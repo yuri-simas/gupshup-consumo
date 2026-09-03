@@ -1,0 +1,647 @@
+<title>Impacto WhatsApp por Cliente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ink:#0E1720; --ink-2:#3D4C5A; --ink-3:#7C8B99;
+  --paper:#FFFFFF; --surface:#F2F5F7; --line:#DCE2E7;
+  --petrol:#4B5E86; --petrol-2:#5C73A4; --petrol-3:#95A4C3; --petrol-soft:#EBEEF4;
+  --signal:#7D437A; --signal-soft:#F2ECF1;
+  --good:#2F6B34; --good-soft:#E9F1E7;
+  --warn:#5D5385;
+  --orpen-navy:#1A293E; --orpen-magenta:#7D437A; --orpen-violet:#6F6399; --orpen-blue:#5C73A4;
+  --orpen-grad:linear-gradient(100deg,#7D437A 0%,#6F6399 52%,#5C73A4 100%);
+}
+*{box-sizing:border-box}
+body{
+  background:#0A1118; color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,sans-serif; font-size:16px; line-height:1.6;
+  margin:0; -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- barra de controle ---------- */
+.bar{
+  position:sticky; top:0; z-index:40; background:#0A1118;
+  border-bottom:1px solid #22313F; padding:9px 16px;
+  display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center;
+}
+.bar label{display:flex;align-items:center;gap:6px}
+.bar .lb{
+  font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:#7C8B99; white-space:nowrap;
+}
+.bar select,.bar input{
+  font:inherit; font-size:12.5px; background:#131E29; color:#DCE6ED;
+  border:1px solid #2B3B4A; border-radius:5px; padding:5px 8px;
+}
+.bar select{max-width:340px}
+.bar select#addSel{max-width:210px}
+.bar input.n{font-family:"IBM Plex Mono",monospace;width:74px;text-align:right}
+.bar input.t{width:190px}
+.bar button,.bar a.lnk{
+  font:inherit; font-size:12.5px; font-weight:500; cursor:pointer;
+  background:#131E29; color:#DCE6ED; border:1px solid #2B3B4A;
+  border-radius:5px; padding:5px 11px; text-decoration:none; white-space:nowrap;
+}
+.bar button:hover,.bar a.lnk:hover{background:#1B2836;border-color:#43596E}
+.bar button.go{background:var(--orpen-magenta);border-color:var(--orpen-magenta);color:#fff}
+.bar button.go:hover{background:#8E4F8B;border-color:#8E4F8B}
+.cb{position:relative}
+.cb input.q{width:236px}
+.cb ul{
+  position:absolute; top:calc(100% + 5px); left:0; z-index:60; margin:0; padding:4px;
+  background:#0E1822; border:1px solid #2B3B4A; border-radius:7px; list-style:none;
+  min-width:360px; max-height:330px; overflow-y:auto; box-shadow:0 14px 36px rgba(0,0,0,.55);
+}
+.cb ul[hidden]{display:none}
+.cb li{padding:6px 9px;border-radius:5px;cursor:pointer}
+.cb li b{display:block;font-size:12.5px;color:#DCE6ED;font-weight:500}
+.cb li i{display:block;font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:#7C8B99;margin-top:1px}
+.cb li[aria-selected="true"],.cb li:hover{background:#1B2836}
+.cb li mark{background:rgba(125,67,122,.5);color:#F4DCF2;border-radius:2px;padding:0 1px}
+.cb .msg{padding:9px 10px;color:#7C8B99;font-size:11.5px;font-family:"IBM Plex Mono",monospace}
+.cb ul::-webkit-scrollbar{width:8px}
+.cb ul::-webkit-scrollbar-track{background:#0E1822}
+.cb ul::-webkit-scrollbar-thumb{background:#2B3B4A;border-radius:8px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; color:#DCE6ED;
+  background:#1B2836; border:1px solid #2B3B4A; border-radius:12px;
+  padding:2px 5px 2px 9px; display:inline-flex; align-items:center; gap:5px;
+}
+.chip b{font-weight:500}
+.chip button{background:none;border:none;color:#7C8B99;padding:0 4px;font-size:13px;line-height:1;cursor:pointer}
+.chip button:hover{color:#E8A0A0;background:none;border:none}
+:focus-visible{outline:2px solid var(--orpen-magenta);outline-offset:2px}
+
+/* ---------- deck ---------- */
+.deck{scroll-snap-type:y mandatory;overflow-y:auto;height:calc(100vh - 45px)}
+.slide{
+  scroll-snap-align:start; min-height:calc(100vh - 45px); background:var(--paper);
+  padding:clamp(28px,4.4vh,56px) clamp(22px,5vw,80px) clamp(60px,7vh,80px);
+  display:flex; flex-direction:column; justify-content:center;
+  position:relative; border-bottom:1px solid #0A1118;
+}
+.slide.dark{background:var(--orpen-navy);color:#fff}
+.inner{width:100%;max-width:1120px;margin:0 auto}
+.orpen-logo{
+  position:absolute; top:clamp(24px,4vh,44px); right:clamp(22px,5vw,80px);
+  width:52px; height:52px; border-radius:11px; z-index:3;
+  box-shadow:0 0 0 1px rgba(255,255,255,.06);
+}
+.slide::after{
+  content:attr(data-n) " / " attr(data-of); position:absolute; bottom:22px; right:clamp(22px,5vw,80px);
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.14em; color:var(--ink-3);
+}
+.slide.dark::after{color:#5C7180}
+.tag{
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--petrol); margin:0 0 14px; display:block;
+}
+.slide.dark .tag{color:#B98FC4}
+h1{font-family:Archivo,sans-serif;font-weight:700;font-size:clamp(30px,5.2vw,58px);line-height:1.03;
+  letter-spacing:-.028em;margin:0 0 20px;max-width:18ch}
+h2{font-family:Archivo,sans-serif;font-weight:600;font-size:clamp(23px,3.4vw,38px);line-height:1.1;
+  letter-spacing:-.022em;margin:0 0 12px;max-width:23ch}
+h3{font-family:Archivo,sans-serif;font-weight:600;font-size:clamp(15px,1.7vw,19px);margin:0 0 8px;letter-spacing:-.01em}
+.sub{font-size:clamp(14px,1.5vw,17px);color:var(--ink-2);max-width:70ch;margin:0 0 4px}
+.slide.dark .sub{color:#AEBFCA}
+p{margin:0 0 12px}
+
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);
+  border:1px solid var(--line);margin-top:26px}
+.figs>div{background:var(--paper);padding:20px 22px}
+.slide.dark .figs{background:#243441;border-color:#243441}
+.slide.dark .figs>div{background:var(--orpen-navy)}
+.figs .l{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 9px}
+.figs .v{font-family:Archivo,sans-serif;font-size:clamp(25px,3.2vw,34px);font-weight:600;letter-spacing:-.025em;line-height:1;margin:0}
+.figs .s{margin:8px 0 0;font-size:12.5px;color:var(--ink-2);line-height:1.4}
+.slide.dark .figs .s{color:#94A8B5}
+.up{color:var(--signal)} .down{color:var(--good)}
+
+.spine{display:flex;height:44px;border-radius:3px;overflow:hidden;margin:24px 0 10px;border:1px solid var(--line)}
+.spine div{display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono",monospace;
+  font-size:11px;font-weight:500;color:#fff;white-space:nowrap;overflow:hidden}
+
+.tw{overflow-x:auto;margin:20px 0 6px}
+.tw.scroll{max-height:min(44vh,400px);overflow-y:auto;border:1px solid var(--line);border-radius:8px;margin-top:16px}
+.tw.scroll table{margin:0;min-width:600px}
+.tw.scroll thead th{position:sticky;top:0;background:var(--paper);z-index:2;padding:12px 14px 9px 14px}
+.tw.scroll td{padding:9px 14px}
+.tw.scroll::-webkit-scrollbar{width:8px}
+.tw.scroll::-webkit-scrollbar-track{background:var(--surface)}
+.tw.scroll::-webkit-scrollbar-thumb{background:var(--petrol-3);border-radius:8px}
+.scroll-hint{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);text-align:center;padding:7px 0 0;margin:0}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:540px}
+th{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-3);text-align:left;font-weight:500;padding:0 14px 9px 0;border-bottom:1px solid var(--ink)}
+td{padding:9px 14px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+td.num,th.num{text-align:right;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;padding-right:0}
+.tw.scroll td.num,.tw.scroll th.num{padding-right:14px}
+tr.hi td{background:var(--petrol-soft)}
+tr.tot td{border-bottom:0;border-top:1px solid var(--ink);font-weight:600}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:24px}
+.card{border:1px solid var(--line);border-top:3px solid var(--warn);padding:18px 20px}
+.card .t{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--warn);margin:0 0 7px}
+.card p{font-size:13.5px;color:var(--ink-2);margin:0 0 9px}
+.card p:last-child{margin:0}
+
+.note{border:1px solid var(--line);background:var(--surface);padding:16px 20px;margin-top:22px;font-size:13.5px;color:var(--ink-2)}
+.note b{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink);display:block;margin-bottom:7px}
+.note.warn{background:var(--signal-soft);border-color:#DACAD9}
+.note.warn b{color:var(--signal)}
+.note.ok{background:var(--good-soft);border-color:#CFE0CC}
+.note.ok b{color:var(--good)}
+.note p{margin:0 0 9px} .note p:last-child{margin:0}
+
+.rank{margin-top:22px;border-top:1px solid var(--line)}
+.rw{display:grid;grid-template-columns:24px 1.25fr 2.4fr auto;gap:16px;align-items:center;
+  padding:11px 0;border-bottom:1px solid var(--line)}
+.rw .n{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3)}
+.rw .nm{font-weight:500;font-size:14.5px}
+.rw .nm small{display:block;font-weight:400;color:var(--ink-3);line-height:1.35;margin-top:1px}
+.trk{background:var(--surface);height:8px;border-radius:2px;overflow:hidden}
+.trk i{display:block;height:100%;background:var(--petrol)}
+.rw .amt{font-family:"IBM Plex Mono",monospace;font-size:13.5px;font-weight:500;text-align:right;white-space:nowrap}
+.rw .amt small{display:block;font-weight:400;color:var(--ink-3);font-size:11px}
+
+.meta{display:flex;flex-wrap:wrap;gap:7px 26px;margin-top:30px;padding-top:18px;border-top:1px solid #243441;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.07em;color:#7C8B99;text-transform:uppercase}
+.hint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;color:#7C8B99;
+  background:rgba(10,17,24,.86);padding:6px 14px;border-radius:20px;text-transform:uppercase}
+
+@media (max-width:680px){
+  .rw{grid-template-columns:20px 1fr auto;gap:9px} .rw .trk{display:none}
+  .slide{justify-content:flex-start;padding-top:44px}
+  .hint{display:none}
+  .bar select{max-width:100%;flex:1}
+}
+@media print{
+  body{background:#fff}
+  .bar,.hint{display:none!important}
+  .deck{height:auto;overflow:visible}
+  .slide{min-height:auto;page-break-after:always;break-after:page;border:0;padding:24px 30px}
+  .tw.scroll{max-height:none;overflow:visible;border:0}
+  .slide.dark{background:#1A293E!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="bar">
+  <label><span class="lb">Cliente</span>
+    <span class="cb" id="cbMain">
+      <input class="q" type="text" role="combobox" aria-expanded="false" aria-autocomplete="list"
+             aria-controls="cbMainList" autocomplete="off" spellcheck="false"
+             placeholder="Digite o nome do app…" aria-label="Buscar app ou Customer Id">
+      <ul id="cbMainList" role="listbox" hidden></ul>
+    </span></label>
+  <label><span class="lb">Agrupar</span>
+    <span class="cb" id="cbAdd">
+      <input class="q" type="text" role="combobox" aria-expanded="false" aria-autocomplete="list"
+             aria-controls="cbAddList" autocomplete="off" spellcheck="false"
+             placeholder="+ adicionar app…" aria-label="Adicionar Customer Id ao grupo">
+      <ul id="cbAddList" role="listbox" hidden></ul>
+    </span></label>
+  <div class="chips" id="chips"></div>
+  <label><span class="lb">Nome</span>
+    <input id="nome" class="t" type="text" aria-label="Nome do cliente no deck"></label>
+  <label><span class="lb">Serviço US$</span>
+    <input id="rSvc" class="n" type="number" step="0.0001" min="0" value="0.0068" aria-label="Tarifa da mensagem de serviço"></label>
+  <label><span class="lb">Dólar R$</span>
+    <input id="fx" class="n" type="number" step="0.01" min="0" value="5.12" aria-label="Cotação do dólar"></label>
+  <a class="lnk" href="index.html">← Rateio geral</a>
+  <button class="go" id="print">Imprimir / PDF</button>
+</div>
+
+<div class="deck" id="deck"></div>
+<div class="hint" id="hint">↑ ↓ navegar · P imprimir</div>
+
+<script id="seed" type="application/json">__DATA__</script>
+<script id="logo" type="text/plain">__LOGO__</script>
+<script>
+(function(){
+"use strict";
+
+/* registro:
+   0 app  1 appId  2 cid  3 sOut  4 sIn  5 tmpl  6 mkt  7 utilPaid  8 utilFree
+   9 auth  10 freeEntry  11 mmlite  12 voiceIn  13 gFee  14 gMkt  15 wFee
+   16 disc  17 total  18 svc                                              */
+
+var DATA = JSON.parse(document.getElementById("seed").textContent);
+var LOGO = document.getElementById("logo").textContent.trim();
+
+var MESES = 3;            /* extrato de 90 dias */
+var TETO  = 75;           /* teto Gupshup por app, por mês */
+var R_MKT = 0.0625, R_UTIL = 0.0068;
+var st = {sel:[], nome:"", rSvc:0.0068, fx:5.12};
+
+var fU = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"USD",minimumFractionDigits:2,maximumFractionDigits:2});
+var fU0= new Intl.NumberFormat("pt-BR",{style:"currency",currency:"USD",minimumFractionDigits:0,maximumFractionDigits:0});
+var fB = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:0,maximumFractionDigits:0});
+var fN = new Intl.NumberFormat("pt-BR");
+function usd(v){ return fU.format(v); }
+function usd0(v){ return fU0.format(v); }
+function brl(v){ return fB.format(v*st.fx); }
+var fB2 = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:2,maximumFractionDigits:2});
+function brl2(v){ return fB2.format(v*st.fx); }
+function int(v){ return fN.format(Math.round(v)); }
+function pc(v){ return (v*100).toFixed(1).replace(".",",")+"%"; }
+function mult(v){ return v.toFixed(1).replace(".",",")+"x"; }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+/* ---- números de um app, já em média mensal ---- */
+function appCalc(r){
+  var gRaw   = r[13] / MESES;                       /* taxa Gupshup cheia */
+  var gBill  = Math.min(r[13], TETO*MESES) / MESES; /* com o teto mensal  */
+  var gMkt   = r[14] / MESES;
+  var tmplNow= r[15] / MESES;                       /* templates já pagos hoje */
+  var svcNew = (r[18]*st.rSvc + r[8]*R_UTIL) / MESES; /* serviço + utility em janela */
+  var hoje   = gBill + gMkt + tmplNow;
+  return {
+    app:r[0], cid:r[2], sOut:r[3]/MESES, svc:r[18]/MESES,
+    gRaw:gRaw, gBill:gBill, gMkt:gMkt, gEcon:gRaw-gBill,
+    tmpl:tmplNow, svcNew:svcNew,
+    hoje:hoje, out:hoje+svcNew,
+    capped:r[13] > TETO*MESES
+  };
+}
+
+/* ---- agrega a seleção ---- */
+function build(){
+  var apps = DATA.filter(function(r){ return st.sel.indexOf(r[2]) > -1; }).map(appCalc);
+  apps.sort(function(a,b){ return b.out - a.out; });
+  var T = {gBill:0,gMkt:0,gEcon:0,gRaw:0,tmpl:0,svcNew:0,hoje:0,out:0,sOut:0,svc:0,capped:0};
+  apps.forEach(function(a){
+    T.gBill+=a.gBill; T.gMkt+=a.gMkt; T.gEcon+=a.gEcon; T.gRaw+=a.gRaw;
+    T.tmpl+=a.tmpl; T.svcNew+=a.svcNew; T.hoje+=a.hoje; T.out+=a.out;
+    T.sOut+=a.sOut; T.svc+=a.svc; if(a.capped) T.capped++;
+  });
+  T.mult = T.hoje > 0 ? T.out/T.hoje : 0;
+  T.gup  = T.gBill + T.gMkt;
+  return {apps:apps, T:T};
+}
+
+/* ---------------- slides ---------------- */
+function render(){
+  if(!st.sel.length){ document.getElementById("deck").innerHTML = ""; return; }
+  var b = build(), A = b.apps, T = b.T, N = 7;
+  var nome = st.nome || (A[0] ? A[0].app : "Cliente");
+  var multi = st.sel.length > 1;
+  var s = [];
+
+  /* 01 capa */
+  s.push(slide(1,N,true,
+    '<img class="orpen-logo" src="'+LOGO+'" alt="Orpen">'
+    + tag("Orpen · Análise interna · Setembro 2026")
+    + '<h1>'+esc(nome)+': o impacto da mudança do WhatsApp em outubro</h1>'
+    + '<p class="sub">A partir de 01/10/2026 a Meta passa a cobrar as mensagens de serviço — as respostas de texto livre dentro da janela de 24h — na tarifa de Utilidade. '
+    + (T.capped > 0
+        ? 'Aqui há um agravante: o limite da Gupshup, que hoje segura a taxa por mensagem em US$ 75 por app, não alcança essa nova cobrança.'
+        : 'O peso da mudança depende de quanto do tráfego é atendimento e quanto já é template pago hoje.')
+    + '</p>'
+    + '<div class="meta">'
+    +   '<span>Escopo · '+(multi ? st.sel.length+" Customer Ids consolidados" : "Customer Id "+esc(st.sel[0]))+' · '+esc(nome)+'</span>'
+    +   '<span>Base · 90 dias · '+A.length+' app'+(A.length>1?"s":"")+'</span>'
+    +   '<span>Natureza · Estimativa · tarifa de serviço não publicada</span>'
+    +   '<span>Emissão · 03/09/2026</span>'
+    + '</div>'));
+
+  /* 02 panorama */
+  var titulo2 = T.mult >= 5 ? "O atendimento vira o principal custo"
+              : T.mult >= 2 ? "O custo mensal se multiplica"
+              : "Impacto contido";
+  s.push(slide(2,N,false,
+    tag("Panorama")
+    + '<h2>'+titulo2+'</h2>'
+    + '<p class="sub">'+ (T.tmpl > T.svcNew
+        ? 'A operação já paga tarifa cheia de template sobre boa parte do tráfego, então a nova cobrança encontra uma base de custo para se diluir.'
+        : 'A operação é majoritariamente atendimento, com pouco template pago hoje. É o cenário em que a mudança de outubro pesa mais: não há base de custo Meta para diluir a nova cobrança.')
+    + '</p>'
+    + figs([
+        ["Custo médio mensal hoje", usd0(T.hoje), "≈ "+brl(T.hoje)+" a R$ "+st.fx.toFixed(2).replace(".",",")+"/US$", ""],
+        ["Custo médio mensal · 01/10", usd0(T.out), "≈ "+brl(T.out)+" · <span class=\"up\">+"+pc(T.hoje?T.out/T.hoje-1:0)+"</span>", "up"],
+        ["Multiplicador", mult(T.mult), "Sobre a média de 90 dias", "up"]
+      ])
+    + note("warn","Por que o salto é desse tamanho",
+        'Hoje o cliente transaciona cerca de <strong>'+int(T.svc)+' mensagens de serviço por mês</strong>, que não custam nada na Meta'
+        + (T.capped > 0 ? ' — e '+T.capped+' app'+(T.capped>1?"s batem":" bate")+' o limite de US$ 75, o que segura a taxa Gupshup' : '')
+        + '. Em outubro essas mensagens passam a custar a tarifa de Utilidade, <strong>que não tem teto</strong>: '
+        + usd0(T.svcNew)+'/mês, ou '+pc(T.out?T.svcNew/T.out:0)+' da conta projetada.')));
+
+  /* 03 a regra do limite */
+  s.push(slide(3,N,false,
+    tag("01 · A regra do limite")
+    + '<h2>O limite protege a Gupshup, não a Meta</h2>'
+    + '<p class="sub">O limite da Gupshup restringe a taxa por mensagem a US$ 75 por app, por mês. Ele continua valendo em outubro — mas cobre só a camada Gupshup. A cobrança da Meta é uma camada separada, sem teto.</p>'
+    + '<div class="tw"><table>'
+    + '<thead><tr><th>Camada de custo</th><th class="num">Tem limite?</th><th class="num">Hoje</th><th class="num">Outubro</th></tr></thead><tbody>'
+    + '<tr><td>Gupshup — taxa por mensagem</td><td class="num" style="color:var(--good)">Sim · US$ 75/app</td><td class="num">'+usd0(T.gBill)+'</td><td class="num">'+usd0(T.gBill)+'</td></tr>'
+    + (T.gMkt > 0.5 ? '<tr><td>Gupshup — Cloud API marketing</td><td class="num">—</td><td class="num">'+usd0(T.gMkt)+'</td><td class="num">'+usd0(T.gMkt)+'</td></tr>' : '')
+    + '<tr><td>Meta — templates pagos</td><td class="num">Não</td><td class="num">'+usd0(T.tmpl)+'</td><td class="num">'+usd0(T.tmpl)+'</td></tr>'
+    + '<tr class="hi"><td>Meta — mensagens de serviço</td><td class="num" style="color:var(--signal)">Não</td><td class="num" style="color:var(--good)">US$ 0</td><td class="num" style="color:var(--signal)">'+usd0(T.svcNew)+'</td></tr>'
+    + '<tr class="tot"><td>Total</td><td class="num">—</td><td class="num">'+usd0(T.hoje)+'</td><td class="num">'+usd0(T.out)+'</td></tr>'
+    + '</tbody></table></div>'
+    + figs([
+        ["Gupshup bruto sem limite", usd0(T.gRaw), "Se não houvesse teto", ""],
+        ["Desconto que o limite gera", usd0(T.gEcon), "Continua valendo em outubro", "down"],
+        ["Novo custo Meta · sem limite", usd0(T.svcNew), "É o que o limite não alcança", "up"]
+      ])
+    + note("warn","O ponto central",
+        'O limite seguirá economizando cerca de <strong>'+usd0(T.gEcon)+'/mês</strong> em taxa Gupshup — isso não muda. '
+        + 'Mas surge um custo Meta de <strong>'+usd0(T.svcNew)+'/mês</strong> que nenhum limite cobre, '
+        + pc(T.out?T.svcNew/T.out:0)+' da conta projetada de outubro.')));
+
+  /* 04 composição */
+  var camadas = [
+    {n:"Meta · mensagens de serviço", d:"Novo em outubro · sem limite", v:T.svcNew, hoje:0},
+    {n:"Meta · templates pagos", d:"Utilidade + marketing · já pago hoje", v:T.tmpl, hoje:T.tmpl},
+    {n:"Gupshup · taxa por mensagem", d:"Limitada a US$ 75 por app", v:T.gup, hoje:T.gup}
+  ].sort(function(a,b){ return b.v-a.v; });
+  var cmax = Math.max(camadas[0].v, 1);
+  var pSvc = T.out ? T.svcNew/T.out : 0, pTmpl = T.out ? T.tmpl/T.out : 0, pGup = T.out ? T.gup/T.out : 0;
+  s.push(slide(4,N,false,
+    tag("02 · Composição")
+    + '<h2>De onde vem o custo de outubro</h2>'
+    + '<p class="sub">Duas camadas não se movem: o limite Gupshup e os templates já pagos hoje. Todo o aumento vem de uma linha só.</p>'
+    + '<div class="spine">'
+    +   seg(pGup, "#5C73A4", "Gupshup " + pc(pGup))
+    +   seg(pTmpl, "#6F6399", "Templates " + pc(pTmpl))
+    +   seg(pSvc, "var(--orpen-grad)", "Mensagens de serviço " + pc(pSvc))
+    + '</div>'
+    + '<div class="rank">' + camadas.map(function(c,i){
+        return '<div class="rw"><span class="n">'+(i+1<10?"0":"")+(i+1)+'</span>'
+          + '<span class="nm">'+esc(c.n)+'<small>'+esc(c.d)+'</small></span>'
+          + '<span class="trk"><i style="width:'+((c.v/cmax)*100).toFixed(1)+'%"></i></span>'
+          + '<span class="amt">'+usd0(c.v)+'<small>hoje '+usd0(c.hoje)+'</small></span></div>';
+      }).join("") + '</div>'
+    + note("","A leitura",
+        'O limite Gupshup fica em '+usd0(T.gup)+' e os templates em '+usd0(T.tmpl)+'. '
+        + '<strong>Todo o aumento — de '+usd0(T.hoje)+' para '+usd0(T.out)+' — vem das mensagens de serviço</strong>, '
+        + 'que deixam de ser gratuitas. Elas sozinhas respondem por '+pc(pSvc)+' da conta de outubro.')));
+
+  /* 05 apps */
+  var amax = A[0] ? A[0].out : 1;
+  s.push(slide(5,N,false,
+    tag("03 · Custo por app")
+    + '<h2>'+(A.length===1 ? "O app, detalhado" : "Os "+A.length+" apps, detalhados")+'</h2>'
+    + '<p class="sub">Custo médio mensal, hoje e projetado para outubro, por aplicação — do maior para o menor impacto.</p>'
+    + '<div class="tw'+(A.length>8?" scroll":"")+'"><table>'
+    + '<thead><tr><th>App</th><th class="num">Custo hoje</th><th class="num">Custo 01/10</th><th class="num">Mult.</th><th class="num">Part. out</th></tr></thead><tbody>'
+    + A.map(function(a,i){
+        var m = a.hoje > 0 ? a.out/a.hoje : 0;
+        var cor = m >= 5 ? ' style="color:var(--signal)"' : (m < 1.2 ? ' style="color:var(--good)"' : '');
+        return '<tr'+(i===0&&A.length>1?' class="hi"':'')+'><td>'+esc(a.app)+(a.capped?' <span style="color:var(--good);font-size:11px">· no limite</span>':'')+'</td>'
+          + '<td class="num">'+usd(a.hoje)+'</td><td class="num">'+usd(a.out)+'</td>'
+          + '<td class="num"'+cor+'>'+(m?mult(m):"—")+'</td>'
+          + '<td class="num">'+(T.out?pc(a.out/T.out):"—")+'</td></tr>';
+      }).join("")
+    + '<tr class="tot"><td>Total</td><td class="num">'+usd(T.hoje)+'</td><td class="num">'+usd(T.out)+'</td>'
+    + '<td class="num">'+mult(T.mult)+'</td><td class="num">100,0%</td></tr>'
+    + '</tbody></table></div>'
+    + (A.length>8 ? '<p class="scroll-hint">↕ role para ver os '+A.length+' apps</p>' : '')
+    + note("","Como ler",
+        (A.length>1
+          ? 'Os apps com maior multiplicador são os de atendimento puro — muito volume de serviço e pouco template. Os de marketing intenso quase não se movem, porque já pagam tarifa cheia hoje. '
+          : '')
+        + 'O rateio usa o volume real de 90 dias dividido por três.')));
+
+  /* 06 custo marginal */
+  s.push(slide(6,N,false,
+    tag("04 · A unidade")
+    + '<h2>O custo por mensagem, com e sem limite</h2>'
+    + '<p class="sub">O limite muda a forma de pensar o custo marginal. Hoje, acima de 75 mil mensagens no mês, cada mensagem enviada é praticamente gratuita. Em outubro cada uma passa a custar a tarifa de serviço, sem exceção.</p>'
+    + figs([
+        ["Custo marginal hoje · acima do limite", "US$ 0,0000", "O limite zera a taxa por mensagem extra", ""],
+        ["Custo marginal · 01/10", "US$ "+st.rSvc.toFixed(4).replace(".",","), "Tarifa Meta de serviço · sem limite", "up"],
+        ["A cada 1.000 saídas · 01/10", brl2(st.rSvc*1000), "US$ "+(st.rSvc*1000).toFixed(2).replace(".",","), "up"],
+        ["Saídas médias por mês", int(T.sOut), "Todas passam a contar", ""]
+      ])
+    + note("warn","A inversão que o limite provoca",
+        'Hoje, aumentar o volume de atendimento é quase de graça — o limite absorve. A partir de outubro cada mensagem de serviço tem custo cheio e linear. '
+        + '<strong>A lógica de "quanto mais atende, melhor" se inverte</strong>: o volume que hoje não pesava passa a ser exatamente o que define a conta.')));
+
+  /* 07 ressalvas */
+  s.push(slide(7,N,false,
+    tag("05 · Ressalvas")
+    + '<h2>O que ainda não é definitivo</h2>'
+    + '<div class="cards">'
+    + card("Tarifa","Ainda não confirmada","A Meta se comprometeu a publicar a tabela oficial de mensagem de serviço por país até 01/09/2026. Enquanto ela não é confirmada, usamos a tarifa de Utilidade — US$ "+R_UTIL.toFixed(4).replace(".",",")+" — que é o critério anunciado por ela.")
+    + card("Cenário","O mais caro possível","Assumimos que toda mensagem de serviço será cobrada. A janela gratuita de 72h dos anúncios Click-to-WhatsApp segue valendo, então o valor real tende a ficar abaixo.")
+    + card("Base","90 dias, sem quebra por ciclo","O extrato consolida o trimestre. Os valores aqui são a média mensal. Com os extratos de cada ciclo separados dá para mostrar a tendência mês a mês.")
+    + '</div>'
+    + note("ok","O que já é certo",
+        'A data — <strong>01/10/2026</strong> — e a regra: mensagens de serviço e templates de utilidade enviados dentro da janela aberta passam a ser cobrados por unidade. '
+        + 'O teto de US$ 75/mês por app da Gupshup foi confirmado nos dados: aplicá-lo à base inteira reproduz a fatura real com 0,4% de diferença.')));
+
+  document.getElementById("deck").innerHTML = s.join("");
+  wire();
+}
+
+function slide(n,of,dark,html){
+  return '<section class="slide'+(dark?" dark":"")+'" data-n="'+(n<10?"0":"")+n+'" data-of="0'+of+'"><div class="inner">'+html+'</div></section>';
+}
+function tag(t){ return '<span class="tag">'+esc(t)+'</span>'; }
+function figs(list){
+  return '<div class="figs">' + list.map(function(f){
+    return '<div><p class="l">'+esc(f[0])+'</p><p class="v '+(f[3]||"")+'">'+f[1]+'</p><p class="s">'+f[2]+'</p></div>';
+  }).join("") + '</div>';
+}
+function note(kind,title,html){
+  return '<div class="note'+(kind?" "+kind:"")+'"><b>'+esc(title)+'</b><p>'+html+'</p></div>';
+}
+function card(t,h,p){
+  return '<div class="card"><p class="t">'+esc(t)+'</p><h3>'+esc(h)+'</h3><p>'+esc(p)+'</p></div>';
+}
+function seg(p,bg,label){
+  if(p <= 0.001) return "";
+  var w = (p*100).toFixed(1);
+  return '<div style="width:'+w+'%;background:'+bg+'">'+(p > 0.14 ? esc(label) : "")+'</div>';
+}
+
+/* ---------------- seleção de cliente ---------------- */
+var byCid = {};
+DATA.forEach(function(r){
+  var e = byCid[r[2]] || (byCid[r[2]] = {cid:r[2], apps:0, total:0, top:"", topv:-1});
+  e.apps++; e.total += r[17];
+  if(r[17] > e.topv){ e.topv = r[17]; e.top = r[0]; }
+});
+var CIDS = Object.keys(byCid).map(function(k){ return byCid[k]; })
+  .sort(function(a,b){ return b.total - a.total; });
+
+function optLabel(e){
+  return e.cid + " · " + e.top + (e.apps>1 ? " (+"+(e.apps-1)+")" : "") + " — " + usd0(e.total/MESES) + "/mês";
+}
+
+/* ---- índice de busca: um registro por app ---- */
+function norm(s){
+  return String(s).normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+}
+var APPS = DATA.map(function(r){
+  return {app:r[0], appId:r[1], cid:r[2], tot:r[17], n:norm(r[0]+" "+r[2]+" "+r[1])};
+});
+var LIMITE = 40;
+
+/* Todos os termos digitados precisam aparecer. Ordena por: começa com o termo,
+   depois contém, depois pelo custo do app. */
+function buscar(q){
+  var nq = norm(q).trim();
+  if(!nq){
+    return {itens: APPS.slice().sort(function(a,b){ return b.tot-a.tot; }).slice(0,LIMITE), total:APPS.length, vazio:true};
+  }
+  var termos = nq.split(/\s+/);
+  var hits = [];
+  APPS.forEach(function(a){
+    for(var i=0;i<termos.length;i++){ if(a.n.indexOf(termos[i]) < 0) return; }
+    var na = norm(a.app);
+    hits.push({a:a, rank: na.indexOf(termos[0]) === 0 ? 0 : (na.indexOf(termos[0]) > -1 ? 1 : 2)});
+  });
+  hits.sort(function(x,y){ return x.rank - y.rank || y.a.tot - x.a.tot; });
+  return {itens: hits.slice(0,LIMITE).map(function(x){ return x.a; }), total:hits.length, vazio:false};
+}
+
+function marcar(texto, q){
+  var nq = norm(q).trim().split(/\s+/)[0];
+  if(!nq) return esc(texto);
+  var i = norm(texto).indexOf(nq);
+  if(i < 0) return esc(texto);
+  return esc(texto.slice(0,i)) + "<mark>" + esc(texto.slice(i, i+nq.length)) + "</mark>" + esc(texto.slice(i+nq.length));
+}
+
+/* ---- combobox reutilizável ---- */
+function combo(rootId, aoEscolher){
+  var raiz  = document.getElementById(rootId);
+  var campo = raiz.querySelector("input");
+  var lista = raiz.querySelector("ul");
+  var itens = [], atual = -1;
+
+  function abrir(){ lista.hidden = false; campo.setAttribute("aria-expanded","true"); }
+  function fechar(){ lista.hidden = true; campo.setAttribute("aria-expanded","false"); atual = -1; }
+  function desenhar(){
+    var q = campo.value, r = buscar(q);
+    itens = r.itens;
+    if(!itens.length){
+      lista.innerHTML = '<li class="msg" role="presentation">Nenhum app encontrado para “'+esc(q)+'”</li>';
+      atual = -1; abrir(); return;
+    }
+    atual = 0;
+    lista.innerHTML = itens.map(function(a,i){
+      var c = byCid[a.cid];
+      return '<li role="option" data-i="'+i+'" aria-selected="'+(i===0)+'">'
+        + '<b>' + marcar(a.app, q) + '</b>'
+        + '<i>' + esc(a.cid) + ' · ' + c.apps + ' app' + (c.apps>1?"s":"") + ' · ' + esc(usd0(c.total/MESES)) + '/mês</i>'
+        + '</li>';
+    }).join("")
+    + (r.total > itens.length ? '<li class="msg" role="presentation">+ '+(r.total-itens.length)+' resultados — refine a busca</li>' : "");
+    abrir();
+  }
+  function mover(d){
+    if(lista.hidden || !itens.length) return;
+    atual = (atual + d + itens.length) % itens.length;
+    [].forEach.call(lista.querySelectorAll('li[role="option"]'), function(li,i){
+      li.setAttribute("aria-selected", i === atual);
+      if(i === atual) li.scrollIntoView({block:"nearest"});
+    });
+  }
+  function escolher(i){
+    var a = itens[i]; if(!a) return;
+    campo.value = a.app;
+    campo.blur(); fechar();
+    aoEscolher(a);
+  }
+
+  campo.addEventListener("input", desenhar);
+  campo.addEventListener("focus", function(){ this.select(); desenhar(); });
+  campo.addEventListener("keydown", function(e){
+    if(e.key === "ArrowDown"){ e.preventDefault(); lista.hidden ? desenhar() : mover(1); }
+    else if(e.key === "ArrowUp"){ e.preventDefault(); mover(-1); }
+    else if(e.key === "Enter"){ e.preventDefault(); if(!lista.hidden) escolher(atual); }
+    else if(e.key === "Escape"){ e.preventDefault(); fechar(); this.blur(); }
+  });
+  lista.addEventListener("mousedown", function(e){
+    var li = e.target.closest('li[role="option"]'); if(!li) return;
+    e.preventDefault(); escolher(+li.dataset.i);
+  });
+  document.addEventListener("click", function(e){ if(!raiz.contains(e.target)) fechar(); });
+
+  return {campo:campo, limpar:function(){ campo.value = ""; }, mostrar:function(v){ campo.value = v; }};
+}
+function renderChips(){
+  var extra = st.sel.slice(1);
+  document.getElementById("chips").innerHTML = extra.map(function(c){
+    return '<span class="chip"><b>'+esc(c)+'</b><button data-cid="'+esc(c)+'" aria-label="Remover '+esc(c)+'">×</button></span>';
+  }).join("");
+}
+function defaultName(){
+  var a = DATA.filter(function(r){ return st.sel.indexOf(r[2]) > -1; })
+              .sort(function(x,y){ return y[17]-x[17]; })[0];
+  return a ? a[0] : "";
+}
+function selectCid(cid, keepName){
+  st.sel = [cid];
+  if(typeof cbMain !== "undefined") cbMain.mostrar(byCid[cid].top);
+  if(!keepName){ st.nome = defaultName(); document.getElementById("nome").value = st.nome; }
+  renderChips(); render();
+}
+
+st.sel = [CIDS[0].cid];
+st.nome = defaultName();
+document.getElementById("nome").value = st.nome;
+
+var cbMain = combo("cbMain", function(a){ selectCid(a.cid); cbMain.mostrar(a.app); });
+var cbAdd  = combo("cbAdd", function(a){
+  if(st.sel.indexOf(a.cid) > -1){ cbAdd.limpar(); return; }
+  st.sel.push(a.cid); cbAdd.limpar(); renderChips(); render();
+});
+cbMain.mostrar(byCid[st.sel[0]].top);
+document.getElementById("chips").addEventListener("click", function(ev){
+  var b = ev.target.closest("button"); if(!b) return;
+  st.sel = st.sel.filter(function(c){ return c !== b.dataset.cid; });
+  renderChips(); render();
+});
+document.getElementById("nome").addEventListener("input", function(){ st.nome = this.value; render(); });
+["rSvc","fx"].forEach(function(id){
+  document.getElementById(id).addEventListener("input", function(){
+    var v = parseFloat(this.value);
+    st[id] = (isNaN(v) || v < 0) ? 0 : v;
+    render();
+  });
+});
+document.getElementById("print").addEventListener("click", function(){ window.print(); });
+
+/* ---------------- navegação ---------------- */
+var idx = 0;
+function slides(){ return [].slice.call(document.querySelectorAll(".slide")); }
+function go(n){
+  var s = slides(); if(!s.length) return;
+  idx = Math.max(0, Math.min(s.length-1, n));
+  s[idx].scrollIntoView({behavior:"smooth"});
+}
+document.addEventListener("keydown", function(e){
+  if(/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if(["ArrowDown","ArrowRight","PageDown"," "].indexOf(e.key) > -1){ e.preventDefault(); go(idx+1); }
+  else if(["ArrowUp","ArrowLeft","PageUp"].indexOf(e.key) > -1){ e.preventDefault(); go(idx-1); }
+  else if(e.key === "Home"){ e.preventDefault(); go(0); }
+  else if(e.key === "End"){ e.preventDefault(); go(slides().length-1); }
+  else if(e.key === "p" || e.key === "P"){ window.print(); }
+});
+var io = new IntersectionObserver(function(es){
+  es.forEach(function(en){ if(en.isIntersecting) idx = slides().indexOf(en.target); });
+}, {threshold:.5});
+function wire(){ slides().forEach(function(s){ io.observe(s); }); }
+
+render();
+setTimeout(function(){
+  var h = document.getElementById("hint");
+  if(h){ h.style.transition = "opacity .6s"; h.style.opacity = "0"; }
+}, 4600);
+})();
+</script>

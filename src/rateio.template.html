@@ -1,0 +1,955 @@
+<title>Rateio Gupshup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ground:#EDEFF2; --surface:#FFFFFF; --raised:#F6F7F9;
+  --ink:#111820; --ink2:#485663; --muted:#7A8792;
+  --rule:#DBE0E6; --rule-strong:#C3CBD4;
+  --broker:#A16207; --meta:#2F5FBF; --free:#9AA5B1;
+  --alert:#A32017; --alert-bg:#FBE7E4; --alert-mark:#C0392B;
+  --good:#15683F; --good-bg:#E1F1E7;
+  --focus:#2F5FBF;
+  --shadow:0 1px 2px rgba(17,24,32,.06), 0 8px 24px -16px rgba(17,24,32,.28);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0F1318; --surface:#191D24; --raised:#20252D;
+    --ink:#E7ECF2; --ink2:#A6B1BD; --muted:#78848F;
+    --rule:#2A313A; --rule-strong:#3A434E;
+    --broker:#C08529; --meta:#6690E8; --free:#5C6874;
+    --alert:#F0857C; --alert-bg:#3A1F1C; --alert-mark:#D9635A;
+    --good:#5CC08D; --good-bg:#16301F;
+    --focus:#6690E8;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0F1318; --surface:#191D24; --raised:#20252D;
+  --ink:#E7ECF2; --ink2:#A6B1BD; --muted:#78848F;
+  --rule:#2A313A; --rule-strong:#3A434E;
+  --broker:#C08529; --meta:#6690E8; --free:#5C6874;
+  --alert:#F0857C; --alert-bg:#3A1F1C; --alert-mark:#D9635A;
+  --good:#5CC08D; --good-bg:#16301F;
+  --focus:#6690E8;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:14px; line-height:1.5; margin:0; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:Archivo,"IBM Plex Sans",sans-serif;font-weight:700;margin:0;text-wrap:balance;letter-spacing:-.015em}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+.num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:3px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px 72px}
+
+.masthead{border-bottom:1px solid var(--rule);background:var(--surface)}
+.masthead-in{max-width:1240px;margin:0 auto;padding:22px 20px 20px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:space-between}
+.brandline{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+h1{font-size:25px}
+.field{display:flex;align-items:center;gap:7px;color:var(--ink2);font-size:12.5px}
+.field input{font:inherit;font-size:12.5px;background:var(--raised);color:var(--ink);border:1px solid var(--rule);border-radius:5px;padding:4px 8px}
+.field input.wide{width:126px}
+.field input.narrow{font-family:"IBM Plex Mono",monospace;width:58px;text-align:right}
+.sub{color:var(--muted);font-size:12.5px;max-width:64ch;margin-top:6px}
+.head-actions{display:flex;gap:8px;align-items:center}
+
+button,.btn{font:inherit;font-size:12.5px;font-weight:500;cursor:pointer;background:var(--raised);color:var(--ink);border:1px solid var(--rule-strong);border-radius:6px;padding:6px 11px;display:inline-flex;align-items:center;gap:6px;transition:background .12s,border-color .12s}
+a.btn{text-decoration:none}
+button:hover,.btn:hover{background:var(--surface);border-color:var(--ink2)}
+button.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+button.primary:hover{opacity:.88;background:var(--ink)}
+
+.controls{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--rule)}
+.controls-in{max-width:1240px;margin:0 auto;padding:11px 20px;display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center}
+.ctl{display:flex;align-items:center;gap:8px}
+.ctl-label{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.seg{display:inline-flex;background:var(--raised);border:1px solid var(--rule);border-radius:7px;padding:2px;gap:2px}
+.seg button{border:none;background:transparent;padding:4px 10px;border-radius:5px;font-size:12.5px;color:var(--ink2);font-weight:500}
+.seg button:hover{background:transparent;color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.09)}
+.capbox{display:flex;align-items:center;gap:6px}
+.capbox input{font:inherit;font-family:"IBM Plex Mono",monospace;font-size:12.5px;width:62px;background:var(--raised);color:var(--ink);border:1px solid var(--rule);border-radius:5px;padding:4px 7px;text-align:right}
+.capbox select{font:inherit;font-size:12.5px;background:var(--raised);color:var(--ink);border:1px solid var(--rule);border-radius:5px;padding:4px 6px}
+.capbox[hidden]{display:none}
+.search{flex:1;min-width:180px;display:flex;justify-content:flex-end}
+.search input{font:inherit;font-size:13px;width:100%;max-width:270px;background:var(--raised);color:var(--ink);border:1px solid var(--rule);border-radius:6px;padding:6px 11px}
+.search input::placeholder{color:var(--muted)}
+
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface);border:1px solid var(--rule);border-radius:10px;margin-top:22px;overflow:hidden;box-shadow:var(--shadow)}
+.kpi{padding:15px 17px 16px;border-left:1px solid var(--rule)}
+.kpi:first-child{border-left:none}
+.kpi-k{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.kpi-v{font-family:Archivo,sans-serif;font-weight:700;font-size:24px;letter-spacing:-.02em;margin-top:5px;font-variant-numeric:tabular-nums}
+.kpi-r{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink2);margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi-n{font-size:11.5px;color:var(--muted);margin-top:3px}
+.kpi.accent .kpi-v{color:var(--good)}
+
+.sec{margin-top:34px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+h2{font-size:16.5px}
+.sec-note{font-size:12px;color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:10px;box-shadow:var(--shadow)}
+
+.comp{display:grid;grid-template-columns:1fr 300px}
+.comp-rows{padding:16px 18px 18px;display:flex;flex-direction:column;gap:11px}
+.crow{display:grid;grid-template-columns:172px 1fr 98px 92px 52px;gap:12px;align-items:center}
+.crow .cl{font-size:12.5px;font-weight:500;color:var(--ink)}
+.crow .cl small{display:block;color:var(--muted);font-size:10.5px;font-weight:400;font-family:"IBM Plex Mono",monospace}
+.ctrack{height:17px;background:var(--raised);border-radius:4px;overflow:hidden}
+.cbar{height:100%;border-radius:4px;min-width:2px}
+.cbar.b{background:var(--broker)} .cbar.m{background:var(--meta)}
+.cbar.f{background:var(--free)} .cbar.o{background:var(--rule-strong)}
+.crow .cv{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-variant-numeric:tabular-nums}
+.crow .cr{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.crow .cp{text-align:right;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rates{border-left:1px solid var(--rule);padding:16px 18px 18px}
+.rates h3{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600;font-family:"IBM Plex Sans",sans-serif}
+.rate{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+.rate span{font-size:12.5px;color:var(--ink2)}
+.rate input,.mininput{font:inherit;font-family:"IBM Plex Mono",monospace;font-size:12px;width:82px;background:var(--raised);color:var(--ink);border:1px solid var(--rule);border-radius:5px;padding:3px 7px;text-align:right}
+.rates p{font-size:11.5px;color:var(--muted);margin:14px 0 0;line-height:1.5}
+
+.legend{display:flex;gap:16px;align-items:center;padding:13px 18px 0;flex-wrap:wrap}
+.lg{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2)}
+.sw{width:11px;height:11px;border-radius:3px;flex:none}
+.sw.b{background:var(--broker)} .sw.m{background:var(--meta)} .sw.r{background:var(--alert-mark)}
+.chart{padding:12px 18px 18px;display:flex;flex-direction:column;gap:9px}
+.row-c{display:grid;grid-template-columns:170px 1fr 96px 88px;gap:12px;align-items:center}
+.row-c .nm{font-size:12.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.row-c .nm small{display:block;color:var(--muted);font-size:10.5px;font-weight:400;font-family:"IBM Plex Mono",monospace}
+.track{height:19px;background:var(--raised);border-radius:4px;display:flex;gap:2px;overflow:hidden}
+.seg-b,.seg-m{height:100%;min-width:2px}
+.seg-b{background:var(--broker);border-radius:4px 0 0 4px}
+.seg-m{background:var(--meta);border-radius:0 4px 4px 0}
+.row-c:hover .track{outline:1px solid var(--rule-strong);outline-offset:1px}
+.row-c .amt{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.row-c .amtr{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:12px;font-variant-numeric:tabular-nums;color:var(--muted)}
+
+.simwrap{padding:18px}
+.simrow{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:center;margin-bottom:12px}
+.simrow:last-child{margin-bottom:0}
+.simlab{font-size:12px;color:var(--ink2);font-weight:500}
+.simlab small{display:block;color:var(--muted);font-size:10.5px;font-weight:400}
+.simtrack{height:28px;background:var(--raised);border-radius:5px;display:flex;gap:2px;overflow:hidden;position:relative}
+.simtrack i{height:100%;min-width:2px;display:block}
+.simtrack i.b{background:var(--broker)} .simtrack i.m{background:var(--meta)} .simtrack i.r{background:var(--alert-mark)}
+.simval{position:absolute;right:10px;top:0;line-height:28px;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink);font-weight:500}
+.simval em{font-style:normal;color:var(--ink2);margin-left:9px}
+.simfoot{margin-top:15px;padding-top:14px;border-top:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:22px}
+.simstat{min-width:158px}
+.simstat b{display:block;font-family:Archivo,sans-serif;font-size:20px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.simstat b.risk{color:var(--alert)}
+.simstat span{font-size:11.5px;color:var(--muted)}
+
+/* filtro da tabela */
+.tbar{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--rule);background:var(--raised);border-radius:10px 10px 0 0}
+.tbar input[type="search"]{font:inherit;font-size:12.5px;background:var(--surface);color:var(--ink);border:1px solid var(--rule-strong);border-radius:6px;padding:5px 10px;width:210px}
+.tbar input[type="number"]{font:inherit;font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:var(--surface);color:var(--ink);border:1px solid var(--rule-strong);border-radius:6px;padding:5px 8px;width:88px;text-align:right}
+.tbar select{font:inherit;font-size:12.5px;background:var(--surface);color:var(--ink);border:1px solid var(--rule-strong);border-radius:6px;padding:5px 7px}
+.tbar .grow{flex:1;text-align:right;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:150px}
+.tbar button.clear{padding:5px 9px}
+
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:940px;background:var(--surface)}
+thead th{position:sticky;top:47px;z-index:10;background:var(--surface);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:right;padding:10px 13px;border-bottom:1px solid var(--rule-strong);white-space:nowrap;cursor:pointer;user-select:none}
+thead th:first-child{text-align:left}
+thead th:hover{color:var(--ink)}
+thead th .car{opacity:0;margin-left:4px;font-size:9px}
+thead th[data-active="1"]{color:var(--ink)}
+thead th[data-active="1"] .car{opacity:1}
+tbody td{padding:9px 13px;border-bottom:1px solid var(--rule);text-align:right;font-variant-numeric:tabular-nums;font-size:13px;white-space:nowrap}
+tbody td:first-child{text-align:left;white-space:normal}
+tbody tr.parent{cursor:pointer}
+tbody tr.parent:hover td{background:var(--raised)}
+tbody tr.child td{background:var(--raised);font-size:12.5px;color:var(--ink2);padding-top:6px;padding-bottom:6px}
+tbody tr.child td:first-child{padding-left:34px}
+tbody tr.empty td{text-align:center;color:var(--muted);padding:26px 13px;font-size:13px}
+.ent{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ent .id{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink);font-weight:500}
+.ent .hint{font-size:11.5px;color:var(--muted)}
+.exp{display:inline-block;width:13px;color:var(--muted);font-size:9px;transition:transform .14s}
+tr.open .exp{transform:rotate(90deg)}
+.chip{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10.5px;font-weight:600}
+.chip.cap{background:var(--good-bg);color:var(--good)}
+td.b{color:var(--broker)} td.m{color:var(--meta)} td.d{color:var(--good)} td.f{color:var(--muted)} td.r{color:var(--ink2)}
+td.b,td.m,td.d,td.f,td.t,td.x,td.r{font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+td.t{font-weight:600}
+tfoot td{padding:11px 13px;text-align:right;font-weight:600;font-size:13px;font-variant-numeric:tabular-nums;border-top:1px solid var(--rule-strong);background:var(--raised);font-family:"IBM Plex Mono",monospace}
+tfoot td:first-child{text-align:left;font-family:"IBM Plex Sans",sans-serif}
+
+.method{margin-top:34px;display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.mcol{padding:18px 20px 20px}
+.mcol+.mcol{border-left:1px solid var(--rule)}
+.mcol h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;font-family:"IBM Plex Sans",sans-serif}
+.mcol ul{margin:11px 0 0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.mcol li{font-size:12.5px;color:var(--ink2);padding-left:15px;position:relative;max-width:60ch}
+.mcol li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:1px;background:var(--rule-strong)}
+.mcol code{font-family:"IBM Plex Mono",monospace;font-size:11.5px;background:var(--raised);padding:1px 4px;border-radius:3px;color:var(--ink)}
+.ok{margin-top:12px;padding:10px 12px;border-radius:7px;background:var(--good-bg);color:var(--good);font-size:12px;max-width:60ch}
+.warn{margin-top:12px;padding:10px 12px;border-radius:7px;background:var(--alert-bg);color:var(--alert);font-size:12px;max-width:60ch}
+
+#drop{position:fixed;inset:0;z-index:100;background:rgba(15,19,24,.72);display:none;align-items:center;justify-content:center;color:#fff;font-family:Archivo,sans-serif;font-size:19px;font-weight:600}
+#drop.on{display:flex}
+#drop div{border:2px dashed rgba(255,255,255,.5);border-radius:14px;padding:40px 56px}
+#tip{position:fixed;z-index:200;pointer-events:none;opacity:0;transition:opacity .1s;background:var(--ink);color:var(--surface);padding:8px 11px;border-radius:7px;font-size:12px;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.3);max-width:250px}
+#tip.on{opacity:1}
+#tip b{font-family:"IBM Plex Mono",monospace;font-weight:500}
+
+@media (max-width:1080px){
+  .crow{grid-template-columns:150px 1fr 92px 86px 48px}
+}
+@media (max-width:980px){
+  .comp{grid-template-columns:1fr}
+  .rates{border-left:none;border-top:1px solid var(--rule)}
+}
+@media (max-width:880px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .kpi{border-left:1px solid var(--rule);border-top:1px solid var(--rule)}
+  .kpi:nth-child(-n+2){border-top:none}
+  .kpi:nth-child(odd){border-left:none}
+  .kpi:last-child{grid-column:1/-1}
+  .method{grid-template-columns:1fr}
+  .mcol+.mcol{border-left:none;border-top:1px solid var(--rule)}
+  .row-c{grid-template-columns:112px 1fr 82px 74px}
+  .crow{grid-template-columns:118px 1fr 84px 78px 44px}
+  thead th{top:0}
+  .tbar input[type="search"]{width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="masthead">
+  <div class="masthead-in">
+    <div>
+      <div class="brandline">
+        <h1>Rateio Gupshup</h1>
+        <div class="field">
+          <span class="ctl-label">Extrato</span>
+          <input id="periodo" class="wide" type="text" value="Jun – Ago / 2026" aria-label="Período do extrato">
+        </div>
+        <div class="field">
+          <span class="ctl-label">Dias</span>
+          <input id="dias" class="narrow" type="number" min="1" step="1" value="90" aria-label="Dias cobertos pelo extrato">
+        </div>
+        <div class="field">
+          <span class="ctl-label">Dólar R$</span>
+          <input id="fx" class="narrow" type="number" min="0" step="0.01" value="5.12" aria-label="Cotação do dólar em reais">
+        </div>
+      </div>
+      <p class="sub">Custo de plataforma por Customer ID e por App, aberto por categoria de mensagem. O extrato cobre 90 dias — a média mensal divide tudo por 3.</p>
+    </div>
+    <div class="head-actions">
+      <a class="btn" href="deck.html">Deck por cliente →</a>
+      <button id="importBtn">Importar extrato CSV</button>
+      <button id="exportBtn" class="primary">Exportar visão</button>
+      <input id="file" type="file" accept=".csv,text/csv" hidden>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="controls-in">
+    <div class="ctl">
+      <span class="ctl-label">Valores</span>
+      <div class="seg" id="scaleSeg" role="group" aria-label="Escala dos valores">
+        <button data-s="mes" aria-pressed="true">Média mensal</button>
+        <button data-s="periodo" aria-pressed="false">Total 90 dias</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label">Agrupar por</span>
+      <div class="seg" id="viewSeg" role="group" aria-label="Agrupamento">
+        <button data-v="cliente" aria-pressed="true">Cliente</button>
+        <button data-v="app" aria-pressed="false">App</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label">Colunas</span>
+      <div class="seg" id="colSeg" role="group" aria-label="Colunas da tabela">
+        <button data-c="resumo" aria-pressed="true">Resumo</button>
+        <button data-c="cat" aria-pressed="false">Por categoria</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label">Cobrança</span>
+      <div class="seg" id="modeSeg" role="group" aria-label="Modo de cobrança">
+        <button data-m="desconto" aria-pressed="true">Líquido</button>
+        <button data-m="bruto" aria-pressed="false">Bruto</button>
+        <button data-m="teto" aria-pressed="false">Teto</button>
+      </div>
+    </div>
+    <div class="capbox" id="capBox" hidden>
+      <span class="ctl-label">US$ / mês</span>
+      <input id="capVal" type="number" min="0" step="5" value="75" aria-label="Teto mensal em dólares">
+      <select id="capScope" aria-label="Escopo do teto">
+        <option value="app">por App</option>
+        <option value="cli">por Customer ID</option>
+      </select>
+    </div>
+    <div class="search">
+      <input id="q" type="search" placeholder="Busca global: cliente, app ou ID…" aria-label="Busca global">
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="kpis" id="kpis"></div>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Onde cada dólar é gasto</h2>
+      <span class="sec-note">Tarifas Meta inferidas do próprio extrato · editáveis</span>
+    </div>
+    <div class="panel comp">
+      <div class="comp-rows" id="comp"></div>
+      <div class="rates">
+        <h3>Tarifa unitária Meta</h3>
+        <div class="rate"><span>Marketing e MM Lite</span><input id="rMkt" type="number" step="0.0001" min="0" value="0.0625" aria-label="Tarifa marketing"></div>
+        <div class="rate"><span>Utility paga</span><input id="rUtil" type="number" step="0.0001" min="0" value="0.0068" aria-label="Tarifa utility"></div>
+        <div class="rate"><span>Autenticação</span><input id="rAuth" type="number" step="0.0001" min="0" value="0.0315" aria-label="Tarifa autenticação"></div>
+        <p>Marketing e Utility foram isolados em linhas de categoria única do extrato — 32 e 34 apps, com p10 igual ao p90. Autenticação não pôde ser isolada (2.016 mensagens em 90 dias); o valor é a tarifa de referência do Brasil.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Se a Meta cobrar serviço em outubro</h2>
+      <span class="sec-note">Regra anunciada para 01/10/2026</span>
+    </div>
+    <div class="panel">
+      <div class="legend">
+        <span class="lg"><i class="sw b"></i>Taxa Gupshup</span>
+        <span class="lg"><i class="sw m"></i>Meta hoje</span>
+        <span class="lg"><i class="sw r"></i>Novo custo de serviço</span>
+        <span class="lg" style="margin-left:auto">
+          <span class="ctl-label">Tarifa serviço US$</span>
+          <input id="rSvc" class="mininput" type="number" step="0.0001" min="0" value="0.0068" aria-label="Tarifa da mensagem de serviço">
+        </span>
+      </div>
+      <div class="simwrap" id="sim"></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2 id="chartTitle">Onde o custo se concentra</h2>
+      <span class="sec-note" id="chartNote"></span>
+    </div>
+    <div class="panel">
+      <div class="legend">
+        <span class="lg"><i class="sw b"></i>Gupshup <span class="mono" style="color:var(--muted)">(US$ 0,001/msg)</span></span>
+        <span class="lg"><i class="sw m"></i>Meta</span>
+      </div>
+      <div class="chart" id="chart"></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2 id="tableTitle">Detalhamento por cliente</h2>
+      <span class="sec-note" id="tableNote"></span>
+    </div>
+    <div class="panel">
+      <div class="tbar">
+        <input id="tq" type="search" placeholder="Filtrar nesta tabela…" aria-label="Filtrar a tabela">
+        <label class="ctl"><span class="ctl-label">Custo mín. US$</span>
+          <input id="tmin" type="number" min="0" step="10" value="0" aria-label="Custo mínimo em dólares"></label>
+        <label class="ctl"><span class="ctl-label">Exibir</span>
+          <select id="ttop" aria-label="Quantidade exibida">
+            <option value="0">Todos</option>
+            <option value="25">Top 25</option>
+            <option value="50">Top 50</option>
+            <option value="100">Top 100</option>
+          </select></label>
+        <button class="clear" id="tclear">Limpar</button>
+        <span class="grow" id="tsum"></span>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr id="thead"></tr></thead>
+          <tbody id="tbody"></tbody>
+          <tfoot><tr id="tfoot"></tr></tfoot>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="method">
+    <div class="mcol">
+      <h3>Como o custo por categoria é apurado</h3>
+      <ul>
+        <li>O extrato traz a <code>WhatsApp Fee</code> como um número único, sem quebra por categoria. A quebra aqui é calculada: <code>volume × tarifa</code>.</li>
+        <li><strong>Marketing</strong> = <code>Marketing Templates + MM Lite</code>. MM Lite é marketing enviado pela API Lite e vem em coluna separada, não somado em Marketing.</li>
+        <li><strong>Utility</strong> conta só <code>Paid Utility Templates</code>. As <code>Free Utility</code> saíram dentro da janela de atendimento aberta e hoje não custam nada.</li>
+        <li><strong>Serviço</strong> é <code>Conversation Service</code>, gratuito desde 01/11/2024.</li>
+        <li><strong>Outros</strong> é o resíduo entre a soma calculada e a fatura real — sobretudo mensagens para fora do Brasil, com tarifa própria que o extrato não mostra.</li>
+        <li>O modelo fecha em <strong>879 das 888 linhas</strong> dentro de 3%.</li>
+      </ul>
+    </div>
+    <div class="mcol">
+      <h3>Cobrança Gupshup e o teto mensal</h3>
+      <ul>
+        <li><code>Total = Taxa Gupshup + Cloud API Marketing + WhatsApp Fee</code>, confere nas 888 linhas.</li>
+        <li>A taxa Gupshup é <code>US$ 0,001</code> por mensagem trocada — entradas, saídas e templates. Por isso quase não depende da categoria.</li>
+        <li>O teto é <strong>mensal</strong>: US$ 75 equivalem a 75.000 mensagens no mês. Num extrato de 90 dias ele vale <code>US$ 75 × 3 = US$ 225</code> por app.</li>
+        <li>No modo <em>Líquido</em> a coluna <code>Discount</code> é abatida — é o valor real da fatura.</li>
+      </ul>
+      <p class="ok">O teto confere. Aplicar <code>min(taxa, US$ 225)</code> na base inteira dá US$ 34.342,56, contra US$ 34.481,08 do líquido real — 0,4% de diferença. A folga vem de apps que passaram de 75.000 mensagens em apenas alguns dos três meses.</p>
+    </div>
+  </section>
+</main>
+
+<div id="drop"><div>Solte o CSV do analytics aqui</div></div>
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script id="seed" type="application/json">__DATA__</script>
+<script>
+(function(){
+"use strict";
+
+/* registro:
+   0 app  1 appId  2 cid  3 sOut  4 sIn  5 tmpl  6 mkt  7 utilPaid  8 utilFree
+   9 auth  10 freeEntry  11 mmlite  12 voiceIn  13 gFee  14 gMkt  15 wFee
+   16 disc  17 total  18 svc                                              */
+
+var DATA = JSON.parse(document.getElementById("seed").textContent);
+var state = {view:"cliente", cols:"resumo", mode:"desconto", cap:75, scope:"app",
+             q:"", sort:"total", dir:-1, open:{},
+             rMkt:0.0625, rUtil:0.0068, rAuth:0.0315, rSvc:0.0068,
+             days:90, fx:5.12, scale:"mes",
+             tq:"", tmin:0, ttop:0};
+
+var fmtU = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"USD",minimumFractionDigits:2,maximumFractionDigits:2});
+var fmtB = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:2,maximumFractionDigits:2});
+var fmtR = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"USD",minimumFractionDigits:4,maximumFractionDigits:4});
+var fmtN = new Intl.NumberFormat("pt-BR");
+function usd(v){ return fmtU.format(v); }
+function brl(v){ return fmtB.format(v); }
+function rate(v){ return fmtR.format(v); }
+function int(v){ return fmtN.format(Math.round(v)); }
+function pct(v){ return (v*100).toFixed(1).replace(".",",")+"%"; }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function shorten(s,n){ s=String(s); return s.length>n ? s.slice(0,n-1)+"…" : s; }
+
+/* meses cobertos pelo extrato e divisor da escala em uso */
+function months(){ return Math.max(state.days/30, 0.0333); }
+function div(){ return state.scale === "mes" ? months() : 1; }
+/* formatadores já na escala escolhida */
+function m$(v){ return usd(v/div()); }
+function mR(v){ return brl((v/div())*state.fx); }
+function mQ(v){ return int(v/div()); }
+
+/* ---- aplica modo de cobrança e abre a fatura Meta por categoria ---- */
+function priced(){
+  var rows = DATA.map(function(r){
+    var cMkt  = (r[6] + r[11]) * state.rMkt;
+    var cUtil = r[7] * state.rUtil;
+    var cAuth = r[9] * state.rAuth;
+    return {r:r, app:r[0], appId:r[1], cid:r[2],
+            msgs:r[3]+r[4]+r[5], svcMsgs:r[18],
+            qMkt:r[6]+r[11], qUtil:r[7], qUtilFree:r[8], qAuth:r[9], qFep:r[10],
+            g:r[13], gm:r[14], w:r[15], disc:r[16],
+            gBill:r[13], capped:false,
+            cMkt:cMkt, cUtil:cUtil, cAuth:cAuth,
+            cOut:r[15] - (cMkt + cUtil + cAuth)};   /* resíduo: internacional / ajuste */
+  });
+
+  if(state.mode === "teto"){
+    var cap = state.cap * months();          /* o teto é mensal */
+    if(state.scope === "app"){
+      rows.forEach(function(x){ if(x.g > cap){ x.gBill = cap; x.capped = true; } });
+    } else {
+      var byCli = {};
+      rows.forEach(function(x){ byCli[x.cid] = (byCli[x.cid]||0) + x.g; });
+      rows.forEach(function(x){
+        var t = byCli[x.cid];
+        if(t > cap){ x.gBill = t > 0 ? (x.g/t)*cap : 0; x.capped = true; }
+      });
+    }
+  }
+
+  rows.forEach(function(x){
+    x.gTotal = x.gBill + x.gm;
+    x.total  = x.gTotal + x.w - (state.mode === "desconto" ? x.disc : 0);
+    x.future = x.total + x.svcMsgs*state.rSvc + x.qUtilFree*state.rUtil;
+  });
+  return rows;
+}
+
+var SUMK = ["apps","msgs","svcMsgs","g","w","disc","total","cMkt","cUtil","cAuth","cOut",
+            "future","qMkt","qUtil","qUtilFree","qAuth","qFep"];
+function blank(key,label,hint,mono){
+  var e = {key:key, label:label, hint:hint, mono:mono, capped:false, children:[]};
+  SUMK.forEach(function(k){ e[k]=0; });
+  return e;
+}
+function addInto(e,x){
+  e.apps++; e.msgs+=x.msgs; e.svcMsgs+=x.svcMsgs;
+  e.g+=x.gTotal; e.w+=x.w; e.disc+=x.disc; e.total+=x.total; e.future+=x.future;
+  e.cMkt+=x.cMkt; e.cUtil+=x.cUtil; e.cAuth+=x.cAuth; e.cOut+=x.cOut;
+  e.qMkt+=x.qMkt; e.qUtil+=x.qUtil; e.qUtilFree+=x.qUtilFree; e.qAuth+=x.qAuth; e.qFep+=x.qFep;
+  e.capped = e.capped || x.capped;
+  e.children.push(x);
+}
+function aggregate(rows){
+  if(state.view === "app"){
+    return rows.map(function(x){
+      var e = blank(x.appId, x.app, x.cid, false);
+      addInto(e,x);
+      return e;
+    });
+  }
+  var m = {}, out = [];
+  rows.forEach(function(x){
+    var e = m[x.cid];
+    if(!e){ e = m[x.cid] = blank(x.cid, x.cid, "", true); out.push(e); }
+    addInto(e,x);
+  });
+  out.forEach(function(e){
+    e.children.sort(function(a,b){ return b.total - a.total; });
+    e.hint = e.children[0].app + (e.apps > 1 ? " +" + (e.apps-1) + " app" + (e.apps>2?"s":"") : "");
+  });
+  return out;
+}
+
+function matches(e, q){
+  if(e.label.toLowerCase().indexOf(q) > -1 || e.hint.toLowerCase().indexOf(q) > -1) return true;
+  return e.children.some(function(c){
+    return c.app.toLowerCase().indexOf(q) > -1 || c.cid.indexOf(q) > -1 || c.appId.indexOf(q) > -1;
+  });
+}
+function filtered(list){
+  var q = state.q.trim().toLowerCase();
+  return q ? list.filter(function(e){ return matches(e,q); }) : list;
+}
+/* filtro que vale só para a tabela */
+function tableFilter(list){
+  var q = state.tq.trim().toLowerCase();
+  var out = list;
+  if(q) out = out.filter(function(e){ return matches(e,q); });
+  if(state.tmin > 0){
+    var d = div();
+    out = out.filter(function(e){ return (e.total/d) >= state.tmin; });
+  }
+  if(state.ttop > 0){
+    out = out.slice().sort(function(a,b){ return b.total-a.total; }).slice(0, state.ttop);
+    out = sorted(out);
+  }
+  return out;
+}
+function sorted(list){
+  var k = state.sort, d = state.dir;
+  return list.slice().sort(function(a,b){
+    var av = (k === "label") ? a.label.toLowerCase() : a[k];
+    var bv = (k === "label") ? b.label.toLowerCase() : b[k];
+    return av < bv ? -d : av > bv ? d : 0;
+  });
+}
+
+/* ---------------- render ---------------- */
+var elChart=document.getElementById("chart"), elComp=document.getElementById("comp"),
+    elSim=document.getElementById("sim"), elTbody=document.getElementById("tbody"),
+    elThead=document.getElementById("thead"), elTfoot=document.getElementById("tfoot"),
+    elKpis=document.getElementById("kpis"), tip=document.getElementById("tip");
+var current=[], chartTop=[];
+
+function render(){
+  var rows = priced();
+  var list = sorted(filtered(aggregate(rows)));
+  var per  = state.scale === "mes" ? " / mês" : " em " + int(state.days) + " dias";
+
+  var T = {}; SUMK.forEach(function(k){ T[k]=0; });
+  list.forEach(function(e){ SUMK.forEach(function(k){ T[k]+=e[k]; }); });
+
+  var grossG = rows.reduce(function(s,x){ return s+x.g; },0);
+  var econ = state.mode === "teto" ? grossG - rows.reduce(function(s,x){ return s+x.gBill; },0)
+           : state.mode === "desconto" ? T.disc : 0;
+
+  /* KPIs — dólar em destaque, real logo abaixo */
+  elKpis.innerHTML =
+    tile("Custo total", m$(T.total), mR(T.total), modeLabel() + per) +
+    tile("Customer IDs", int(state.view==="cliente" ? list.length : uniqueCids(list)), "",
+         int(T.apps) + " apps ativos") +
+    tile("Marketing", m$(T.cMkt), mR(T.cMkt), mQ(T.qMkt) + " msg · " + pct(T.total?T.cMkt/T.total:0)) +
+    tile("Utility paga", m$(T.cUtil), mR(T.cUtil), mQ(T.qUtil) + " msg · " + pct(T.total?T.cUtil/T.total:0)) +
+    (econ > 0
+      ? tile("Economia", m$(econ), mR(econ), state.mode==="teto" ? "efeito do teto" : "desconto concedido", "accent")
+      : tile("Serviço", "US$ 0,00", "R$ 0,00", mQ(T.svcMsgs) + " conversas grátis", "accent"));
+
+  /* composição por categoria */
+  var comps = [
+    {k:"Taxa Gupshup",  v:T.g,     q:T.msgs,   u:"US$ 0,0010 / msg",          c:"b"},
+    {k:"Marketing",     v:T.cMkt,  q:T.qMkt,   u:rate(state.rMkt)+" / msg",   c:"m"},
+    {k:"Utility paga",  v:T.cUtil, q:T.qUtil,  u:rate(state.rUtil)+" / msg",  c:"m"},
+    {k:"Autenticação",  v:T.cAuth, q:T.qAuth,  u:rate(state.rAuth)+" / msg",  c:"m"},
+    {k:"Outros / internacional", v:T.cOut, q:0, u:"resíduo vs. fatura real",  c:"o"},
+    {k:"Conversas de serviço",   v:0, q:T.svcMsgs,   u:"grátis até 30/09/2026", c:"f"},
+    {k:"Utility em janela aberta", v:0, q:T.qUtilFree, u:"grátis até 30/09/2026", c:"f"},
+    {k:"Free entry points",      v:0, q:T.qFep,      u:"janela 72h de anúncios", c:"f"}
+  ];
+  if(state.mode === "desconto" && T.disc > 0)
+    comps.splice(1, 0, {k:"Desconto Gupshup", v:-T.disc, q:0, u:"abatido do bruto", c:"o"});
+  var cmax = Math.max.apply(null, comps.map(function(c){ return Math.abs(c.v); }).concat([1]));
+  elComp.innerHTML = comps.map(function(c){
+    return '<div class="crow"><div class="cl">'+esc(c.k)+'<small>'
+      + (c.q ? mQ(c.q)+" msg · " : "") + esc(c.u) + '</small></div>'
+      + '<div class="ctrack"><div class="cbar '+c.c+'" style="width:'+((Math.abs(c.v)/cmax)*100).toFixed(2)+'%"></div></div>'
+      + '<div class="cv">'+(c.v<0 ? "−"+m$(-c.v) : m$(c.v))+'</div>'
+      + '<div class="cr">'+(c.v<0 ? "−"+mR(-c.v) : mR(c.v))+'</div>'
+      + '<div class="cp">'+(T.total ? pct(c.v/T.total) : "—")+'</div></div>';
+  }).join("");
+
+  /* simulação outubro/2026 */
+  var addSvc = T.svcMsgs*state.rSvc, addUtil = T.qUtilFree*state.rUtil;
+  var add = addSvc + addUtil, fut = T.total + add;
+  var smax = Math.max(fut, T.total, 1);
+  elSim.innerHTML =
+      simRow("Hoje", "regra até 30/09", T.total, T.g, T.w, 0, smax)
+    + simRow("Outubro", "serviço cobrado", fut, T.g, T.w, add, smax)
+    + '<div class="simfoot">'
+    + '<div class="simstat"><b class="risk">+'+m$(add)+'</b><span>'+mR(add)+' de custo novo'+per+'</span></div>'
+    + '<div class="simstat"><b class="risk">'+(T.total ? "+"+pct((fut/T.total)-1) : "—")+'</b><span>sobre a fatura atual</span></div>'
+    + '<div class="simstat"><b>'+mQ(T.svcMsgs)+'</b><span>conversas de serviço hoje grátis'+per+'</span></div>'
+    + '<div class="simstat"><b>'+mQ(T.qUtilFree)+'</b><span>utility em janela aberta'+per+'</span></div>'
+    + '</div>';
+
+  /* top 12 */
+  var top = list.slice().sort(function(a,b){ return b.total-a.total; }).slice(0,12);
+  var max = top.length ? top[0].total : 1;
+  chartTop = top;
+  elChart.innerHTML = top.map(function(e,i){
+    var wG = max?(e.g/max)*100:0, wM = max?(e.w/max)*100:0;
+    return '<div class="row-c" data-i="'+i+'">'
+      + '<div class="nm'+(e.mono?" mono":"")+'">'+esc(e.label)+'<small>'+esc(shorten(e.hint,26))+'</small></div>'
+      + '<div class="track">'+(wG>0?'<div class="seg-b" style="width:'+wG.toFixed(3)+'%"></div>':'')
+      + (wM>0?'<div class="seg-m" style="width:'+wM.toFixed(3)+'%"></div>':'')+'</div>'
+      + '<div class="amt">'+m$(e.total)+'</div>'
+      + '<div class="amtr">'+mR(e.total)+'</div></div>';
+  }).join("");
+  document.getElementById("chartNote").textContent =
+    "Top 12 de " + int(list.length) + " · " + pct(T.total ? top.reduce(function(s,e){return s+e.total;},0)/T.total : 0) + " do custo";
+  document.getElementById("chartTitle").textContent =
+    state.view === "cliente" ? "Onde o custo se concentra" : "Apps mais caros";
+
+  /* ---- tabela (filtro próprio) ---- */
+  var tlist = tableFilter(list);
+  current = tlist;
+  var showDisc = state.mode === "desconto", byCat = state.cols === "cat";
+  var cols = byCat
+    ? [{k:"label",t:state.view==="cliente"?"Customer ID":"App"},
+       {k:"cMkt",t:"Marketing",cls:"m"},{k:"cUtil",t:"Utility",cls:"m"},
+       {k:"cAuth",t:"Auth",cls:"m"},{k:"cOut",t:"Outros",cls:"x"},
+       {k:"svcMsgs",t:"Serviço (grátis)",cls:"f",isq:true},
+       {k:"g",t:"Gupshup",cls:"b"},{k:"total",t:"Total US$",cls:"t"},{k:"totalR",t:"Total R$",cls:"r",isr:true}]
+    : [{k:"label",t:state.view==="cliente"?"Customer ID":"App"},
+       {k:"apps",t:"Apps",isq:true,hide:state.view==="app"},
+       {k:"msgs",t:"Mensagens",isq:true},
+       {k:"g",t:"Gupshup",cls:"b"},{k:"w",t:"Meta",cls:"m"},
+       {k:"disc",t:"Desconto",cls:"d",hide:!showDisc},
+       {k:"total",t:"Total US$",cls:"t"},{k:"totalR",t:"Total R$",cls:"r",isr:true},
+       {k:"share",t:"%"}];
+  cols = cols.filter(function(c){ return !c.hide; });
+
+  elThead.innerHTML = cols.map(function(c){
+    var sk = c.isr ? "total" : c.k;
+    return '<th data-k="'+sk+'" data-active="'+(state.sort===sk?1:0)+'">'+c.t
+      +'<span class="car">'+(state.dir<0?"▼":"▲")+'</span></th>';
+  }).join("");
+
+  function cells(e, isChild){
+    return cols.slice(1).map(function(c){
+      if(c.isr)           return '<td class="r">'+mR(e.total)+'</td>';
+      if(c.k === "share") return '<td class="num">'+(T.total?pct(e.total/T.total):"—")+'</td>';
+      if(c.k === "apps")  return '<td class="num">'+(isChild ? "" : e.apps)+'</td>';
+      if(c.isq)           return '<td class="'+(c.cls||"num")+'">'+mQ(e[c.k])+'</td>';
+      if(c.k === "disc")  return '<td class="d">'+(e.disc>0 ? "−"+m$(e.disc) : "—")+'</td>';
+      return '<td class="'+(c.cls||"num")+'">'+m$(e[c.k])+'</td>';
+    }).join("");
+  }
+
+  elTbody.innerHTML = tlist.length ? tlist.map(function(e){
+    var isOpen = !!state.open[e.key];
+    var html = '<tr class="parent'+(isOpen?" open":"")+'" data-key="'+esc(e.key)+'"><td><span class="ent">'
+      + (state.view==="cliente" ? '<span class="exp">▶</span>' : '')
+      + '<span class="id">'+esc(e.label)+'</span>'
+      + '<span class="hint">'+esc(shorten(e.hint,40))+'</span>'
+      + (e.capped ? ' <span class="chip cap">no teto</span>' : '')
+      + '</span></td>' + cells(e,false) + '</tr>';
+    if(state.view==="cliente" && isOpen){
+      html += e.children.map(function(c){
+        var ce = {label:c.app, apps:1, msgs:c.msgs, svcMsgs:c.svcMsgs, g:c.gTotal, w:c.w,
+                  disc:c.disc, total:c.total, cMkt:c.cMkt, cUtil:c.cUtil, cAuth:c.cAuth, cOut:c.cOut};
+        return '<tr class="child"><td>'+esc(c.app)+'</td>'+cells(ce,true)+'</tr>';
+      }).join("");
+    }
+    return html;
+  }).join("") : '<tr class="empty"><td colspan="'+cols.length+'">Nenhum cliente atende a esse filtro. Baixe o custo mínimo ou limpe os campos.</td></tr>';
+
+  var F = {}; SUMK.forEach(function(k){ F[k]=0; });
+  tlist.forEach(function(e){ SUMK.forEach(function(k){ F[k]+=e[k]; }); });
+  elTfoot.innerHTML = '<td>'+(tlist.length===list.length ? "Total" : "Total exibido")+'</td>'
+    + cols.slice(1).map(function(c){
+        if(c.isr)           return '<td>'+mR(F.total)+'</td>';
+        if(c.k === "share") return '<td>'+(T.total?pct(F.total/T.total):"—")+'</td>';
+        if(c.k === "apps")  return '<td>'+int(F.apps)+'</td>';
+        if(c.isq)           return '<td>'+mQ(F[c.k])+'</td>';
+        if(c.k === "disc")  return '<td>−'+m$(F.disc)+'</td>';
+        return '<td>'+m$(F[c.k])+'</td>';
+      }).join("");
+
+  document.getElementById("tsum").textContent =
+    int(tlist.length) + " de " + int(list.length) + (state.view==="cliente" ? " clientes · " : " apps · ")
+    + m$(F.total) + " · " + mR(F.total);
+  document.getElementById("tableNote").textContent =
+    state.view==="cliente" ? "clique numa linha para abrir os apps" : "";
+  document.getElementById("tableTitle").textContent =
+    state.view==="cliente" ? "Detalhamento por cliente" : "Detalhamento por app";
+}
+
+function simRow(lab, note, total, g, w, extra, max){
+  function p(v){ return ((v/max)*100).toFixed(2); }
+  return '<div class="simrow"><div class="simlab">'+lab+'<small>'+note+'</small></div>'
+    + '<div class="simtrack">'
+    +   '<i class="b" style="width:'+p(g)+'%"></i>'
+    +   '<i class="m" style="width:'+p(w)+'%"></i>'
+    +   (extra > 0 ? '<i class="r" style="width:'+p(extra)+'%"></i>' : '')
+    +   '<span class="simval">'+m$(total)+'<em>'+mR(total)+'</em></span>'
+    + '</div></div>';
+}
+function uniqueCids(list){
+  var s={}; list.forEach(function(e){ e.children.forEach(function(c){ s[c.cid]=1; }); }); return Object.keys(s).length;
+}
+function modeLabel(){
+  if(state.mode==="bruto") return "bruto do extrato";
+  if(state.mode==="desconto") return "líquido real";
+  return "teto US$ "+state.cap+"/mês "+(state.scope==="app"?"por app":"por cliente");
+}
+function tile(k,v,r,n,cls){
+  return '<div class="kpi'+(cls?" "+cls:"")+'"><div class="kpi-k">'+k+'</div><div class="kpi-v">'+v+'</div>'
+    + (r ? '<div class="kpi-r">'+r+'</div>' : '')
+    + '<div class="kpi-n">'+n+'</div></div>';
+}
+
+/* ---------------- eventos ---------------- */
+function seg(id, key, after){
+  document.getElementById(id).addEventListener("click", function(ev){
+    var b = ev.target.closest("button"); if(!b) return;
+    state[key] = b.dataset[Object.keys(b.dataset)[0]];
+    [].forEach.call(this.children, function(x){ x.setAttribute("aria-pressed", x===b); });
+    if(after) after();
+    render();
+  });
+}
+seg("scaleSeg","scale");
+seg("viewSeg","view",function(){ state.open = {}; });
+seg("colSeg","cols");
+seg("modeSeg","mode",function(){ document.getElementById("capBox").hidden = state.mode !== "teto"; });
+
+function numInput(id, key, min){
+  document.getElementById(id).addEventListener("input", function(){
+    var v = parseFloat(this.value);
+    state[key] = (isNaN(v) || v < (min||0)) ? (min||0) : v;
+    if(key === "days"){
+      var lbl = document.querySelector('#scaleSeg button[data-s="periodo"]');
+      if(lbl) lbl.textContent = "Total " + Math.round(state.days) + " dias";
+    }
+    render();
+  });
+}
+numInput("capVal","cap"); numInput("rMkt","rMkt"); numInput("rUtil","rUtil");
+numInput("rAuth","rAuth"); numInput("rSvc","rSvc");
+numInput("dias","days",1); numInput("fx","fx");
+numInput("tmin","tmin");
+document.getElementById("capScope").addEventListener("change", function(){ state.scope=this.value; render(); });
+document.getElementById("ttop").addEventListener("change", function(){ state.ttop = parseInt(this.value,10)||0; render(); });
+
+function debounced(id, key){
+  var t;
+  document.getElementById(id).addEventListener("input", function(){
+    var v = this.value; clearTimeout(t);
+    t = setTimeout(function(){ state[key] = v; render(); }, 140);
+  });
+}
+debounced("q","q"); debounced("tq","tq");
+
+document.getElementById("tclear").addEventListener("click", function(){
+  state.tq = ""; state.tmin = 0; state.ttop = 0;
+  document.getElementById("tq").value = "";
+  document.getElementById("tmin").value = "0";
+  document.getElementById("ttop").value = "0";
+  render();
+});
+
+elThead.addEventListener("click", function(ev){
+  var th = ev.target.closest("th"); if(!th) return;
+  var k = th.dataset.k;
+  if(state.sort === k) state.dir *= -1;
+  else { state.sort = k; state.dir = (k === "label") ? 1 : -1; }
+  render();
+});
+elTbody.addEventListener("click", function(ev){
+  var tr = ev.target.closest("tr.parent"); if(!tr || state.view !== "cliente") return;
+  state.open[tr.dataset.key] = !state.open[tr.dataset.key];
+  render();
+});
+elChart.addEventListener("mousemove", function(ev){
+  var row = ev.target.closest(".row-c");
+  if(!row){ tip.classList.remove("on"); return; }
+  var e = chartTop[+row.dataset.i]; if(!e) return;
+  tip.innerHTML = "<b>"+esc(e.label)+"</b><br>Marketing <b>"+m$(e.cMkt)+"</b><br>Utility <b>"+m$(e.cUtil)
+    + "</b><br>Gupshup <b>"+m$(e.g)+"</b><br>"+mQ(e.svcMsgs)+" conversas de serviço";
+  tip.classList.add("on");
+  tip.style.left = Math.min(ev.clientX+14, window.innerWidth-260)+"px";
+  tip.style.top  = Math.max(8, ev.clientY-86)+"px";
+});
+elChart.addEventListener("mouseleave", function(){ tip.classList.remove("on"); });
+
+/* ---------------- exportar ---------------- */
+document.getElementById("exportBtn").addEventListener("click", function(){
+  var byCat = state.cols === "cat", showDisc = state.mode === "desconto";
+  var d = div(), fx = state.fx;
+  var suf = state.scale === "mes" ? " (media mensal)" : " (90 dias)";
+  var head = (state.view==="cliente" ? ["Customer Id","Apps","Apps (nomes)"] : ["App Name","App Id","Customer Id"])
+    .concat(["Mensagens","Conversas de servico"])
+    .concat(byCat ? ["Custo Marketing US$","Custo Utility US$","Custo Auth US$","Outros US$"] : ["Taxa Meta US$"])
+    .concat(["Taxa Gupshup US$"]).concat(showDisc ? ["Desconto US$"] : [])
+    .concat(["Total US$","Total R$","Projecao out/2026 US$"]);
+  var lines = [head.map(function(h){ return /US\$|R\$|Mensagens|Conversas/.test(h) ? h+suf : h; }).join(";")];
+  current.forEach(function(e){
+    var c = state.view==="cliente"
+      ? [e.key, e.apps, e.children.map(function(x){ return x.app; }).join(" | ")]
+      : [e.label, e.key, e.hint];
+    c = c.concat([Math.round(e.msgs/d), Math.round(e.svcMsgs/d)])
+         .concat(byCat ? [n2(e.cMkt/d),n2(e.cUtil/d),n2(e.cAuth/d),n2(e.cOut/d)] : [n2(e.w/d)])
+         .concat([n2(e.g/d)]).concat(showDisc ? [n2(e.disc/d)] : [])
+         .concat([n2(e.total/d), n2((e.total/d)*fx), n2(e.future/d)]);
+    lines.push(c.map(csvCell).join(";"));
+  });
+  save(lines.join("\r\n"),
+       "rateio-gupshup_"+slug(document.getElementById("periodo").value)+"_"+state.scale+"-"+state.view+"-"+state.cols+".csv");
+});
+function n2(v){ return v.toFixed(2).replace(".",","); }
+function csvCell(v){ v=String(v); return /[";\r\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; }
+function slug(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+
+/* o visualizador de artifacts entrega arquivos pela capability downloads;
+   fora dele (arquivo local, GitHub Pages) cai no link de download comum. */
+var dl = null;
+if(window.claude && typeof window.claude.use === "function"){
+  window.claude.use("downloads").then(function(d){ dl=d; }, function(){ dl=null; });
+}
+function save(text, name){
+  var body = "﻿" + text;
+  if(dl){
+    dl.save({filename:name, data:new Blob([body],{type:"text/csv"})}).then(function(){
+      flash("Arquivo " + name + " salvo.");
+    }, function(err){
+      if(err && err.code === "declined") return;
+      flash("Não foi possível salvar o arquivo" + (err && err.message ? ": "+err.message : "."), true);
+    });
+    return;
+  }
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([body],{type:"text/csv;charset=utf-8"}));
+  a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+
+/* ---------------- importar ---------------- */
+document.getElementById("importBtn").addEventListener("click", function(){ document.getElementById("file").click(); });
+document.getElementById("file").addEventListener("change", function(){
+  if(this.files && this.files[0]) readFile(this.files[0]);
+  this.value = "";
+});
+var drop=document.getElementById("drop"), dragN=0;
+window.addEventListener("dragenter", function(e){ e.preventDefault(); dragN++; drop.classList.add("on"); });
+window.addEventListener("dragover",  function(e){ e.preventDefault(); });
+window.addEventListener("dragleave", function(e){ e.preventDefault(); if(--dragN<=0){ dragN=0; drop.classList.remove("on"); } });
+window.addEventListener("drop", function(e){
+  e.preventDefault(); dragN=0; drop.classList.remove("on");
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if(f) readFile(f);
+});
+function readFile(f){
+  var fr = new FileReader();
+  fr.onload = function(){
+    try{
+      var rows = parseGupshup(String(fr.result));
+      if(!rows.length) throw new Error("Nenhuma linha reconhecida.");
+      DATA = rows; state.open = {}; render();
+      flash(rows.length + " apps carregados de " + f.name + ". Confira o campo Dias, que define a média mensal.");
+    }catch(err){
+      flash("Não deu para ler o arquivo: " + err.message + " Confira se é o CSV de analytics da Gupshup, com o cabeçalho original.", true);
+    }
+  };
+  fr.readAsText(f, "utf-8");
+}
+function flash(msg, bad){
+  tip.innerHTML = esc(msg);
+  tip.style.left="50%"; tip.style.top="84px";
+  tip.style.transform="translateX(-50%)"; tip.style.maxWidth="460px";
+  tip.classList.add("on");
+  setTimeout(function(){ tip.classList.remove("on"); tip.style.transform=""; tip.style.maxWidth=""; }, bad?8000:4500);
+}
+function splitCSV(line){
+  var out=[], cur="", q=false;
+  for(var i=0;i<line.length;i++){
+    var ch=line[i];
+    if(q){ if(ch==='"'){ if(line[i+1]==='"'){ cur+='"'; i++; } else q=false; } else cur+=ch; }
+    else { if(ch==='"') q=true; else if(ch===","){ out.push(cur); cur=""; } else cur+=ch; }
+  }
+  out.push(cur); return out;
+}
+function parseGupshup(text){
+  text = text.replace(/^﻿/, "");
+  var lines = text.split(/\r?\n/).filter(function(l){ return l.trim().length; });
+  if(lines.length < 2) throw new Error("Arquivo vazio.");
+  var head = splitCSV(lines[0]).map(function(h){
+    return h.trim().toLowerCase().replace(/[–—]/g,"-").replace(/\s+/g," ");
+  });
+  function col(name){
+    var i = head.indexOf(name.toLowerCase());
+    if(i < 0) throw new Error('coluna "'+name+'" não encontrada.');
+    return i;
+  }
+  var ix = {
+    app:col("App Name"), appId:col("App Id"), cid:col("Customer Id"),
+    sOut:col("Session Outgoing Messages"), sIn:col("Session Incoming Messages"),
+    tmpl:col("Template Messages"), mkt:col("Marketing Templates"),
+    utilPaid:col("Paid Utility Templates"), utilFree:col("Free Utility Templates"),
+    auth:col("Authentication Templates"), fep:col("Free entry points"),
+    mml:col("MM Lite"), voice:col("Incoming Voice Minutes"),
+    g:col("Gupshup Fee"), gm:col("Gupshup fee for Cloud API - Marketing"),
+    w:col("WhatsApp Fee"), d:col("Discount"), t:col("Total Fee"),
+    svc:col("Conversation Service")
+  };
+  function num(s){
+    var v = parseFloat(String(s==null?"":s).replace(/\$/g,"").replace(/\s/g,"").replace(/,/g,""));
+    return isNaN(v) ? 0 : v;
+  }
+  var out=[];
+  for(var i=1;i<lines.length;i++){
+    var c = splitCSV(lines[i]);
+    if(c.length < head.length) continue;
+    out.push([c[ix.app], c[ix.appId], c[ix.cid],
+      num(c[ix.sOut]), num(c[ix.sIn]), num(c[ix.tmpl]), num(c[ix.mkt]),
+      num(c[ix.utilPaid]), num(c[ix.utilFree]), num(c[ix.auth]),
+      num(c[ix.fep]), num(c[ix.mml]), num(c[ix.voice]),
+      num(c[ix.g]), num(c[ix.gm]), num(c[ix.w]), num(c[ix.d]), num(c[ix.t]),
+      num(c[ix.svc])]);
+  }
+  out.sort(function(a,b){ return b[17]-a[17]; });
+  return out;
+}
+
+render();
+})();
+</script>

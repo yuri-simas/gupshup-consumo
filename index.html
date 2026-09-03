@@ -1,0 +1,955 @@
+<title>Rateio Gupshup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ground:#EDEFF2; --surface:#FFFFFF; --raised:#F6F7F9;
+  --ink:#111820; --ink2:#485663; --muted:#7A8792;
+  --rule:#DBE0E6; --rule-strong:#C3CBD4;
+  --broker:#A16207; --meta:#2F5FBF; --free:#9AA5B1;
+  --alert:#A32017; --alert-bg:#FBE7E4; --alert-mark:#C0392B;
+  --good:#15683F; --good-bg:#E1F1E7;
+  --focus:#2F5FBF;
+  --shadow:0 1px 2px rgba(17,24,32,.06), 0 8px 24px -16px rgba(17,24,32,.28);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0F1318; --surface:#191D24; --raised:#20252D;
+    --ink:#E7ECF2; --ink2:#A6B1BD; --muted:#78848F;
+    --rule:#2A313A; --rule-strong:#3A434E;
+    --broker:#C08529; --meta:#6690E8; --free:#5C6874;
+    --alert:#F0857C; --alert-bg:#3A1F1C; --alert-mark:#D9635A;
+    --good:#5CC08D; --good-bg:#16301F;
+    --focus:#6690E8;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0F1318; --surface:#191D24; --raised:#20252D;
+  --ink:#E7ECF2; --ink2:#A6B1BD; --muted:#78848F;
+  --rule:#2A313A; --rule-strong:#3A434E;
+  --broker:#C08529; --meta:#6690E8; --free:#5C6874;
+  --alert:#F0857C; --alert-bg:#3A1F1C; --alert-mark:#D9635A;
+  --good:#5CC08D; --good-bg:#16301F;
+  --focus:#6690E8;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:14px; line-height:1.5; margin:0; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:Archivo,"IBM Plex Sans",sans-serif;font-weight:700;margin:0;text-wrap:balance;letter-spacing:-.015em}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+.num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:3px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px 72px}
+
+.masthead{border-bottom:1px solid var(--rule);background:var(--surface)}
+.masthead-in{max-width:1240px;margin:0 auto;padding:22px 20px 20px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:space-between}
+.brandline{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+h1{font-size:25px}
+.field{display:flex;align-items:center;gap:7px;color:var(--ink2);font-size:12.5px}
+.field input{font:inherit;font-size:12.5px;background:var(--raised);color:var(--ink);border:1px solid var(--rule);border-radius:5px;padding:4px 8px}
+.field input.wide{width:126px}
+.field input.narrow{font-family:"IBM Plex Mono",monospace;width:58px;text-align:right}
+.sub{color:var(--muted);font-size:12.5px;max-width:64ch;margin-top:6px}
+.head-actions{display:flex;gap:8px;align-items:center}
+
+button,.btn{font:inherit;font-size:12.5px;font-weight:500;cursor:pointer;background:var(--raised);color:var(--ink);border:1px solid var(--rule-strong);border-radius:6px;padding:6px 11px;display:inline-flex;align-items:center;gap:6px;transition:background .12s,border-color .12s}
+a.btn{text-decoration:none}
+button:hover,.btn:hover{background:var(--surface);border-color:var(--ink2)}
+button.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+button.primary:hover{opacity:.88;background:var(--ink)}
+
+.controls{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--rule)}
+.controls-in{max-width:1240px;margin:0 auto;padding:11px 20px;display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center}
+.ctl{display:flex;align-items:center;gap:8px}
+.ctl-label{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.seg{display:inline-flex;background:var(--raised);border:1px solid var(--rule);border-radius:7px;padding:2px;gap:2px}
+.seg button{border:none;background:transparent;padding:4px 10px;border-radius:5px;font-size:12.5px;color:var(--ink2);font-weight:500}
+.seg button:hover{background:transparent;color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.09)}
+.capbox{display:flex;align-items:center;gap:6px}
+.capbox input{font:inherit;font-family:"IBM Plex Mono",monospace;font-size:12.5px;width:62px;background:var(--raised);color:var(--ink);border:1px solid var(--rule);border-radius:5px;padding:4px 7px;text-align:right}
+.capbox select{font:inherit;font-size:12.5px;background:var(--raised);color:var(--ink);border:1px solid var(--rule);border-radius:5px;padding:4px 6px}
+.capbox[hidden]{display:none}
+.search{flex:1;min-width:180px;display:flex;justify-content:flex-end}
+.search input{font:inherit;font-size:13px;width:100%;max-width:270px;background:var(--raised);color:var(--ink);border:1px solid var(--rule);border-radius:6px;padding:6px 11px}
+.search input::placeholder{color:var(--muted)}
+
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface);border:1px solid var(--rule);border-radius:10px;margin-top:22px;overflow:hidden;box-shadow:var(--shadow)}
+.kpi{padding:15px 17px 16px;border-left:1px solid var(--rule)}
+.kpi:first-child{border-left:none}
+.kpi-k{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.kpi-v{font-family:Archivo,sans-serif;font-weight:700;font-size:24px;letter-spacing:-.02em;margin-top:5px;font-variant-numeric:tabular-nums}
+.kpi-r{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink2);margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi-n{font-size:11.5px;color:var(--muted);margin-top:3px}
+.kpi.accent .kpi-v{color:var(--good)}
+
+.sec{margin-top:34px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+h2{font-size:16.5px}
+.sec-note{font-size:12px;color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:10px;box-shadow:var(--shadow)}
+
+.comp{display:grid;grid-template-columns:1fr 300px}
+.comp-rows{padding:16px 18px 18px;display:flex;flex-direction:column;gap:11px}
+.crow{display:grid;grid-template-columns:172px 1fr 98px 92px 52px;gap:12px;align-items:center}
+.crow .cl{font-size:12.5px;font-weight:500;color:var(--ink)}
+.crow .cl small{display:block;color:var(--muted);font-size:10.5px;font-weight:400;font-family:"IBM Plex Mono",monospace}
+.ctrack{height:17px;background:var(--raised);border-radius:4px;overflow:hidden}
+.cbar{height:100%;border-radius:4px;min-width:2px}
+.cbar.b{background:var(--broker)} .cbar.m{background:var(--meta)}
+.cbar.f{background:var(--free)} .cbar.o{background:var(--rule-strong)}
+.crow .cv{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-variant-numeric:tabular-nums}
+.crow .cr{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.crow .cp{text-align:right;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rates{border-left:1px solid var(--rule);padding:16px 18px 18px}
+.rates h3{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600;font-family:"IBM Plex Sans",sans-serif}
+.rate{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+.rate span{font-size:12.5px;color:var(--ink2)}
+.rate input,.mininput{font:inherit;font-family:"IBM Plex Mono",monospace;font-size:12px;width:82px;background:var(--raised);color:var(--ink);border:1px solid var(--rule);border-radius:5px;padding:3px 7px;text-align:right}
+.rates p{font-size:11.5px;color:var(--muted);margin:14px 0 0;line-height:1.5}
+
+.legend{display:flex;gap:16px;align-items:center;padding:13px 18px 0;flex-wrap:wrap}
+.lg{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2)}
+.sw{width:11px;height:11px;border-radius:3px;flex:none}
+.sw.b{background:var(--broker)} .sw.m{background:var(--meta)} .sw.r{background:var(--alert-mark)}
+.chart{padding:12px 18px 18px;display:flex;flex-direction:column;gap:9px}
+.row-c{display:grid;grid-template-columns:170px 1fr 96px 88px;gap:12px;align-items:center}
+.row-c .nm{font-size:12.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.row-c .nm small{display:block;color:var(--muted);font-size:10.5px;font-weight:400;font-family:"IBM Plex Mono",monospace}
+.track{height:19px;background:var(--raised);border-radius:4px;display:flex;gap:2px;overflow:hidden}
+.seg-b,.seg-m{height:100%;min-width:2px}
+.seg-b{background:var(--broker);border-radius:4px 0 0 4px}
+.seg-m{background:var(--meta);border-radius:0 4px 4px 0}
+.row-c:hover .track{outline:1px solid var(--rule-strong);outline-offset:1px}
+.row-c .amt{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.row-c .amtr{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:12px;font-variant-numeric:tabular-nums;color:var(--muted)}
+
+.simwrap{padding:18px}
+.simrow{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:center;margin-bottom:12px}
+.simrow:last-child{margin-bottom:0}
+.simlab{font-size:12px;color:var(--ink2);font-weight:500}
+.simlab small{display:block;color:var(--muted);font-size:10.5px;font-weight:400}
+.simtrack{height:28px;background:var(--raised);border-radius:5px;display:flex;gap:2px;overflow:hidden;position:relative}
+.simtrack i{height:100%;min-width:2px;display:block}
+.simtrack i.b{background:var(--broker)} .simtrack i.m{background:var(--meta)} .simtrack i.r{background:var(--alert-mark)}
+.simval{position:absolute;right:10px;top:0;line-height:28px;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink);font-weight:500}
+.simval em{font-style:normal;color:var(--ink2);margin-left:9px}
+.simfoot{margin-top:15px;padding-top:14px;border-top:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:22px}
+.simstat{min-width:158px}
+.simstat b{display:block;font-family:Archivo,sans-serif;font-size:20px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.simstat b.risk{color:var(--alert)}
+.simstat span{font-size:11.5px;color:var(--muted)}
+
+/* filtro da tabela */
+.tbar{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--rule);background:var(--raised);border-radius:10px 10px 0 0}
+.tbar input[type="search"]{font:inherit;font-size:12.5px;background:var(--surface);color:var(--ink);border:1px solid var(--rule-strong);border-radius:6px;padding:5px 10px;width:210px}
+.tbar input[type="number"]{font:inherit;font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:var(--surface);color:var(--ink);border:1px solid var(--rule-strong);border-radius:6px;padding:5px 8px;width:88px;text-align:right}
+.tbar select{font:inherit;font-size:12.5px;background:var(--surface);color:var(--ink);border:1px solid var(--rule-strong);border-radius:6px;padding:5px 7px}
+.tbar .grow{flex:1;text-align:right;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:150px}
+.tbar button.clear{padding:5px 9px}
+
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:940px;background:var(--surface)}
+thead th{position:sticky;top:47px;z-index:10;background:var(--surface);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:right;padding:10px 13px;border-bottom:1px solid var(--rule-strong);white-space:nowrap;cursor:pointer;user-select:none}
+thead th:first-child{text-align:left}
+thead th:hover{color:var(--ink)}
+thead th .car{opacity:0;margin-left:4px;font-size:9px}
+thead th[data-active="1"]{color:var(--ink)}
+thead th[data-active="1"] .car{opacity:1}
+tbody td{padding:9px 13px;border-bottom:1px solid var(--rule);text-align:right;font-variant-numeric:tabular-nums;font-size:13px;white-space:nowrap}
+tbody td:first-child{text-align:left;white-space:normal}
+tbody tr.parent{cursor:pointer}
+tbody tr.parent:hover td{background:var(--raised)}
+tbody tr.child td{background:var(--raised);font-size:12.5px;color:var(--ink2);padding-top:6px;padding-bottom:6px}
+tbody tr.child td:first-child{padding-left:34px}
+tbody tr.empty td{text-align:center;color:var(--muted);padding:26px 13px;font-size:13px}
+.ent{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ent .id{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink);font-weight:500}
+.ent .hint{font-size:11.5px;color:var(--muted)}
+.exp{display:inline-block;width:13px;color:var(--muted);font-size:9px;transition:transform .14s}
+tr.open .exp{transform:rotate(90deg)}
+.chip{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10.5px;font-weight:600}
+.chip.cap{background:var(--good-bg);color:var(--good)}
+td.b{color:var(--broker)} td.m{color:var(--meta)} td.d{color:var(--good)} td.f{color:var(--muted)} td.r{color:var(--ink2)}
+td.b,td.m,td.d,td.f,td.t,td.x,td.r{font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+td.t{font-weight:600}
+tfoot td{padding:11px 13px;text-align:right;font-weight:600;font-size:13px;font-variant-numeric:tabular-nums;border-top:1px solid var(--rule-strong);background:var(--raised);font-family:"IBM Plex Mono",monospace}
+tfoot td:first-child{text-align:left;font-family:"IBM Plex Sans",sans-serif}
+
+.method{margin-top:34px;display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.mcol{padding:18px 20px 20px}
+.mcol+.mcol{border-left:1px solid var(--rule)}
+.mcol h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;font-family:"IBM Plex Sans",sans-serif}
+.mcol ul{margin:11px 0 0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.mcol li{font-size:12.5px;color:var(--ink2);padding-left:15px;position:relative;max-width:60ch}
+.mcol li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:1px;background:var(--rule-strong)}
+.mcol code{font-family:"IBM Plex Mono",monospace;font-size:11.5px;background:var(--raised);padding:1px 4px;border-radius:3px;color:var(--ink)}
+.ok{margin-top:12px;padding:10px 12px;border-radius:7px;background:var(--good-bg);color:var(--good);font-size:12px;max-width:60ch}
+.warn{margin-top:12px;padding:10px 12px;border-radius:7px;background:var(--alert-bg);color:var(--alert);font-size:12px;max-width:60ch}
+
+#drop{position:fixed;inset:0;z-index:100;background:rgba(15,19,24,.72);display:none;align-items:center;justify-content:center;color:#fff;font-family:Archivo,sans-serif;font-size:19px;font-weight:600}
+#drop.on{display:flex}
+#drop div{border:2px dashed rgba(255,255,255,.5);border-radius:14px;padding:40px 56px}
+#tip{position:fixed;z-index:200;pointer-events:none;opacity:0;transition:opacity .1s;background:var(--ink);color:var(--surface);padding:8px 11px;border-radius:7px;font-size:12px;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.3);max-width:250px}
+#tip.on{opacity:1}
+#tip b{font-family:"IBM Plex Mono",monospace;font-weight:500}
+
+@media (max-width:1080px){
+  .crow{grid-template-columns:150px 1fr 92px 86px 48px}
+}
+@media (max-width:980px){
+  .comp{grid-template-columns:1fr}
+  .rates{border-left:none;border-top:1px solid var(--rule)}
+}
+@media (max-width:880px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .kpi{border-left:1px solid var(--rule);border-top:1px solid var(--rule)}
+  .kpi:nth-child(-n+2){border-top:none}
+  .kpi:nth-child(odd){border-left:none}
+  .kpi:last-child{grid-column:1/-1}
+  .method{grid-template-columns:1fr}
+  .mcol+.mcol{border-left:none;border-top:1px solid var(--rule)}
+  .row-c{grid-template-columns:112px 1fr 82px 74px}
+  .crow{grid-template-columns:118px 1fr 84px 78px 44px}
+  thead th{top:0}
+  .tbar input[type="search"]{width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="masthead">
+  <div class="masthead-in">
+    <div>
+      <div class="brandline">
+        <h1>Rateio Gupshup</h1>
+        <div class="field">
+          <span class="ctl-label">Extrato</span>
+          <input id="periodo" class="wide" type="text" value="Jun – Ago / 2026" aria-label="Período do extrato">
+        </div>
+        <div class="field">
+          <span class="ctl-label">Dias</span>
+          <input id="dias" class="narrow" type="number" min="1" step="1" value="90" aria-label="Dias cobertos pelo extrato">
+        </div>
+        <div class="field">
+          <span class="ctl-label">Dólar R$</span>
+          <input id="fx" class="narrow" type="number" min="0" step="0.01" value="5.12" aria-label="Cotação do dólar em reais">
+        </div>
+      </div>
+      <p class="sub">Custo de plataforma por Customer ID e por App, aberto por categoria de mensagem. O extrato cobre 90 dias — a média mensal divide tudo por 3.</p>
+    </div>
+    <div class="head-actions">
+      <a class="btn" href="deck.html">Deck por cliente →</a>
+      <button id="importBtn">Importar extrato CSV</button>
+      <button id="exportBtn" class="primary">Exportar visão</button>
+      <input id="file" type="file" accept=".csv,text/csv" hidden>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="controls-in">
+    <div class="ctl">
+      <span class="ctl-label">Valores</span>
+      <div class="seg" id="scaleSeg" role="group" aria-label="Escala dos valores">
+        <button data-s="mes" aria-pressed="true">Média mensal</button>
+        <button data-s="periodo" aria-pressed="false">Total 90 dias</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label">Agrupar por</span>
+      <div class="seg" id="viewSeg" role="group" aria-label="Agrupamento">
+        <button data-v="cliente" aria-pressed="true">Cliente</button>
+        <button data-v="app" aria-pressed="false">App</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label">Colunas</span>
+      <div class="seg" id="colSeg" role="group" aria-label="Colunas da tabela">
+        <button data-c="resumo" aria-pressed="true">Resumo</button>
+        <button data-c="cat" aria-pressed="false">Por categoria</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label">Cobrança</span>
+      <div class="seg" id="modeSeg" role="group" aria-label="Modo de cobrança">
+        <button data-m="desconto" aria-pressed="true">Líquido</button>
+        <button data-m="bruto" aria-pressed="false">Bruto</button>
+        <button data-m="teto" aria-pressed="false">Teto</button>
+      </div>
+    </div>
+    <div class="capbox" id="capBox" hidden>
+      <span class="ctl-label">US$ / mês</span>
+      <input id="capVal" type="number" min="0" step="5" value="75" aria-label="Teto mensal em dólares">
+      <select id="capScope" aria-label="Escopo do teto">
+        <option value="app">por App</option>
+        <option value="cli">por Customer ID</option>
+      </select>
+    </div>
+    <div class="search">
+      <input id="q" type="search" placeholder="Busca global: cliente, app ou ID…" aria-label="Busca global">
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="kpis" id="kpis"></div>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Onde cada dólar é gasto</h2>
+      <span class="sec-note">Tarifas Meta inferidas do próprio extrato · editáveis</span>
+    </div>
+    <div class="panel comp">
+      <div class="comp-rows" id="comp"></div>
+      <div class="rates">
+        <h3>Tarifa unitária Meta</h3>
+        <div class="rate"><span>Marketing e MM Lite</span><input id="rMkt" type="number" step="0.0001" min="0" value="0.0625" aria-label="Tarifa marketing"></div>
+        <div class="rate"><span>Utility paga</span><input id="rUtil" type="number" step="0.0001" min="0" value="0.0068" aria-label="Tarifa utility"></div>
+        <div class="rate"><span>Autenticação</span><input id="rAuth" type="number" step="0.0001" min="0" value="0.0315" aria-label="Tarifa autenticação"></div>
+        <p>Marketing e Utility foram isolados em linhas de categoria única do extrato — 32 e 34 apps, com p10 igual ao p90. Autenticação não pôde ser isolada (2.016 mensagens em 90 dias); o valor é a tarifa de referência do Brasil.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Se a Meta cobrar serviço em outubro</h2>
+      <span class="sec-note">Regra anunciada para 01/10/2026</span>
+    </div>
+    <div class="panel">
+      <div class="legend">
+        <span class="lg"><i class="sw b"></i>Taxa Gupshup</span>
+        <span class="lg"><i class="sw m"></i>Meta hoje</span>
+        <span class="lg"><i class="sw r"></i>Novo custo de serviço</span>
+        <span class="lg" style="margin-left:auto">
+          <span class="ctl-label">Tarifa serviço US$</span>
+          <input id="rSvc" class="mininput" type="number" step="0.0001" min="0" value="0.0068" aria-label="Tarifa da mensagem de serviço">
+        </span>
+      </div>
+      <div class="simwrap" id="sim"></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2 id="chartTitle">Onde o custo se concentra</h2>
+      <span class="sec-note" id="chartNote"></span>
+    </div>
+    <div class="panel">
+      <div class="legend">
+        <span class="lg"><i class="sw b"></i>Gupshup <span class="mono" style="color:var(--muted)">(US$ 0,001/msg)</span></span>
+        <span class="lg"><i class="sw m"></i>Meta</span>
+      </div>
+      <div class="chart" id="chart"></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2 id="tableTitle">Detalhamento por cliente</h2>
+      <span class="sec-note" id="tableNote"></span>
+    </div>
+    <div class="panel">
+      <div class="tbar">
+        <input id="tq" type="search" placeholder="Filtrar nesta tabela…" aria-label="Filtrar a tabela">
+        <label class="ctl"><span class="ctl-label">Custo mín. US$</span>
+          <input id="tmin" type="number" min="0" step="10" value="0" aria-label="Custo mínimo em dólares"></label>
+        <label class="ctl"><span class="ctl-label">Exibir</span>
+          <select id="ttop" aria-label="Quantidade exibida">
+            <option value="0">Todos</option>
+            <option value="25">Top 25</option>
+            <option value="50">Top 50</option>
+            <option value="100">Top 100</option>
+          </select></label>
+        <button class="clear" id="tclear">Limpar</button>
+        <span class="grow" id="tsum"></span>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr id="thead"></tr></thead>
+          <tbody id="tbody"></tbody>
+          <tfoot><tr id="tfoot"></tr></tfoot>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="method">
+    <div class="mcol">
+      <h3>Como o custo por categoria é apurado</h3>
+      <ul>
+        <li>O extrato traz a <code>WhatsApp Fee</code> como um número único, sem quebra por categoria. A quebra aqui é calculada: <code>volume × tarifa</code>.</li>
+        <li><strong>Marketing</strong> = <code>Marketing Templates + MM Lite</code>. MM Lite é marketing enviado pela API Lite e vem em coluna separada, não somado em Marketing.</li>
+        <li><strong>Utility</strong> conta só <code>Paid Utility Templates</code>. As <code>Free Utility</code> saíram dentro da janela de atendimento aberta e hoje não custam nada.</li>
+        <li><strong>Serviço</strong> é <code>Conversation Service</code>, gratuito desde 01/11/2024.</li>
+        <li><strong>Outros</strong> é o resíduo entre a soma calculada e a fatura real — sobretudo mensagens para fora do Brasil, com tarifa própria que o extrato não mostra.</li>
+        <li>O modelo fecha em <strong>879 das 888 linhas</strong> dentro de 3%.</li>
+      </ul>
+    </div>
+    <div class="mcol">
+      <h3>Cobrança Gupshup e o teto mensal</h3>
+      <ul>
+        <li><code>Total = Taxa Gupshup + Cloud API Marketing + WhatsApp Fee</code>, confere nas 888 linhas.</li>
+        <li>A taxa Gupshup é <code>US$ 0,001</code> por mensagem trocada — entradas, saídas e templates. Por isso quase não depende da categoria.</li>
+        <li>O teto é <strong>mensal</strong>: US$ 75 equivalem a 75.000 mensagens no mês. Num extrato de 90 dias ele vale <code>US$ 75 × 3 = US$ 225</code> por app.</li>
+        <li>No modo <em>Líquido</em> a coluna <code>Discount</code> é abatida — é o valor real da fatura.</li>
+      </ul>
+      <p class="ok">O teto confere. Aplicar <code>min(taxa, US$ 225)</code> na base inteira dá US$ 34.342,56, contra US$ 34.481,08 do líquido real — 0,4% de diferença. A folga vem de apps que passaram de 75.000 mensagens em apenas alguns dos três meses.</p>
+    </div>
+  </section>
+</main>
+
+<div id="drop"><div>Solte o CSV do analytics aqui</div></div>
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script id="seed" type="application/json">[["GoodHope","c01747db-35b6-4c9c-ad14-48fd83e8ef58","4000208257",14345,16601,297284,46047,236931,11861,415,0,0,0,521.628,193.398,7984.021,111.929,8699.047,14341],["HMVCORPOCLINICO","68b35961-c971-4c39-9513-c9d1c88cc97e","4000228264",19063,2809,84306,0,0,0,0,0,98935,0,106.178,0.0,6183.435,0.0,6289.613,2754],["OrpenHMV","8f9adec3-dab4-4f18-ae24-3de80d87c690","4000143096",1183924,1000819,118705,0,100406,12996,0,0,4913,0,2303.448,0.0,989.978,2083.519,3293.426,1183764],["ClinicadeOlhosSaoJose","5bf6e8e1-3ab4-4a2c-a805-aed37709647d","4000213415",77524,88277,60134,35869,10981,2460,0,0,7415,0,362.057,136.1187,2780.062,11.845,3278.238,77481],["552122222425","6e648f30-62b8-473e-b55d-29f68e0d4139","4000189818",236116,195703,37689,35916,0,0,0,0,0,0,605.834,136.325,2244.921,254.622,2987.08,236011],["CCOclinica","7b7f3766-67d8-4ccc-9ee1-c7fa0072cd59","4000273206",425322,295909,72354,13477,25814,16437,0,7522,16180,0,844.615,51.0283,2029.098,581.835,2924.741,417514],["HSLParticular","dc7c10e7-fa08-4a46-aa1d-f6f6bac72224","4000332605",861613,672605,25133,0,18191,48,0,0,9007,0,1559.351,0.0,686.604,1358.352,2245.955,859909],["Safeweb","1aa7a070-a262-4fc0-8611-903cd3e78d41","4000309983",961447,775183,5465,0,1134,9,0,155,4280,0,1742.095,0.0,275.252,1562.904,2017.347,961930],["wecanbroficial","1c3ac2eb-0b15-475d-a5fd-5d943e9c6d6d","4000233423",52535,75101,32655,25343,5895,879,0,0,0,0,256.495,96.2051,1624.02,0.0,1976.72,52469],["IMMACOHATRAC2","248e46ec-e912-47f8-a6f4-ff6382a337b5","4000333957",168011,149798,23469,0,1564,188,0,13,25455,0,341.278,0.0,1601.575,119.624,1942.853,164250],["0800Dufrio","7215ea12-d372-4d36-94ab-f6c1c661b7b4","4000298692",463838,374683,25954,0,10049,100,0,29,15539,0,864.475,0.0,1039.592,645.732,1904.067,463774],["OrpenCasarao","f4241d96-acfb-4443-a4d0-ff9cbd10145e","4000165224",257116,225958,15489,15112,67,0,0,57233,0,0,555.867,57.3042,944.955,285.359,1558.126,199968],["WecanbrSorocaba","a4e10e3b-b016-4232-8446-181fc5dfc9c3","4000233423",35511,47821,21054,0,1884,111,0,0,22214,0,104.386,0.0,1401.181,0.0,1505.567,31854],["vasco2","57954334-9a05-4a0f-b2e3-576a5e5b4aab","4000213154",173884,170271,18234,0,0,0,0,0,17600,0,362.389,0.0,1099.999,145.199,1462.388,173752],["Marketing9011","034a5c85-1ff1-4880-90ba-599c156bfb17","4000080546",1149,1240,22395,0,0,0,0,0,21508,0,24.784,0.0,1344.245,0.0,1369.029,1145],["Fisiocenter","d7b3af57-2fc3-4f97-a743-fa1ef2703c25","4000285664",149166,109691,26158,0,5292,6449,0,1128,14107,0,285.015,0.0,917.673,67.621,1202.688,148049],["SouEstagiandoOficial","e0a9ea12-141e-4ba2-aab0-37c1db7a2f09","4000332569",32989,35522,13356,0,0,0,0,96,17824,0,81.867,0.0,1113.998,0.0,1195.865,28165],["Prontosul","c84a5298-174f-435e-9b6f-3200fce66086","4000283147",138484,128446,38454,0,13218,13245,0,82,11196,0,305.384,0.0,789.615,83.698,1094.999,138345],["WinAudioAPI","6002dddd-c637-45f4-ba34-3fb01482a91b","4000183413",64321,62310,13123,11821,857,9,0,0,0,0,184.64,44.8868,744.625,0.0,974.152,64299],["SenaiEAD","36b9619e-8f85-4cb9-8573-6074d670d7a6","4000225177",28704,21422,59778,0,49358,1217,0,0,8110,0,109.904,0.0,842.507,0.0,952.411,28707],["contabilizeiapp","405b4646-dc57-43dd-a1df-1c95a2dfb8c9","4000239687",526101,366152,0,0,0,0,0,0,0,0,892.253,0.0,0.0,708.414,892.253,526136],["AdvHealth","1ef9e587-267a-4642-9c63-58a14865fc39","4000080546",485400,370663,3431,0,3202,192,0,0,23,0,859.494,0.0,23.207,649.284,882.701,485375],["551128387007","fce81aec-e545-487a-83f0-ec3e6132730b","4000204251",97273,95151,24694,0,14565,926,0,0,8989,0,217.118,0.0,660.858,1.066,877.976,97232],["WecanbrBauru","11e8aabe-ef59-43ab-b0f5-d7b5a78e299d","4000233423",29442,43367,14751,0,2254,339,0,0,12186,0,87.56,0.0,776.95,0.0,864.51,29117],["SesiCaxiasdoSul","1009b68d-58d4-4a33-9e23-33a4b071172d","4000220773",100990,69878,14840,0,4482,233,0,0,9925,0,185.708,0.0,650.96,0.0,836.668,100967],["GamarraOficial","94009485-4a66-4030-ac90-db83daf1c52f","4000174124",294790,254221,4559,0,265,0,0,7506,4165,0,553.57,0.0,262.056,341.088,815.626,287368],["TagLivros","176a1e14-7db3-42eb-8bcb-31910e6073c8","4000339009",15183,15107,11371,0,236,0,0,0,11691,0,41.661,0.0,732.295,0.0,773.956,14535],["0800Vendasloja","9047bbd0-d9b9-48f7-bee6-4a585b0780be","4000298692",322500,265271,2190,0,0,0,0,4,2900,0,589.961,0.0,181.256,366.593,771.217,321787],["BemCentroMedico2","b217faf7-b62d-4fc2-88f3-de11aa8acfbe","4000229878",139674,115158,5305,0,0,0,0,47,8160,0,260.137,0.0,510.003,40.104,770.14,136669],["ClinicaVIVA","8a8957f8-32f8-47c6-b9ec-776ff23b17f6","4000186012",381056,340519,3880,0,3616,243,0,64,0,0,725.455,0.0,24.691,515.585,750.146,380651],["VicenteCuritiba","fa904093-6860-4c3d-856a-fa2ea8036a6e","4000281765",99835,73124,9612,0,992,26,0,0,8486,0,182.571,0.0,537.14,0.0,719.711,99750],["OficialHAB","c2cad552-30aa-47e2-9502-683bf8122e2d","4000174726",246776,242046,15138,0,12793,248,0,0,2040,0,503.96,0.0,214.436,287.726,718.396,246712],["AtendimentoSHOPPBUD","30ac5b5d-fa5c-418b-8607-93bf8a6bb28f","4000134216",74519,65806,8855,0,7,0,0,0,8760,0,149.18,0.0,547.555,0.0,696.735,74492],["comercialInhouseMarket","0297d281-0ec5-45ef-b2f3-7c8780bcd7d2","4000134216",66003,27210,11100,0,0,0,0,25110,9265,0,104.313,0.0,579.074,0.0,683.387,42480],["DDR0075","93b631e8-6544-4cdf-9359-77f99dad6f11","4000311374",239806,235614,28958,0,26239,2624,0,53,1,0,504.378,0.0,178.489,285.309,682.867,239849],["SinapseAPP","e6e56e35-e2ab-4307-82a2-c45c11f56758","4000227714",5426,10244,26821,5091,21174,267,0,0,0,0,61.668,19.1758,596.944,0.0,677.788,5422],["Cardiocentro2","bb5ac58f-6569-4457-bb59-bdcd2df97818","4000179727",198619,169299,23366,0,18244,2904,0,72,2583,0,391.284,0.0,285.496,169.39,676.78,198097],["CentrodeSaudeRenascer","0f1222fe-e21a-4077-bf02-955d25525775","4000277064",221482,195128,36828,0,30826,5788,0,2931,0,0,453.438,0.0,209.619,237.018,663.057,218626],["DominioOPS","fb241d6a-e508-43a2-8dc0-d5069be817c8","4000178670",116708,112728,9100,0,4461,95,2,0,6119,0,238.536,0.0,412.782,20.703,651.318,115117],["HSLSUS","30f92300-143e-4198-8391-ef712033f2e2","4000332605",184251,190187,14476,0,11955,280,0,0,2663,0,388.914,0.0,247.73,183.51,636.644,183832],["ClinicaCuritiba","fc663f57-3ae9-4cd8-87d4-966df9d0a6d7","4000278028",272938,162086,13904,1380,10755,1713,0,0,0,0,454.169,5.2403,159.417,227.105,618.826,272875],["LouisPasteur158","97f97a57-4328-4422-9705-854320233b9f","4000231201",308453,279233,1274,1,1262,0,0,144,0,0,588.964,0.0038,8.644,366.185,597.612,308194],["HSLConfirmacoes","0c14561b-dfe3-4aee-8274-50def076e357","4000332605",53055,54575,65723,0,62175,3142,0,0,0,0,173.353,0.0,422.8,0.0,596.153,53053],["Wbeducacao","4d815ffe-a690-496c-881e-fabfec4eb82b","4000270284",19534,15895,9081,0,0,0,0,3211,8660,0,44.51,0.0,540.806,0.0,585.316,16595],["SenaiFIERGS","077d002a-dbb0-4baa-bf87-7680c88252e0","4000226240",365251,212808,563,0,555,0,0,1737,2,0,578.622,0.0,3.897,360.204,582.519,363165],["Cadigestivo","5efbac48-8cf3-4cb1-9775-dab9aa40eacd","4000286395",222935,176001,21819,537,17634,3571,0,0,0,0,422.791,2.0373,153.435,203.454,578.263,222895],["NegociosPublicosTeste","091aca40-e12e-46b5-81c2-3e3b73f15e5a","4000232097",1815,1837,9018,0,0,0,0,0,8990,0,12.67,0.0,561.869,0.0,574.539,1812],["OrpenTopazio","cefe45c4-e912-4810-a93f-a338ce39f2c2","4000175874",32684,27055,18205,6094,9811,871,0,0,0,0,101.096,23.1552,447.587,0.0,571.838,32646],["DIFERPANOFICIAL","b1b82f3c-d08a-4cf9-83b7-8324b604c500","4000218064",233088,174683,8418,0,5429,1016,0,246,1859,0,416.189,0.0,153.101,217.622,569.29,232886],["OrpenGETNET","d5ad3402-a74b-4ec1-96ce-7aa0a099e742","4000143063",189041,131839,32732,0,31429,610,0,0,11,0,353.612,0.0,214.405,139.554,568.017,189035],["Prontomed2","26c762c8-e3b5-4669-ae9e-2e0c8236fa23","4000299584",224386,180748,14959,0,12287,1661,0,0,950,0,420.093,0.0,142.925,197.539,563.018,224384],["OrpenRoniOFICIAL","d94069d4-fe27-4c62-89e8-eb422310ae4c","4000144829",128368,104025,6440,4170,2228,1,0,324,0,0,254.677,15.8429,275.81,19.619,546.33,128048],["CentroMedicinaRocinha","c3532025-5b09-4081-82ff-0a3a65858f65","4000326589",276270,195790,9376,0,9186,43,0,20,0,0,481.436,0.0,62.464,267.891,543.9,276287],["ChiaperiniFixo","8d4281b7-075a-4538-a7a2-d013d6e14f97","4000271096",181351,149546,3420,2913,496,2,0,0,0,0,345.387,11.0705,185.458,115.615,541.915,181359],["OficialHOP","b080c057-74c2-43cd-ac7c-fb1ff8ea69d8","4000187281",144677,123621,10550,2991,7053,491,0,171,0,0,290.22,11.371,235.026,64.152,536.617,144396],["ClinicaPoa","0194729b-3826-412d-a8fc-85c3fb273765","4000278028",216193,129595,12586,1578,9551,1204,0,0,0,0,364.362,5.991,163.593,137.699,533.946,216094],["DomBosco","c39757bf-2fbd-4e4d-8e53-8c1f90c36304","4000284704",83870,61283,5744,5244,64,6,0,19202,0,0,170.799,19.9035,328.099,0.0,518.802,64921],["ArtNobre","d504c5d4-79ad-45b8-af41-3895fb3ff7de","4000322371",17495,18043,7846,0,2278,170,0,0,7307,0,43.384,0.0,472.178,0.0,515.562,15461],["MaxImagem","e34efe22-83e8-4935-ba4c-3d600499b116","4000227276",185250,133014,3035,0,0,0,0,0,3025,0,321.299,0.0,189.063,104.351,510.362,185213],["6235069000","e603aeb6-26c9-4bb3-bcef-7713b1b3bec8","4000190838",166648,126644,6817,0,5429,39,0,0,1279,16657,387.891,0.0,116.853,167.922,504.744,166663],["Facsi1","1e432665-6c54-4c70-9d3d-224221a50234","4000302473",84510,75216,7085,4559,2484,0,0,67,0,0,184.132,17.3237,301.821,0.0,503.277,84411],["Centrus","70e0fe7f-8de6-41ec-b9b2-fecb70bccb50","4000227276",161977,115084,3498,0,0,0,0,11,3479,0,280.559,0.0,217.464,60.944,498.023,161892],["BPOficial","16d1c3e6-6436-433d-992e-c73527c98a4f","4000174442",55361,61322,5889,5214,642,1,0,0,0,0,142.389,19.8162,330.309,0.0,492.514,55356],["TotalMedCare","073880fd-79dc-460c-99f6-68ce9ca7145d","4000185340",123216,87231,3958,3918,0,0,0,0,0,0,229.285,14.8782,244.877,10.26,489.04,123162],["IntegrarEstagios","98008195-f0c9-4165-b180-29553084e179","4000286780",118719,115688,34398,1,31846,20,0,1044,0,0,268.809,0.0038,216.616,47.755,485.429,117440],["5551995024105","34f58cf4-86e5-4d36-b8eb-a932ab7b9580","4000205029",26194,27937,15020,4978,9698,61,0,0,0,0,88.046,18.8971,377.095,0.0,484.038,26189],["MgIdeias","5afe2f01-41d0-4943-bff3-7f02096c91d7","4000226239",3000,2086,6952,6670,0,0,0,2,0,0,37.345,25.3069,416.873,0.0,479.525,3056],["InfinitaBrasiliaa","4bb5dbb2-4a41-4848-aecc-457a6db3d758","4000227121",101551,97272,17520,0,14316,501,0,0,2596,0,216.343,0.0,259.612,5.862,475.955,101535],["ACDIGITAL","4bf02d9e-35a8-40f9-8292-20b3889817a7","4000312750",170018,140774,7540,0,5824,26,0,0,1844,0,318.332,0.0,154.96,97.829,473.292,169806],["MayarDoces1","701ff9a5-c9a6-41f6-9705-750918ca0b05","4000237038",237339,187382,619,0,0,0,0,0,763,0,425.34,0.0,47.691,208.717,473.031,237030],["Ecocenter","e6971ae4-968e-4a97-8025-54a909d489dc","4000299565",153699,129049,15815,1139,13475,1141,0,0,0,0,302.883,4.3182,162.861,74.377,470.062,153170],["SenaiStaCruz","6c74c5ce-b326-425b-b170-2b675ec206d6","4000225177",31263,26955,8761,0,2421,57,0,0,6183,0,66.979,0.0,402.894,0.0,469.873,31240],["SesiFIERGS","7b660a28-c2ae-445c-bf8c-f9cdd8d9d251","4000226240",185400,119456,5185,0,2905,3,0,589,2213,0,310.041,0.0,158.065,87.562,468.106,184757],["IDFederal","775ff05f-b0b1-45d1-8fad-6278bbbc3c51","4000214966",140647,113818,4548,2810,1697,2,0,0,0,0,269.694,10.6776,187.213,38.119,467.585,140633],["Silvestre21","43012c2f-c80f-45c2-b3ef-2350ba5ea387","4000080546",60033,36821,5860,0,0,0,0,0,5787,0,102.714,0.0,361.687,0.0,464.401,60025],["SenaiMecatronica","4e22b936-ce1a-412e-b372-891b4de9abc8","4000225177",70554,61111,5037,0,0,0,0,0,5019,0,136.702,0.0,313.641,0.0,450.343,70553],["HMVPRECADASTRO","ada2d7eb-136e-490a-8c3a-d13afc832de0","4000228264",14723,10853,4686,0,0,0,0,0,6690,0,30.262,0.0,418.118,0.0,448.38,12719],["LouisPasteur","0d36c886-18f1-4ceb-83ab-3579136ea9b4","4000231201",29021,31748,71561,2,46056,24504,0,0,0,0,132.338,0.0076,313.306,0.0,445.652,29016],["INSCER","99c12979-37f0-4ec0-823e-79a24d4e6c29","4000253487",122704,99435,2984,2982,0,0,0,0,0,0,236.456,11.3313,186.377,8.255,434.164,122578],["SesiFarroupilha","5a436793-db39-48c9-a773-0367891ac502","4000220773",40724,26666,8033,0,2349,59,0,0,5444,0,75.423,0.0,356.222,0.0,431.645,40720],["DudaDamewer","6040f139-afa8-4440-9d66-056bbe2458ba","4000213792",13397,11389,6111,5628,311,0,0,12,0,0,52.284,21.3865,353.873,0.0,427.543,13387],["HbrFormaturas3","11aca92b-14ef-4ade-bc8c-c8bd5b6d5928","4000307425",86053,60202,35907,0,33319,497,0,0,0,0,182.162,0.0,226.57,0.0,408.732,85997],["ProasaSaudePara","dddefc49-7d72-41e3-b175-66a2978cca2f","4000080546",180354,122825,1852,2,511,75,0,0,1522,0,305.038,0.0075,98.697,85.832,403.743,180273],["coraapp","379cd158-7e4b-4dd1-8b2c-456ae15c0ccb","4000239687",224465,162359,0,0,0,0,0,0,0,0,386.824,0.0,0.0,171.378,386.824,224521],["SesiPortoAlegre","30c2122d-ea3e-4dda-8b94-cd04235002de","4000220773",70019,46032,7585,0,3459,97,0,0,3793,0,123.636,0.0,260.585,0.0,384.221,70011],["SesiCanoas","f64b4de6-1491-481c-b17f-aa5b29dc5887","4000220773",110535,74000,3448,0,349,0,0,0,3089,0,187.983,0.0,195.535,0.0,383.518,110546],["TMCsaude","f2a7f0d7-bef7-4f24-8327-58d6ae8e719b","4000080546",6080,4657,9076,0,3472,133,0,0,5354,0,19.813,0.0,358.235,0.0,378.048,6075],["ULTCHAKAPP","c960a704-eab8-4460-96b2-45957caea8df","4000218605",167650,160920,1621,0,446,0,0,144892,537,0,330.191,0.0,36.594,116.119,366.785,22854],["POLITONE3","15a88e70-76df-4156-9ac9-95da3c188390","4000314453",20013,15241,4394,0,0,0,0,6,5106,0,39.648,0.0,319.233,0.0,358.881,19247],["medcor2","ca733db5-d3de-42c7-b27e-cd7a83bf56fd","4000226204",83497,86771,2615,2567,33,0,0,0,0,0,182.643,9.7587,160.729,0.0,353.131,83479],["BredaCDMsgAtiva","d4ad53ca-f09e-4111-9f51-e318a2ff1f66","4000302491",80,934,5618,0,0,0,0,0,5538,0,6.632,0.0,346.121,0.0,352.753,80],["CDIODONTO2","5d2ecd05-d4d1-4626-ab65-f4299fe96006","4000217236",155316,150350,647,647,0,0,0,0,0,0,308.771,2.4585,40.439,87.27,351.669,155310],["SenaiMaua","14286460-c42b-420a-aaa8-174d8e422a3c","4000225177",58439,52498,3709,0,0,0,0,0,3672,0,114.646,0.0,229.501,0.0,344.147,58395],["VivaConfirmacoes","ca2ef683-95e3-42cc-95f9-efe64000e06b","4000186012",44489,40127,33614,0,31324,2142,0,0,0,0,118.23,0.0,213.021,0.0,331.251,44489],["SenaiGravatai","8d33d9bb-989d-4c25-ab32-c495b63a8371","4000225177",58375,53255,5225,0,1837,111,0,0,3222,0,116.855,0.0,213.872,0.0,330.727,58339],["SenaiSaoLeopoldo","266babef-502c-429e-923e-f63e54f4ae0c","4000225177",52236,51347,3684,0,116,1,0,0,3531,0,107.267,0.0,221.477,0.0,328.744,52173],["SesiSantaCruz","3287fb0c-711f-440f-b1f3-7fe155fc6815","4000220773",54168,39091,4300,0,706,0,0,0,3585,0,97.559,0.0,228.863,0.0,326.422,54183],["UnimedCentrors","c6205ebb-6db0-4d1e-95ea-7aa7dba0efb0","4000070028",99312,69814,2216,0,153,2,0,571,2049,0,171.342,0.0,129.102,0.0,300.444,98733],["Sub4Turismo","fdbf045b-35b1-4c78-a9c2-dd1193a46a95","4000328924",45077,37283,2169,0,130,3,0,0,3353,0,84.529,0.0,210.342,0.0,294.871,43764],["556232526800","62043327-e791-4fce-aba7-488c28855804","4000123501",85145,64093,5077,0,2776,203,0,5317,1913,0,154.315,0.0,138.446,0.0,292.761,79883],["OrpenVISTORIAPRO","ddcde54b-cff5-4436-8b81-9b82a90712eb","4000143440",136669,117517,501,499,0,0,0,0,0,0,256.589,1.8962,31.181,29.422,289.666,136678],["AlpardoBrasil","2e60cc88-002f-490a-9eb8-5217b0e51660","4000239861",92488,71041,14747,193,13501,343,0,0,0,0,179.011,0.7334,103.869,0.0,283.613,92444],["TAPArgentina","8ef27352-f1af-49bb-97da-ac5479a401a4","4000178670",153716,123478,0,0,0,0,0,0,0,0,277.194,0.0,0.0,56.051,277.194,153726],["HfCasarao","252b25c6-fd5b-4759-9d31-0ddd9bca5354","4000165224",127895,116172,714,0,18,0,0,109059,500,0,244.781,0.0,31.368,32.746,276.149,18893],["HMVPesquisa","fd3e5579-11c0-4b80-9967-b19b7c5f4942","4000179754",30159,33584,3648,0,352,0,0,0,3279,0,67.391,0.0,207.332,0.0,274.723,30157],["MercadaoL","a993f7e4-d672-4ecd-81d2-a3bdff50573b","4000271096",17475,10780,3493,3454,15,0,0,0,0,0,44.87,13.1222,215.977,0.0,273.969,17474],["SesiBentoGoncalves","32c37d22-a858-40b4-bbae-8b45268be90a","4000220773",58084,41256,3545,0,921,2,0,0,2608,0,102.885,0.0,169.259,0.0,272.144,58083],["Casamarela1126955550","05e2cac9-39d9-4398-897c-ce675d073b9f","4000238102",70610,65508,4346,0,25,0,0,915,4278,0,0.0,0.0,267.543,0.0,267.543,69667],["DominioCS","53ac3e3a-ccd8-4236-a330-2e52cb4160d0","4000178670",27761,31380,3559,0,694,3,0,0,3184,0,62.7,0.0,203.72,0.0,266.42,27436],["ClinicaSalus3","654c99d0-9bee-4700-af35-65c67f5b83f5","4000327886",121631,99465,5987,0,5240,691,0,13902,2,0,227.083,0.0,35.756,17.921,262.839,107579],["HSLAgendamentoCirurgico","da1b770e-be96-4306-937a-e4d5dbc49a06","4000332605",22395,21967,3276,0,807,9,0,0,3306,0,47.638,0.0,212.088,0.0,259.726,21507],["InoxGoyaz","fd63d171-16a3-4acd-b25a-c8d8e7e7c96f","4000321643",128135,68936,3062,0,0,0,0,116704,932,0,200.133,0.0,58.241,5.307,258.374,13329],["SaoRamiro","51738a06-14ba-4840-8b95-ba8e94988776","4000320854",74342,49911,2015,0,0,0,0,31830,2107,0,126.268,0.0,131.643,0.0,257.911,42289],["SenaiCanoas","01fa8f1c-cca0-4b31-b44e-3fc65f624fee","4000225177",42342,36177,2824,0,0,0,0,0,2793,0,81.343,0.0,174.563,0.0,255.906,42322],["VelotOficial2","066804a5-46ca-476d-a428-c326bddad272","4000273146",75200,77149,6861,0,5923,53,0,0,711,1373,166.267,0.0,84.69,2.777,250.957,75182],["DominioETL","588ffc45-40c9-434c-bb0a-76f22d119302","4000178670",14720,11509,26977,0,25316,786,0,0,306,0,53.206,0.0,193.91,0.0,247.116,14715],["Ecocenter2","d5066ce3-1ace-46e1-b014-bf86e3d4a64f","4000299565",121028,108095,937,0,917,19,0,13,0,0,230.06,0.0,6.234,14.719,236.294,120578],["DCMonporto","15ac426c-0e1f-4a8c-a226-2d5634b534bb","4000346898",105648,94765,1946,0,1594,2,0,0,367,0,202.359,0.0,33.772,4.272,236.131,105648],["HMVGENTEEGESTAO","8bd4715d-7178-4948-8609-bed8d0816d3c","4000228264",21191,27984,8199,0,6106,228,0,0,2178,0,57.374,0.0,177.645,0.0,235.019,20820],["GPOficial","889f7cdf-02f3-4249-845a-4c86ab211268","4000185520",61590,49699,3592,1465,2088,7,0,0,0,0,120.45,5.5667,105.759,0.0,231.776,61554],["CLUBEFIT3242","202d7b81-9796-43c0-9235-d702f323b73d","4000334637",16365,14667,4063,0,1181,1,0,16,2991,0,35.095,0.0,195.025,0.0,230.12,16177],["MktWhats","4fe87103-2bba-47a3-a22f-5929ce34b3ec","4000204251",61,68,3636,0,0,0,0,0,3615,0,3.765,0.0,225.936,0.0,229.701,61],["Motormac","261320ff-624c-45a9-9605-cde27419a76e","4000279665",49372,44714,2461,0,501,6,0,0,1942,1031,101.349,0.0,124.799,0.0,226.148,49372],["Fairtax","8ef4702e-f5a4-43ea-8020-40d55ef6b893","4000253969",88193,85855,5831,113,5590,88,0,0,0,0,180.309,0.4294,45.075,0.0,225.813,88213],["MacapaAPI","d642d0d8-d082-4495-a148-a947105b878c","4000188188",81002,74584,1789,0,881,1,0,0,903,0,157.375,0.0,62.444,0.0,219.819,81007],["SesiParobe","f2e3b802-e5bb-4aa8-aeab-fe2f3be460b0","4000220773",24497,18721,2899,0,73,10,0,0,2771,0,46.117,0.0,173.683,0.0,219.8,24464],["saudeSilvestre","7a5716ef-4241-48e4-8279-a6a234989c89","4000080546",80038,46442,1256,0,100,0,0,0,1419,0,127.736,0.0,89.389,0.0,217.125,79764],["InfinitaMaraba","86b511ed-1129-4ab2-9490-e0de00510f75","4000227965",53541,46489,1844,0,0,0,0,0,1832,0,101.874,0.0,114.502,0.0,216.376,53538],["ArtNobre2","7d91202e-462b-454e-aabf-d54ff65e2171","4000322371",7015,9573,4943,0,2373,28,0,0,2842,0,21.531,0.0,193.757,0.0,215.288,6451],["HospitalCaridade","4939dff7-b4b4-42d0-95e7-b71469e6d4da","4000322515",95803,81866,3220,0,2966,12,0,0,208,0,180.889,0.0,33.182,0.0,214.071,95820],["Texius","79a8ed3f-1883-4e04-92f3-4065221bc456","4000226995",61984,57886,1432,1295,136,0,0,0,0,0,126.222,4.9221,81.885,0.0,213.029,61987],["Medcor","138edc84-9c47-46ff-b482-ee827d902df8","4000226204",41322,44896,16804,0,15898,861,0,0,0,0,103.022,0.0,108.108,0.0,211.13,41316],["MacroEMicro","decea80c-f4c6-4e85-96ae-25a827d2476c","4000323773",63871,76144,4416,0,4048,7,0,0,490,0,144.431,0.0,58.273,0.0,202.704,63697],["ImedBROficial","68744168-599c-4b8b-ada0-877b69187550","4000297110",92431,109717,4,4,0,0,0,4901,0,0,202.168,0.0152,0.249,0.0,202.432,87521],["ClinicaCot2","1d5df587-46de-4910-928a-da09a36d8b27","4000332511",64487,65528,8272,0,6807,1209,0,0,274,0,138.287,0.0,63.413,0.0,201.7,64487],["OficialTDSA","f1b03b4c-1110-4294-9965-471d88cced57","4000176594",75363,67441,752,748,0,0,0,54,0,0,146.397,2.8415,46.736,0.0,195.975,75229],["WCursos1","8990a7fd-b70f-4b67-9375-d4f829c384de","4000331329",20184,16159,2336,0,0,0,0,13849,2475,0,38.679,0.0,154.688,0.0,193.367,6151],["SesiEspacoSaudeCaxias","4a03ed6e-9545-4d13-a83d-f4918f8f4f37","4000220773",37902,24615,2957,0,1028,0,0,0,1925,0,65.474,0.0,127.312,0.0,192.786,37908],["PiraCopias","13fdacf7-f80a-4a43-b93d-f9d3c69a0c79","4000316225",72414,87033,456,0,0,0,0,0,500,0,159.903,0.0,31.247,0.0,191.15,72360],["Lanai2025","8a6f218c-95b0-44f5-abcf-b11cfd213bd5","4000236908",26819,28772,2482,0,365,1,0,0,2085,0,58.073,0.0,132.677,0.0,190.75,26818],["LegalSWB","f9e2c041-79b2-4c12-84b8-08d425f2c912","4000178670",104654,81526,50,0,0,0,0,12,49,0,186.23,0.0,3.054,0.0,189.284,104672],["Proeesp","3ac96098-90d1-4e36-8b54-401ee82ac84f","4000214829",9083,10284,2681,0,0,0,0,0,2669,0,22.048,0.0,166.809,0.0,188.857,9082],["CentrusLuziania","618902dc-802a-4ff6-bb5b-8534a520d7ec","4000227276",69276,47675,1453,0,396,1,0,0,1049,0,118.404,0.0,68.254,0.0,186.658,69254],["OrpenCBCO","e1b3a427-b011-4b12-bf78-355be78ff98f","4000123501",61521,45431,4069,756,2993,195,0,5120,0,0,113.898,2.8786,67.701,0.0,184.478,56452],["ThomsonReuters","e48b10b5-df50-4170-b415-fdeedb89e6be","4000251668",12945,10787,2328,2255,47,0,0,0,0,0,34.622,8.5618,141.134,0.0,184.318,12942],["551134888000","f2fb8e41-a0bc-47f1-ab5c-f7f8ea6e6f58","4000212350",55769,49190,4980,0,3921,10,0,16882,745,0,109.939,0.0,73.19,0.0,183.129,39103],["TuttySucos","ea19d55d-7e4e-424e-9f0d-928eeab14d19","4000238594",4103,4045,10075,1718,5793,216,0,0,0,0,24.736,6.5095,146.77,0.0,178.016,4108],["InpanemaQueijos","bf09c543-aab0-4535-b4d4-deb524945342","4000275213",8675,13262,2216,2195,0,0,0,0,0,0,32.494,8.3406,137.178,0.0,178.013,8670],["Eprosys","0c24868b-0c36-4721-bdb0-5b3632cf30b9","4000237622",30594,33883,2718,1137,1116,69,0,0,359,0,71.513,4.3117,101.088,0.0,176.913,30596],["DominioProjetos","66098c94-c06f-4812-b68a-1a8e4b619def","4000178670",24436,26920,2716,0,1161,2,0,2,1834,0,54.072,0.0,122.523,0.0,176.595,24150],["OrpenInhouse","74804295-5aa5-4d41-9f04-01f168c14919","4000134216",93730,71433,175,0,0,0,0,170,174,0,165.338,0.0,10.87,0.0,176.208,93474],["FomentoTo2","b06256b6-dea9-418a-af95-286cc918e006","4000335442",13337,13307,1225,0,393,11,0,0,2213,0,27.869,0.0,140.998,0.0,168.867,11890],["CanalRHAdventistHealth","690c51ae-f7f6-4ad1-a8cd-bca155ad2077","4000080546",113,111,2602,0,0,0,0,0,2594,0,2.826,0.0,162.125,0.0,164.951,113],["LUNICAAPP","a77adbcc-17cc-4536-b9a7-1b4b20da3bf4","4000218534",60949,43251,1493,757,727,3,0,0,0,0,108.566,2.8724,52.191,0.0,163.629,60940],["HMVSAUDEDIGITALOFICIAL","6e502ec5-5edb-4475-a51d-dd98b19cbaa5","4000228264",15907,13418,2898,0,833,55,0,0,1992,0,32.223,0.0,130.199,0.0,162.422,15897],["AMERICANFARMA","ce711616-224e-4ab0-a631-2c20a90190b3","4000336733",3273,2451,2333,0,222,0,0,0,2433,0,8.057,0.0,153.521,0.0,161.578,2882],["CentralAtendimentoConsorcioColombo2","fe0aee97-4315-4afd-bf4e-398583d2ecee","4000322498",36480,32103,1284,0,0,0,0,0,1389,967,74.698,0.0,86.809,0.0,161.507,36353],["Bitelo1","a3e5e33a-9e8a-498e-a033-171d93acb61c","4000234914",66704,68858,438,355,81,1,0,345,0,0,137.353,1.3488,22.737,0.0,161.439,66355],["Fibrart","3ce70226-2837-48f2-bcd6-f4f40e7cf360","4000311956",3228,3569,19212,0,17654,18,0,0,229,0,26.009,0.0,134.367,0.0,160.376,3229],["FerreiraColorOficial","aa28f4d2-7b5c-40d9-8e73-8035624fb4f3","4000320194",68257,69068,235,0,0,0,0,0,357,0,137.56,0.0,22.309,0.0,159.869,68127],["MEDSAOPAULO","63380712-3c59-489c-8f59-6c5fae2c4f9c","4000336928",42417,41789,2559,0,1864,3,0,0,937,0,86.765,0.0,71.425,0.0,158.19,42146],["SenaiMadeira","4ef9be57-a558-47ad-a862-10055bb05ba3","4000225177",29626,23817,1644,0,0,0,0,0,1627,0,55.087,0.0,101.68,0.0,156.767,29621],["RoniCanoas","5e6a2cc4-206e-4d57-95bb-54b44a67db9b","4000144829",34354,28093,2008,1238,756,0,0,0,0,0,69.161,4.7048,82.528,0.0,156.394,34364],["senaiLageado","1183b072-b94c-4b5f-b25f-52ca9d7e0b10","4000225177",35256,30257,1381,0,0,0,0,0,1425,0,66.894,0.0,89.063,0.0,155.957,35199],["vicentao","809b5fb0-dfa8-460a-a9de-5421438235af","4000267850",83356,72559,2,0,2,0,0,0,0,0,155.917,0.0,0.014,0.0,155.931,83346],["555133493100","f8c5922f-9841-46c1-bcf1-a5e1b9a27bc2","4000204440",60088,49779,710,0,1,0,0,0,705,1,110.58,0.0,44.188,0.0,154.768,60078],["Bionatus","553d19f8-9dd5-4fd4-a45f-973dbdf8157b","4000236452",9761,11647,3105,1731,1243,66,0,236,0,0,31.085,6.5693,116.651,0.0,154.305,9525],["Amplex5858","d597f02b-dc35-44b9-893f-9a59569311c4","4000304632",6123,5134,2061,2006,0,0,0,1348,0,0,20.93,7.6086,125.371,0.0,153.91,4777],["Vellozz1","de8930d1-db17-4222-929a-a518320e2ba3","4000346579",62641,42148,5284,0,5253,18,0,0,95,0,110.073,0.0,41.709,0.0,151.782,62545],["551128387010","4417913f-11c5-45d7-af8e-532b8d2bd110","4000204251",5474,4619,3059,0,895,46,0,0,2100,0,13.152,0.0,137.334,0.0,150.486,5466],["Dig3Sistemas","8cf400e8-8324-4937-ba35-a40be98117b6","4000325456",20635,16556,14719,0,14485,179,0,0,0,0,51.91,0.0,98.5,0.0,150.41,20637],["LitoralCondominios1","4790369b-a989-4304-9415-a6128fbb58eb","4000244572",33288,37025,1375,1091,283,1,0,62,0,0,75.833,4.1458,70.108,0.0,150.087,33228],["DLLSac","16eb3eae-9bf6-4b9a-ae13-17f3924754ff","4000232209",71382,64144,1236,75,1014,145,0,0,0,0,137.05,0.285,11.585,0.0,148.92,71386],["Chiaperini","3fecbdbf-511f-4ba5-bb80-8e3de594d490","4000271096",24488,21969,1424,1423,0,0,0,0,0,0,53.294,5.4073,88.941,0.0,147.642,24486],["Pbnewsiscomp","4055f828-c3bc-48ea-9154-c5261ef7827d","4000226659",65878,74031,992,0,987,2,0,0,0,0,140.901,0.0,6.729,0.0,147.63,65890],["WecanbrShopee","96d105da-5716-4968-972b-f4302c210928","4000233423",55696,51143,559,0,20,0,0,0,628,0,107.398,0.0,39.382,0.0,146.78,55569],["InfinitaPvh","50591d82-faa7-4870-b0d2-d6c18044c105","4000227966",67558,69551,132,0,0,0,0,0,132,0,137.241,0.0,8.244,0.0,145.485,67543],["PrismatecOficial","b3b155c8-fbf7-4d07-83b3-c7ed3e73742f","4000285651",42361,47613,4768,0,4416,8,0,5,327,0,94.742,0.0,50.467,0.0,145.209,42346],["Afceee","c3d3e699-2ef2-41d0-8a78-71b2f048ffd0","4000330306",18043,18969,367,0,0,0,0,37,1701,0,37.379,0.0,106.307,0.0,143.686,16640],["SesiPelotas","21fd6ad0-eee6-4719-8063-db30a119394b","4000220773",22888,18280,2134,0,582,0,0,0,1507,0,43.302,0.0,98.146,0.0,141.448,22896],["COLOPROCTO2","74965a20-e2c2-4565-b994-f47796799023","4000315361",48714,48518,4500,0,4426,4,0,0,95,0,101.732,0.0,36.041,0.0,137.773,48641],["DssInformatica","e1f75aa1-62de-457c-a96f-31f17c309074","4000227725",57909,54724,351,352,0,0,0,0,0,0,114.318,1.3376,21.997,0.0,137.653,57944],["RCX5600","fef55a1e-ad23-4c28-a2de-031a2af8ba84","4000082865",47664,47600,1899,0,1206,26,0,0,483,46,97.256,0.0,38.451,0.0,135.707,47686],["551138162450","d35de1ff-3b01-4581-86f0-dcbd7ebee16a","4000210062",21420,20611,1965,1206,752,2,0,0,0,0,48.584,4.5848,80.546,0.0,133.715,21391],["BeteImoveisApiOficial","b932f7f0-9e0a-492e-8439-dbccfa846bf1","4000214071",32210,33091,1007,932,73,1,0,5,0,0,69.848,3.5422,58.75,0.0,132.14,32153],["COLEGIOIACS","9fad785c-7ef0-4c26-a6d4-48833ddf3f38","4000216120",17580,13617,2628,1249,1277,5,0,0,0,0,38.565,4.7393,86.788,0.0,130.092,17574],["RoniCaxiasOficial","e098c061-ecbd-4292-9eb2-d68d36e0292f","4000144829",37692,30374,978,840,132,0,0,63,0,0,72.235,3.1925,53.413,0.0,128.84,37601],["SenaiAutomotivo","84fff36e-7e15-49ae-a827-ee9defa426c3","4000225177",29833,27521,1526,0,440,12,0,0,1062,0,58.88,0.0,69.369,0.0,128.249,29828],["SenaiPassoFundo","8f8f26e1-2e3e-4704-ba6e-3a3d3bc701a0","4000225177",15094,15831,1545,0,0,0,0,0,1526,0,32.47,0.0,95.377,0.0,127.847,15081],["5511999959915","ff055a18-fd16-4658-a4f8-2ce2ee08e108","4000229143",13460,14826,13099,0,12639,433,0,0,0,0,41.385,0.0,85.943,0.0,127.328,13461],["AmigaDigitalNovo","7bfeafb0-d2a7-4f08-b4f4-821405a44c14","4000226353",42620,51817,677,435,239,1,0,0,0,0,96.767,1.6534,28.823,0.0,127.243,42617],["SenaiFarroupilha","1ec7dd05-3609-4329-b0ae-69ec2361c9a1","4000225177",27404,23153,1237,0,34,0,0,0,1196,0,51.794,0.0,74.977,0.0,126.771,27401],["FenixInsumosCorp","de096172-c6c9-488d-865d-f8dd8476409c","4000277143",15782,13121,1660,0,124,1,0,0,1525,0,30.563,0.0,96.152,0.0,126.715,15777],["SesiEspacoSaudePanambi","0f65a444-7a7a-4e6a-bbdd-b8fa2c433503","4000220773",23879,13814,1395,0,0,0,0,0,1394,0,39.088,0.0,87.121,0.0,126.209,23869],["oiOportunidades","bfb2c4a2-0385-4d04-b00d-0e18a24f86f4","4000226240",278,99,3518,0,256,1,1589,0,1734,0,3.895,0.0,120.923,0.0,124.818,168],["SesiPanambi","7231ae28-7973-4001-a3e7-ecc696ef1c1f","4000220773",29599,20741,1325,0,171,0,0,0,1150,0,51.665,0.0,73.042,0.0,124.707,29595],["SesiSaoLeopoldo","4b808433-74e6-437c-834a-0c51a65793a5","4000220773",21860,16888,1786,0,483,12,0,0,1289,0,40.534,0.0,83.848,0.0,124.382,21866],["Notificacao1","f32d1b66-529e-440a-99c6-9741326db389","4000218605",3031,3292,3246,0,1549,0,0,0,1634,0,9.569,0.0,112.659,0.0,122.228,3021],["5511994915017","cd5ea2a9-61d6-4ad8-ab60-92faa61e9d3f","4000182087",21970,23272,1190,1066,0,0,0,3148,0,0,50.483,4.0497,66.609,0.0,121.142,18918],["MKTHMV","34302814-7e77-495e-8b0f-4d91bbdf0070","4000228264",944,1046,13272,0,13009,0,0,0,263,0,15.262,0.0,104.897,0.0,120.159,942],["DisparosComercial03","d7ce3e6b-5715-4ff3-a5c6-461a398f1361","4000175874",848,819,1691,1660,0,0,0,0,0,0,9.667,6.3076,103.747,0.0,119.722,842],["Adderi","6f909357-537d-42d4-b11f-4247ebdb0c9e","4000226350",54382,58051,96,96,0,0,0,160,0,0,112.901,0.3648,5.988,0.0,119.254,54236],["SenaiErechim","d6becd6a-f50c-42a2-a3f7-6ff17151a6db","4000225177",25160,18995,1170,0,0,0,0,0,1161,0,45.325,0.0,72.576,0.0,117.901,25157],["SESIGravatai","404105be-f79c-4380-8f87-bff3d2b9f0da","4000220773",28226,24159,3615,0,2785,82,0,0,681,0,56.0,0.0,61.504,0.0,117.504,28218],["COLOPROCTO","a2c93782-3719-4547-9a29-835c2a459dfd","4000315361",63938,46207,885,0,868,5,0,0,5,0,111.03,0.0,6.213,0.0,117.243,63870],["Serpcraz","7bcef015-9465-4889-a7f3-82ce9bed3c46","4000268308",62440,53732,15,15,0,0,0,0,0,0,116.247,0.057,0.933,0.0,117.237,62427],["SBColombo","13459358-50e1-48e3-9b88-559d4d462d45","4000175663",61064,52711,25,0,0,0,0,17053,19,0,113.8,0.0,1.183,0.0,114.983,43958],["GpanizOficial","dcca0484-5feb-4844-90f4-30b4878694a8","4000173400",37806,46056,744,367,375,1,0,3,0,0,86.005,1.3946,25.499,0.0,112.899,37784],["SenaiSapucaia","29ff1ba3-f761-4efc-8479-5e52e48ee2bd","4000225177",24844,22619,1306,0,333,1,0,0,954,0,48.769,0.0,61.907,0.0,110.676,24820],["OrpenPROASA","1c770b21-66e7-4e2e-950b-40797834fb36","4000080546",9254,9282,1286,1278,5,0,0,0,0,0,24.679,4.8564,79.91,0.0,109.445,9250],["flextec02","2d9165df-73fe-4d8d-91bc-bdf6ef2a5c15","4000316786",34572,26546,688,0,0,0,0,0,755,0,61.806,0.0,47.186,0.0,108.992,34510],["COLISEU","95f935d0-85e7-492e-b0f2-a5fcf3e38541","4000356744",45775,47332,322,0,80,0,0,0,239,0,93.429,0.0,15.526,0.0,108.955,45771],["WecanbrCentralAdmissoes","9190748b-2a09-424c-9669-8b97aa92b28d","4000233423",22436,34328,5372,0,4630,489,0,2,238,0,62.136,0.0,46.36,0.0,108.496,22425],["FiergsGesup","f27424e2-6569-479a-adff-cd44607a9ac8","4000225177",21623,21870,1158,0,153,1,0,0,1001,0,44.651,0.0,63.602,0.0,108.253,21621],["DomesticaLegal","4e4dcc42-90a5-4a0a-82b2-7b1ed74d0de0","4000351060",44898,49027,1842,0,1814,28,0,0,0,0,95.767,0.0,12.372,0.0,108.139,44855],["Syn4760","fae91ca3-e6fd-43ea-9b9b-87c5d3f13c2a","4000222607",20624,21385,924,917,0,0,0,0,0,0,46.417,3.4843,57.31,0.0,107.211,20595],["EmiteAi2","9dafe386-3a99-4347-a80f-eb1f6c792e42","4000302309",25884,23428,1239,31,367,1,0,0,806,0,50.669,0.1178,54.805,0.0,105.592,25884],["Biguacu","ea5c3c8f-cde3-419d-92bf-147d6a4019e1","4000226881",13748,10882,3659,943,1602,1048,0,611,0,0,31.872,3.5813,69.834,0.0,105.287,13164],["SesiSapirangaSaude","6dcb2506-e273-415f-90dd-bad0d2f6962c","4000220773",23351,15495,1765,0,841,0,0,0,913,0,40.611,0.0,62.779,0.0,103.39,23357],["SesiMontenegro","d9c4e1f7-bdd6-42e1-97da-bff9400ce64f","4000220773",24135,20651,937,0,24,0,0,0,908,0,45.723,0.0,56.916,0.0,102.639,24138],["SenaiRioGrande","1c65cff3-3a13-49ec-9986-714cb15c3b7f","4000225177",20833,18470,998,0,0,0,0,0,994,0,40.301,0.0,62.082,0.0,102.383,20824],["SenaiMontenegro","67111a3f-9559-4f93-95ef-6dc3c4594426","4000225177",33415,28911,1378,0,880,4,0,0,475,0,63.704,0.0,35.671,0.0,99.375,33400],["denagen01","996e917a-f703-42c7-8084-bd114312813d","4000237799",43540,48978,591,26,564,0,0,0,0,0,93.21,0.0988,5.577,0.0,98.886,43538],["comercialcanaisdigitais","0d58c0c3-ad98-41c5-92c4-ec471419cd57","4000070028",8439,6359,1331,0,0,0,0,68,1320,0,16.129,0.0,82.501,0.0,98.63,8372],["PharmaBen","fae13d6f-1522-4fb7-afcf-172215509264","4000232982",40500,43163,206,205,0,0,0,0,0,0,84.653,0.7789,12.808,0.0,98.24,40436],["AllInformatica","bf1d0270-1382-486e-9294-4f475b07a446","4000226431",31442,24076,596,595,0,0,0,0,0,0,58.378,2.261,37.189,0.0,97.828,31444],["dentalrubi","0b55d83e-9358-4506-978a-97ee95abc224","4000200826",38904,46448,137,137,0,0,0,0,0,0,86.016,0.5216,8.571,0.0,95.109,38896],["Financeiroformaturas","3d450917-c324-429e-af54-ff1ff85f3f0f","4000322371",7917,8029,1469,0,413,8,0,0,1198,0,17.415,0.0,77.687,0.0,95.102,7758],["Taquara","c0f6c2aa-e3b5-4495-8ebf-e489ccd5144c","4000207894",24513,24407,3780,306,3014,354,0,0,0,0,53.859,1.1628,39.621,0.0,94.643,24510],["ProInfo","69ffb44d-f45d-4ea1-9626-1aec9ab21458","4000227797",15554,12271,1156,901,243,0,0,0,0,0,32.406,3.4221,57.932,0.0,93.76,15540],["Hospitalbaleia","08b36941-52c3-440e-b978-f5ea506f9ebc","4000213439",4493,4048,1384,0,23,0,0,0,1321,0,9.925,0.0,82.715,0.0,92.64,4474],["Performatica","c59fa6a9-3e72-488f-9e5e-f90d6bc11f03","4000294337",43743,45524,392,5,384,4,0,0,0,0,89.679,0.019,2.926,0.0,92.624,43741],["Mattozo","39e54b09-984d-4b9e-8dda-fe0c30b83ff8","4000229161",39521,40745,1079,0,990,1,0,141,71,0,81.345,0.0,11.241,0.0,92.586,39377],["GUSTAVOPPECASCHAP","21f42701-ebe8-4c02-a2d6-4e89044425f2","4000279665",22495,17518,814,0,30,0,0,0,787,376,42.468,0.0,49.456,0.0,91.924,22500],["FazAnalises2","959ec46c-6b59-4658-aa01-80735d75a68f","4000227019",15222,16867,840,837,0,0,0,0,0,0,36.115,3.1805,52.309,0.0,91.605,15226],["SesiCentralAgendamentos","f1388a58-4428-443e-8179-abfae31c1304","4000220773",15289,12739,1166,0,185,1,0,0,978,0,29.194,0.0,62.388,0.0,91.582,15294],["GerencialSoftware","c7e500fb-e4d4-45d2-b87a-a6136f310c42","4000240425",41641,40326,137,135,0,0,0,0,0,0,82.623,0.513,8.433,0.0,91.569,41640],["EDUARDOZPECASCHAP","cfcf63ec-783e-445a-a967-43ec8e6f3064","4000279665",16240,12985,838,0,7,0,0,0,935,325,31.437,0.0,58.478,0.0,89.915,16131],["AdventistHealth","0e280d46-883c-44b8-af79-1cadfb4c2e68","4000080546",27626,21427,1706,0,1218,0,0,0,479,0,50.759,0.0,38.221,0.0,88.98,27618],["14073703686","654fd9a3-bf89-42db-b891-0d7c1b2d6a57","4000190060",30018,33004,3430,66,3339,13,0,0,0,0,66.705,0.2508,21.781,0.0,88.737,30023],["SenaePrates6","02f940fb-7b4c-43d4-94f6-d73e3a2b3c1f","4000258782",24081,17087,754,657,92,0,0,0,0,0,44.42,2.4951,41.697,0.0,88.612,24083],["MLSRepresetacoes","1fc19bdb-1e83-42bb-be3a-ee43ee6270c1","4000327568",25243,24334,1336,0,855,6,0,0,489,0,50.913,0.0,36.526,0.0,87.439,25223],["Prodont","d774126d-5667-4fdb-8a6d-4be6518dbcab","4000300314",16378,17829,3381,429,2908,7,0,0,0,0,39.222,1.6302,46.582,0.0,87.434,16375],["HMVCARDIOLOGIA","c765461c-16bc-4219-850c-5db8db1437f9","4000228264",9654,8208,1570,0,563,0,0,0,1000,0,19.432,0.0,66.33,0.0,85.762,9655],["SenaiNiloBettnin","afe0feeb-e90e-4e65-a78d-7a84f871cc35","4000225177",26810,23178,1383,0,930,6,0,0,441,0,51.371,0.0,33.891,0.0,85.262,26799],["SesiLajeado6110","5ca11d22-67ff-409f-bdaf-929ddfbf7f1e","4000220773",21638,16030,914,0,176,6,0,0,727,0,38.582,0.0,46.634,0.0,85.216,21625],["SenaiStaRosa","d78793cc-4cd5-424d-82bf-54d68ba6e6d6","4000225177",15296,13575,944,0,61,0,0,0,871,0,29.815,0.0,54.853,0.0,84.668,15289],["HMVANGIOGRAFIAOFICIAL","4892a95c-3719-40f3-ae4c-dad892695a3d","4000228264",14944,12830,859,0,0,0,0,0,855,0,28.633,0.0,53.45,0.0,82.083,14942],["ALEXANDREFPECASCHAP","7ca16c89-246a-4fb9-ad18-afd1a6161d55","4000279665",13216,12846,824,0,7,0,0,6,853,329,28.455,0.0,53.356,0.0,81.811,13172],["Blazina","74ec7422-c58b-4193-ab2b-8a75f35c11f3","4000236090",8094,9142,1137,876,247,0,0,0,0,0,21.698,3.3284,56.429,0.0,81.455,8097],["OrpenGetTech02","dcfea62b-680f-449b-993c-27ce93471c13","4000143063",2,2,9904,0,9909,7,0,0,0,0,9.908,0.0,68.307,0.0,78.215,2],["PapaConstrucao","b85c0989-98c4-4aa2-b07e-2f1add42298f","4000225946",32422,28004,255,247,0,0,0,2436,0,0,61.625,0.9386,15.432,0.0,77.996,29966],["SenaiPanambi","829d47ad-f45d-45b6-bcbc-7cd4c4dc8124","4000225177",17245,15732,710,0,0,0,0,0,707,0,33.687,0.0,44.197,0.0,77.884,17249],["Hanemaniana","fab28e61-e217-4407-894d-59601b5b16ae","4000282295",28595,28672,318,285,29,0,0,0,0,0,58.672,1.0828,18.007,0.0,77.762,28605],["DentalFeirense","39c89d7e-c6fe-4c77-8bd2-9de59c1dfb00","4000271525",34320,28431,210,209,0,0,0,0,0,0,63.761,0.7942,13.057,0.0,77.612,34323],["TessAdministradora","c213cc18-33a2-4169-b555-3ac93abf355a","4000268676",21940,18168,1311,418,877,3,0,0,0,0,43.008,1.5883,32.075,0.0,76.671,21943],["SenaiCalcados","f8278d87-e576-401e-b686-58cdb5667934","4000225177",17248,15203,706,0,0,0,0,15,694,0,33.157,0.0,43.379,0.0,76.536,17224],["Locadora","9e5073d5-5394-465b-ad51-db7483e2e04b","4000205029",34911,31910,1220,0,1210,9,0,0,0,0,68.041,0.0,8.231,0.0,76.272,34914],["LabSantana","d06c48d1-69db-43b3-862e-f05b81753ca5","4000230751",30714,23967,192,0,0,0,0,3595,342,0,54.873,0.0,21.37,0.0,76.243,26955],["Mesquita","f4044ecb-af13-41f1-8a2b-e28931fe184c","4000275916",19877,21361,2721,224,2433,3,0,512,0,0,44.813,0.8511,30.545,0.0,76.209,19375],["LopesMateriais","27ba6b58-29d7-45a8-ad49-530c55ea74cb","4000216936",37766,31479,88,87,0,0,0,161,0,0,69.669,0.3306,5.429,0.0,75.429,37614],["SenaiSapiranga","fd37b959-0764-41cb-bb09-b343e8c8eb1d","4000225177",16454,14271,996,0,319,4,0,0,664,0,31.721,0.0,43.671,0.0,75.392,16440],["GrecoOficial","f07f3471-8c89-435b-9191-c3bc64611b42","4000288331",41087,31145,380,0,353,0,0,23759,0,0,72.612,0.0,2.402,0.0,75.014,17310],["AGCOSasu","22197bda-2ddd-496e-a4b3-8304c31d94f9","4000232209",33947,31074,566,73,490,3,0,0,0,0,65.871,0.2774,7.903,0.0,74.051,33952],["Versoi","e7cdbf76-2585-44a0-942d-76b62179705d","4000309682",46727,26607,10,0,0,0,0,136,11,0,73.344,0.0,0.685,0.0,74.029,46596],["NeuroVirtual","2942a046-f6a4-4f54-831d-935d9a5ca491","4000286793",32525,40808,1,0,1,0,0,0,0,0,73.334,0.0,0.007,0.0,73.341,32524],["SesiNovoHamburgo","2e0ce4d6-0330-4738-b64f-56f9e2f1cc7a","4000220773",13759,11086,871,0,125,2,0,0,742,0,25.716,0.0,47.22,0.0,72.936,13762],["CristalPetsul","a6182e9c-f6b5-4f1d-8e04-d915ecda557f","4000227405",15379,18256,1116,482,631,3,0,0,0,0,36.584,1.8316,34.419,0.0,72.835,15376],["SesiSaudeEmDia","d2f3bfc4-c4da-49da-a38c-2b78bb6d7093","4000220773",495,538,9182,0,9144,2,0,0,0,0,10.215,0.0,62.183,0.0,72.398,495],["PosVendasRazi","13804079-4bbe-492f-83b8-129e5883e560","4000235210",25899,28872,1000,144,851,4,0,11,0,0,56.317,0.5472,14.783,0.0,71.647,25881],["LegalAR","17cc4729-2bc7-4d47-95ee-8ec595c194e3","4000178670",34694,28668,175,0,68,9,0,0,98,0,63.537,0.0,7.894,0.0,71.431,34696],["IdFederalSingular","8804890e-c172-47c8-8f38-5f7123443109","4000214966",25432,25807,292,272,17,0,0,0,0,0,52.567,1.0335,17.113,0.0,70.714,25426],["ARPOACertificado","1bd56a51-0ae3-4c18-919c-188d64ebc801","4000312750",13365,10653,693,0,1,0,0,0,722,0,24.711,0.0,45.128,0.0,69.839,13330],["GrupoPaineiras","7dadd423-1b09-4713-a87d-2ac59d2286f1","4000234817",17126,18360,464,469,0,0,0,0,0,0,37.738,1.782,29.309,0.0,68.829,17115],["SenaiCouro","6c83e14c-de61-442d-b47d-179ac8e560ec","4000225177",9549,8033,805,0,2,0,0,0,801,0,18.387,0.0,50.101,0.0,68.488,9511],["WecanbrRiodeJaneiro","2cea03b7-bbd3-4d69-b122-bcf2611a8b64","4000233423",7991,10958,1395,0,714,5,0,0,682,0,20.344,0.0,47.482,0.0,67.826,7965],["AdMasterAPI","74fa8d3a-44cf-433d-aad9-faf8f02a3707","4000183852",15187,15032,785,494,287,1,0,0,0,0,32.88,1.8772,32.827,0.0,67.584,15186],["SesiSaudeMental","792b57b6-072c-4194-b640-27d3839d5b09","4000220773",173,143,1397,0,407,16,0,0,1009,0,1.713,0.0,65.827,0.0,67.54,65],["Popprint","800dd4b8-5fba-4ec2-ad8e-cc4a19cb6400","4000237599",30979,31251,535,18,512,3,0,6,0,0,62.834,0.0684,4.636,0.0,67.538,30978],["SesiSaudeSaoLeopoldo","9655e43f-2274-4ce2-854f-537f9834180c","4000220773",20787,16786,511,0,53,0,0,0,453,0,38.084,0.0,28.671,0.0,66.755,20789],["adaconofical","a7cf280d-cf2e-4870-bd64-837d3a7686e3","4000248871",10618,9048,751,0,12,0,0,29,738,0,20.417,0.0,46.216,0.0,66.633,10594],["DisparosComercial01","ea896090-3eea-4cf6-bf1f-613a50770279","4000175874",594,543,957,908,24,0,0,0,0,0,5.546,3.4492,56.906,0.0,65.901,591],["SesiDigital","aea2e955-3658-48ef-981c-e9882a14e8aa","4000220773",7254,6229,954,0,163,0,0,0,789,0,14.437,0.0,50.419,0.0,64.856,7250],["MelnickPesquisa","cec48205-933d-4bdb-b635-9953c0376471","4000319226",539,533,8869,0,8004,32,0,0,7,0,9.941,0.0,54.867,0.0,64.808,539],["JACSYS","c7537e00-7d12-4f8c-ae3c-4120976d11f9","4000216255",8701,8044,675,671,0,0,0,0,0,0,19.97,2.5498,41.934,0.0,64.454,8700],["SesiCanela","8dd2e245-62ef-4f15-be51-33e82c901653","4000220773",18187,12204,537,0,0,0,0,0,536,0,30.928,0.0,33.492,0.0,64.42,18191],["SesiSapucaia","45d9bfbf-de2c-4032-a9ab-763cae1373f3","4000220773",17322,13953,507,0,0,0,0,0,505,0,31.782,0.0,31.559,0.0,63.341,17316],["Prismatec","031ffc28-4182-4088-813c-2be7b165f5d3","4000285651",13775,13876,5354,0,4233,890,0,0,0,0,33.005,0.0,28.787,0.0,61.792,13733],["ClinicaCot","df6d9e7e-cd87-4c0b-9e28-6af0c15a63c9","4000332511",23032,22945,482,0,328,0,0,0,205,0,46.459,0.0,15.047,0.0,61.506,22986],["UniversoDasFerragens2","6d775041-6688-4f44-8dbb-b766fbddcffa","4000317560",4637,4753,815,0,0,0,0,144,811,0,10.205,0.0,50.687,0.0,60.892,4494],["MarketingBrazil1","afd6dbd2-c86e-4514-bdc6-c180f503a43d","4000315397",28069,27120,74,0,0,0,0,10,88,0,55.263,0.0,5.495,0.0,60.758,28039],["IELFIERGS","aad2afec-5bd3-484c-b41b-6e61e7ec76f3","4000226240",12161,9604,599,0,0,0,0,0,599,0,22.364,0.0,37.43,0.0,59.794,12153],["Unicasa01","b76a7f9d-4762-467b-b0d3-400432f50fd4","4000363517",1712,2281,910,0,47,0,0,0,856,0,4.903,0.0,53.817,0.0,58.72,1708],["CbcoTotum","f94ead52-ea2f-46ff-8d41-e5afe5a9f5bb","4000123501",20201,14012,410,340,0,0,0,3838,0,0,35.913,1.292,21.25,0.0,58.455,16331],["RoniProCaminhao","8391ad07-74bb-4c28-b2af-b709da2fe3e1","4000144829",22608,14047,440,298,0,0,0,12070,0,0,38.232,1.1323,18.628,0.0,57.992,10675],["MilanezieRodrigues","0a0df229-e8ef-46ae-ab5d-e0d779362bc0","4000229872",5740,5815,727,643,85,1,0,0,0,0,14.726,2.4434,40.758,0.0,57.927,5740],["PsicoEnvolver","deeb8963-c321-4773-a091-bb9f3140b119","4000324364",22677,20071,1140,0,1022,14,0,16,107,0,43.888,0.0,13.636,0.0,57.524,22657],["HMVHONORARIOSOFICIAL","066da340-a952-49cb-adff-bd837ad74dcc","4000228264",7688,9685,672,0,53,0,0,0,619,0,18.045,0.0,39.044,0.0,57.089,7689],["Tgmaq1","d77892c6-aa22-4276-8493-79f2b8c97f12","4000226228",23971,20896,163,162,0,0,0,0,0,0,45.648,0.6156,10.12,0.0,56.384,23971],["551128387009","1986e022-f0ed-4710-b0d3-d1fddee42c28","4000204251",13041,12852,1379,0,962,57,0,0,357,0,27.272,0.0,28.852,0.0,56.124,13039],["CoopElginSaoPaulo","10503e62-24f1-4e7d-b551-41e165e2bd2f","4000238129",5174,4164,728,645,73,0,0,0,0,0,12.517,2.4509,40.803,0.0,55.771,5176],["Capobiango4","adf1a922-3670-49e6-97ca-cb55bfd9b94e","4000246388",29644,24981,9,0,0,0,0,0,18,0,54.634,0.0,1.12,0.0,55.754,29653],["RotaDoSol","e691c34c-a391-48c5-aae3-b389950f8474","4000313672",12395,10541,530,0,104,0,0,6,477,0,23.466,0.0,31.271,0.0,54.737,12335],["RoniPassoFundo","9746337a-fa98-4957-b3b7-2b5382190010","4000144829",7714,6512,569,559,8,0,0,0,0,0,16.923,2.1242,34.99,0.0,54.037,7715],["EMILYMSVPARTS","7e8733c6-9e71-40c0-ac2f-321e1bd58af6","4000279665",13898,11540,318,0,6,0,0,66,442,107,26.041,0.0,27.663,0.0,53.704,13705],["Synquata","f8a1d119-9462-49ce-afaf-eb7125c99955","4000222607",13874,11546,844,335,505,3,0,0,0,0,27.542,1.273,24.364,0.0,53.179,13867],["Synapsis","779d789b-aecf-44b7-baa1-a7aef91716c4","4000225979",8291,10211,865,428,432,0,0,0,0,0,20.994,1.6264,29.692,0.0,52.312,8292],["SenaiPelotas","1af08c4a-178f-46d0-b355-b0793177356a","4000225177",16888,12895,730,0,421,0,0,0,303,0,30.513,0.0,21.793,0.0,52.306,16883],["Certificaai","706698b6-dc80-4cca-8c8b-3cfe735598e4","4000312750",26325,22767,36,0,0,0,0,0,38,0,49.128,0.0,2.446,0.0,51.574,26323],["DLLSasu","d4089afc-b73d-4cf2-9fe4-b4c521060e97","4000232209",23261,22276,498,31,465,0,0,0,0,0,46.156,0.1178,5.1,0.0,51.374,23275],["HHBeauty","726c2717-3292-4fdb-a7b2-be205863a9cc","4000275802",6084,5631,664,534,125,1,0,0,0,0,14.41,2.0288,34.236,0.0,50.675,6084],["SesiPassoFundo","e6fa56fc-9104-41f2-aa13-33aa920829d0","4000220773",9468,7600,1048,0,602,0,0,0,444,0,18.116,0.0,31.845,0.0,49.961,9468],["kobrasol","4bc35bca-2587-4674-ac93-101924fc914a","4000186012",21047,18807,145,142,0,0,0,0,0,0,40.538,0.5387,8.864,0.0,49.941,20990],["InstitutoHH","80635df2-f853-41cd-abe8-eecec6ce21d1","4000275802",3926,2067,939,0,277,2,0,0,657,0,6.932,0.0,42.906,0.0,49.838,3926],["BiancaFerreiraOdonto","34dd6995-df12-4d36-8c7a-72fcc58a8b46","4000329532",23853,23118,35,0,0,0,0,0,42,0,47.006,0.0,2.618,0.0,49.624,23851],["ClinicaCor01","5648faab-5b05-4c4c-bb71-23939a782ea7","4000365433",14704,16488,1602,0,1498,2,0,0,99,0,32.794,0.0,16.377,0.0,49.171,14705],["Netart","d85704e8-3c95-4cdb-98ab-7a7e58f80a3a","4000226352",23758,22431,36,36,0,0,0,0,0,0,46.368,0.1368,2.242,0.0,48.747,23761],["ALEXANDREOCUMMINS","ea7b8902-4a27-4e25-b198-60675898c4d2","4000279665",22763,20509,47,0,0,0,0,0,47,548,45.684,0.0,2.929,0.0,48.613,22772],["MCTAQ01","a06183d2-dc0c-45d6-8b19-9e444e301aa5","4000216430",96,110,786,0,0,0,0,0,761,0,0.992,0.0,47.559,0.0,48.551,96],["ClinicaPillar","25568326-5b60-4851-82f0-9266cf586ce6","4000230031",9732,9381,560,0,170,1,0,0,442,0,19.673,0.0,28.765,0.0,48.438,9679],["SesiSantaRosa","601c3bc2-aed2-4bd1-b06b-f36e5baf6318","4000220773",12030,9056,426,0,0,0,0,0,426,0,21.512,0.0,26.622,0.0,48.134,12031],["MarketingArgentina1","7114796b-fd6b-4f35-8b90-96e4a1cc449c","4000315397",24434,23283,2,0,0,0,0,28,4,0,47.719,0.0,0.248,0.0,47.967,24393],["DisparosComercial002","2b955146-9006-4ae9-a6e2-69eb1bd205fd","4000175874",459,405,663,656,2,0,0,0,0,0,4.021,2.4918,41.011,0.0,47.524,457],["SesiCampoBom","ed0e063d-701d-4022-8fcd-971352456f23","4000220773",10191,8051,472,0,15,0,0,0,452,0,18.714,0.0,28.352,0.0,47.066,10191],["Wecanbrstoandre","059bd165-3209-4f1b-806c-82f1911627dd","4000233423",4555,6481,1614,0,1293,0,0,0,385,0,12.65,0.0,32.86,0.0,45.51,4473],["SesiSapiranga","fa2968cf-fd2a-4600-afca-7d9a979fbbfa","4000220773",9321,6825,454,0,0,0,0,0,449,0,16.6,0.0,28.062,0.0,44.662,9316],["DoctorClin1","79951bb1-e61a-459f-828b-8236ec2f89d6","4000332182",1331,1370,5388,0,5339,37,0,0,0,0,8.089,0.0,36.31,0.0,44.399,1331],["SesiIgrejinha","adfefc2c-39de-474a-baed-ac3f2cf8fe20","4000220773",6835,4937,564,0,46,0,0,0,504,0,12.336,0.0,31.807,0.0,44.143,6837],["QUEIMADOS","97377f88-f26e-44f0-9748-0f2f2c8e8d08","4000207894",5993,7812,2837,154,2410,201,0,7,0,0,17.229,0.5852,26.014,0.0,43.828,5986],["LegalBLF","80ca0fed-1e71-4400-90c2-bfd584179c4d","4000178670",21662,16953,78,0,0,0,0,0,78,0,38.693,0.0,4.867,0.0,43.56,21663],["MCTAQ02","3c719707-f5e8-478b-ae0a-1c2235389886","4000216430",92,102,685,0,0,0,0,0,670,0,0.879,0.0,41.873,0.0,42.752,90],["TelesomNovo","b25caf03-97b7-4b76-95c6-b9c8253122d4","4000273396",5202,4277,653,448,139,0,0,1499,0,0,11.841,1.7039,28.982,0.0,42.527,3698],["Isoplast2","cd46bf18-e98d-4d9e-b848-15b89067bc24","4000228935",12569,14835,236,0,0,0,0,0,236,0,27.64,0.0,14.746,0.0,42.386,12561],["Dig3Sistemas2","6fe5144a-5c04-49ba-a385-aa0e887ac5c1","4000325456",4417,6766,4176,0,3974,136,0,0,0,0,15.359,0.0,27.025,0.0,42.384,4392],["Schorr","8e6101a7-0f99-43da-971e-daa9f8d247b1","4000228040",14504,14087,987,99,856,0,0,0,0,0,29.959,0.3762,12.011,0.0,42.346,14496],["DeltaInformatica","bf5d9791-e055-4fb7-a977-6cf73f76ee37","4000273034",12175,12880,241,240,0,0,0,0,0,0,26.211,0.912,14.995,0.0,42.118,12176],["PlanoSaudeMoinhos","4bed706d-6f11-4d15-b716-2561f9eba1a1","4000228264",13184,12340,270,0,9,0,0,0,259,0,25.794,0.0,16.249,0.0,42.043,13179],["SesiBraskem","407f87cd-b02d-40b0-9aa4-531c45a6bde7","4000220773",16578,15571,210,0,66,0,0,0,144,0,32.359,0.0,9.44,0.0,41.799,16580],["HMVNavega","dbc2ca96-ac34-4eb0-a504-54ed48f8cbda","4000228264",13201,12345,950,0,837,0,0,0,150,0,26.496,0.0,15.068,0.0,41.564,13157],["IdermeLargoCarioca","aea1aea2-c263-44be-bfd7-d9636aa687a0","4000347674",9931,9373,832,0,633,0,0,12,273,0,20.136,0.0,21.355,0.0,41.491,9846],["Wecanbrminas","865b4599-d8c4-49c7-b939-674cadc5fbfd","4000233423",2178,2235,380,0,0,0,0,0,585,0,4.793,0.0,36.56,0.0,41.353,1956],["Agaesse","8f8519f6-805a-4ac5-8b45-675545325bfb","4000278030",21235,20010,2,1,1,0,0,179,0,0,41.251,0.0038,0.069,0.0,41.324,21054],["SenaiFatec","6b61b0d6-8146-4144-9d74-a6336af05bed","4000225177",15179,13564,198,0,0,0,0,0,197,0,28.941,0.0,12.301,0.0,41.242,15169],["Mutransit","59b5d1da-5bfc-420e-9622-1f498c782650","4000237331",6631,7632,386,378,0,0,0,3,0,0,16.094,1.4369,23.629,0.0,41.16,6622],["SesiErechim","9c9ca52c-d25b-4cb4-a3f0-06d38f63ec63","4000220773",9552,7599,369,0,0,0,0,0,369,0,17.52,0.0,23.061,0.0,40.581,9550],["RoniIjui","f9261dd6-71ae-4b7e-a74d-cb42086da0d2","4000144829",6289,5176,941,337,587,0,0,0,0,0,13.69,1.2806,25.053,0.0,40.024,6284],["Aderosso","5cc75896-950c-4020-bbc7-60f56e4eb147","4000274110",11678,9099,1663,0,1552,2,0,0,109,0,22.44,0.0,17.366,0.0,39.806,11681],["RoniPelotas","cdece0e2-8a1c-4734-b428-76d1033c4be6","4000144829",12474,8660,403,238,165,0,0,0,0,0,22.445,0.9056,16.028,0.0,39.379,12475],["RelacionamentoCredenciamento","0af57cc5-3136-448e-ab6f-4aa133108efd","4000080546",10416,12907,236,0,0,0,0,0,249,0,23.559,0.0,15.559,0.0,39.118,10401],["LUCASSCUMMINS","f56e1fa9-a1f9-4b94-89cf-9a2ccc6ee1a3","4000279665",14637,13570,149,0,2,0,0,0,147,354,29.413,0.0,9.206,0.0,38.619,14648],["SesiEsteio","d0cbb69b-79bb-4d59-9c56-aeaf4fdf3135","4000220773",6359,4796,631,0,225,2,0,0,401,0,11.786,0.0,26.591,0.0,38.377,6360],["ImobiliariaAcores","0a6fe4c2-039a-413e-b2b4-cc0a48d945b9","4000273605",2185,3070,524,0,1,0,0,0,515,0,5.779,0.0,32.218,0.0,37.997,2184],["HimalaiaDistribuidora","3a29221b-14df-4171-8747-02de0c1920d5","4000324540",15683,11642,233,0,0,0,0,5784,166,0,27.558,0.0,10.371,0.0,37.929,9937],["FLAMA3131","0dc354a2-9d7d-4198-8e77-f925b5125362","4000331567",14220,13431,143,0,0,0,0,0,155,0,27.794,0.0,9.686,0.0,37.48,14208],["Centrodavisao","55714d99-44a6-40dc-9bd3-424f18d8541c","4000217429",17996,15844,167,34,131,0,0,780,0,0,34.141,0.1292,3.043,0.0,37.313,17197],["HmvPontal2PreCirurgico","4dca9c37-4f22-44ef-be0e-8fc73ff223ac","4000228264",3573,2959,493,0,10,0,0,0,481,0,7.025,0.0,30.159,0.0,37.184,3570],["LIMPIM","711a584d-7af5-4728-8a28-d4b785749c1d","4000220311",4917,4875,386,384,0,0,0,0,0,0,11.641,1.4604,24.019,0.0,37.12,4915],["RochaMarquezeImoveis2","b28558b9-b10d-4d98-80c3-87aa39d28138","4000273605",8006,7398,331,0,1,0,0,0,330,0,15.735,0.0,20.633,0.0,36.368,8012],["marquesdeandrade2","f4be4d12-8a42-4f82-90c8-148930da1fd6","4000301430",8774,5840,2955,0,2707,64,0,0,0,0,17.569,0.0,18.411,0.0,35.98,8785],["SafetyBrasil","1e508617-d058-4fb0-8e5b-83f70c3cceaf","4000317752",11529,11527,187,0,1,0,0,0,203,0,23.243,0.0,12.693,0.0,35.936,11512],["PrevConsultoria","7c7af9b1-be4d-45cf-9192-e06d5acd19db","4000226340",3970,4914,600,351,245,1,0,0,0,0,10.818,1.3338,23.605,0.0,35.757,3970],["JANINEACUMMINS","5c8eb6f6-fd07-466f-8422-a8c7a7b75e36","4000279665",14562,14046,106,0,7,0,0,0,99,174,29.178,0.0,6.229,0.0,35.407,14568],["HMVDESFECHOSCLINICOS","ead3481e-c44b-48f9-95f5-3c0b918623be","4000228264",616,556,1523,0,1239,0,0,0,388,0,2.695,0.0,32.677,0.0,35.372,491],["I9Coffee","88cb2093-4000-4261-ad50-582c233cfc18","4000241414",6797,5134,327,327,0,0,0,0,0,0,13.502,1.2426,20.439,0.0,35.184,6799],["PortalWheeling","e9d62d42-8da0-4e18-b82f-1581b0bc1cbc","4000313801",9049,9729,214,0,0,0,0,0,250,0,18.992,0.0,15.616,0.0,34.608,9004],["BiancaFerreiraOdonto3","584d894b-e13b-449c-aade-d4a26e158c37","4000329532",17788,16561,0,0,0,0,0,0,0,0,34.349,0.0,0.0,0.0,34.349,17782],["LaboratorioSantana","b999edb5-e02d-4449-976a-27e776fd589e","4000230751",17959,15276,141,0,139,1,0,0,0,0,33.376,0.0,0.947,0.0,34.323,17920],["suporteunicardsa01","3978b13f-966d-4f1d-8592-1026b29a138f","4000333540",3215,2618,537,0,0,0,0,1426,446,0,6.37,0.0,27.869,0.0,34.239,1822],["CLEBERCUMMINSCOL","85c9eadc-2715-461b-be27-8dcdf6b01b50","4000279665",12728,15085,81,0,0,0,0,0,81,247,28.705,0.0,5.051,0.0,33.756,12738],["INOFOficial2","2b646b83-877a-47d8-b0d0-c07e3bc6f9cf","4000283729",17614,11654,62,62,0,0,0,10,0,0,29.569,0.2343,3.844,0.0,33.647,17605],["IdermeLargoMachado","25a1a361-98c9-459f-9165-f080a03ea82b","4000347674",8828,8858,509,0,342,1,0,0,209,0,18.195,0.0,15.401,0.0,33.596,8792],["UNBAdventista","c87c9289-b082-444b-b998-57e9c37bb0ad","4000234135",16772,14387,31,31,0,0,0,0,0,0,31.312,0.1178,1.932,0.0,33.362,16774],["ArguileBr","dc2340e7-b420-41c1-b3f2-d120b5db5436","4000221843",6917,8142,386,239,138,0,0,51,0,0,16.36,0.908,15.877,0.0,33.145,6874],["mevoapp","6797fd36-33d3-4559-8b1a-7fde278aaa24","4000239687",20229,12836,0,0,0,0,0,0,0,0,33.065,0.0,0.0,0.0,33.065,20146],["RoniAraquari","9bba4b3f-7e54-4b67-9b3e-d57031b37685","4000144829",7636,5923,623,231,381,0,0,0,0,0,15.06,0.8778,17.029,0.0,32.967,7638],["Saosebastiaoacabamentos","ef6099f9-8009-4fff-8ce0-60696c67997b","4000175663",18848,14094,0,0,0,0,0,15698,0,0,32.942,0.0,0.0,0.0,32.942,3116],["MetalCubasReal","1abf4bce-9f41-4feb-987a-c0e316c0d5d9","4000360557",13418,15730,344,0,326,3,0,0,15,0,29.492,0.0,3.157,0.0,32.649,13418],["Motormac2","f190d221-c7ce-4ce5-b142-4a60a601f00e","4000279665",17481,14594,65,0,61,1,0,92,0,0,32.14,0.0,0.419,0.0,32.559,17388],["CoopElginManaus","0619ff8e-5795-46f6-84e1-2e678aeb640e","4000238129",4709,3480,348,342,4,0,0,0,0,0,9.84,1.2996,21.401,0.0,32.541,4700],["LUISVCUMMINS","3a24aece-ee12-4d33-a94b-44f9f9cee8eb","4000279665",10392,10803,154,0,10,0,0,0,143,282,22.687,0.0,9.003,0.0,31.69,10398],["DDR0732","468cd201-12c0-4117-b32b-ce5c69e152fd","4000082865",10572,7099,1346,0,1307,1,0,0,59,0,19.017,0.0,12.577,0.0,31.594,10477],["ConfiancaSeguranca","d782341e-a3c9-4b5a-b9e6-dbecfe0f99fb","4000283646",9120,9839,192,151,13,0,0,0,27,0,19.731,0.5738,11.207,0.0,31.512,9119],["THALITACUMMINSSJO","2163e0a2-71e5-4caa-bbbc-5da5b1ae9a46","4000279665",11152,12734,119,0,7,0,0,59,112,141,24.36,0.0,7.042,0.0,31.402,11100],["COLISEUOFICIAL","5038c1e3-782b-4746-b922-1f3fd45aaf73","4000303292",14089,14214,42,42,0,0,0,0,0,0,28.508,0.1596,2.622,0.0,31.29,14090],["GoldBrasil","c49b8999-c42c-4a69-9402-1cdcf5c8485d","4000279490",11108,8801,160,160,0,0,0,0,0,0,20.678,0.608,9.993,0.0,31.279,11110],["SesiGuapore2","b20e03bd-b456-4876-8cb6-ba8d0b565543","4000220773",4558,3598,366,0,1,0,0,0,363,0,8.522,0.0,22.689,0.0,31.211,4557],["Pbnewsistemas","4332b03a-683c-4b4f-9d18-a88bcf26750f","4000226659",14716,14958,183,0,181,1,0,19,0,0,29.857,0.0,1.241,0.0,31.098,14698],["LUISCUMMINSCOL","aced8878-779d-4920-861b-5ae5fbc11c28","4000279665",5503,5580,312,0,1,0,0,0,310,94,11.687,0.0,19.379,0.0,31.066,5510],["ValenetDois","245a49f0-b9aa-4fd5-bac1-aa7962c0b54c","4000222074",1442,1608,438,0,0,0,0,0,438,0,3.488,0.0,27.369,0.0,30.857,1443],["AdaconLeads","b0a81374-f13d-4481-a58d-f67653968c73","4000248871",5593,5536,323,0,7,0,0,69,309,0,11.452,0.0,19.354,0.0,30.806,5530],["ONeOficial","5b653bd5-48f2-494f-a39e-ae0053620efd","4000208521",914,722,532,0,82,1,0,0,448,0,2.168,0.0,28.624,0.0,30.792,914],["Dygnus","cb66acaf-a3b2-4903-9423-670673a95613","4000249851",4282,6834,450,250,194,4,0,0,0,0,12.517,0.95,16.948,0.0,30.415,4282],["GOVPLAN","42caff6b-9d74-4bb0-ac6d-fc4f6ebb9fe7","4000216694",3885,3961,312,311,0,0,0,0,0,0,9.341,1.1818,19.438,0.0,29.961,3885],["MGAMedica","a46e1f3d-3ebf-49a0-898e-e0c24a4a22a8","4000226582",3261,5055,299,299,0,0,0,0,0,0,9.749,1.1362,18.686,0.0,29.571,3261],["MAYKONCUMMINSCOL","2b75cc9a-f96a-41ca-ba35-8c3f66e0eb4f","4000279665",11005,14796,59,0,30,3,0,0,26,494,27.324,0.0,1.83,0.0,29.154,11007],["UnimedItaqui","3d59e4d9-7820-43c0-b0f5-26bbf15c202a","4000239823",7815,6568,207,207,0,0,0,105,0,0,15.383,0.7866,12.931,0.0,29.101,7713],["IncdCertificados","6f796db6-9041-4627-907d-ac4316c22cc0","4000230677",5865,5751,2472,0,2197,253,0,0,0,0,14.088,0.0,14.981,0.0,29.069,5867],["SPLeituras2","dc471981-b46e-49b2-a35a-074b3b9dcc73","4000240561",4649,5728,293,0,0,0,0,0,293,0,10.67,0.0,18.305,0.0,28.975,4650],["SESIGRP","3ce7ebe5-9287-457e-b211-d3fc5ba9fc4f","4000220773",4638,3890,320,0,0,0,0,0,319,0,8.848,0.0,19.937,0.0,28.785,4639],["SesiGuaiba","e15ae2e8-4474-4cee-aae8-b5017d269cd7","4000220773",7376,5120,541,0,332,0,0,0,206,0,13.037,0.0,15.129,0.0,28.166,7374],["OrpenCS3905","74fbe9d4-ba06-4c69-a10f-f9ed760fb442","4000082865",4994,6593,280,0,15,0,0,0,259,0,11.867,0.0,16.286,0.0,28.153,4983],["PAMELAMSVPARTESPOA","10679810-46e9-4b02-945f-a4a419fb21b4","4000279665",4760,5023,286,0,42,1,0,0,282,62,10.243,0.0,17.907,0.0,28.15,4724],["555133449290","de75b1c2-328e-486e-9d07-589dcca1b97d","4000194438",9568,7891,1044,0,969,10,0,0,47,0,18.503,0.0,9.525,0.0,28.028,9564],["RdsConsultoria","3470faa0-ff74-4e4a-a189-17fedc5b7512","4000226523",7566,8009,223,168,55,0,0,14,0,0,16.446,0.6384,10.873,0.0,27.957,7554],["OrientadoraDircksen","fddafa6e-2028-49bd-9b04-e4ba63e13045","4000273206",2558,2962,353,0,9,0,0,0,344,0,5.873,0.0,21.56,0.0,27.433,2556],["SantoSupermercado","852dd857-e1da-4825-bf19-f7e16c88ef50","4000315267",6672,8340,134,0,0,0,0,0,191,0,15.146,0.0,11.935,0.0,27.081,6611],["ENERSONCUMMINSSJO","a05746e5-4100-4bc0-b18d-5fc471365968","4000279665",10767,13511,200,0,195,2,0,4,3,241,25.128,0.0,1.516,0.0,26.644,10762],["ronistamaria","2a366f73-ec63-4d74-b841-991f440c9037","4000144829",5369,4905,529,0,312,0,0,0,217,0,10.803,0.0,15.707,0.0,26.51,5369],["ClinicaSaoJose","75c8977c-90c0-406c-9f67-69283cec7484","4000213415",8349,10142,169,67,0,0,0,1618,43,0,18.918,0.2544,6.868,0.0,26.04,6756],["GILMARCUMMINSSJO","48bb85d9-155f-4ea8-959b-0948955f8439","4000279665",11899,11820,40,0,6,0,0,4,34,79,23.876,0.0,2.16,0.0,26.036,11899],["JONATHANPECASJCB","2a38c2f3-a226-4322-8505-ac33716d4b95","4000279665",7759,7703,147,0,6,0,0,0,141,337,17.123,0.0,8.852,0.0,25.975,7760],["SorVila","fba56f10-ec55-417c-a177-60b48007fc3f","4000269477",1608,1799,316,316,0,0,0,0,0,0,4.929,1.2008,19.744,0.0,25.874,1604],["DITUALSP","d789b5ba-a817-4ecb-a177-8038beb1435f","4000220318",9708,7010,175,123,50,0,0,0,0,0,17.361,0.467,8.029,0.0,25.857,9633],["TedsysSistemas","0472a071-e00b-4868-a028-db664d511a14","4000249218",10548,8394,93,93,0,0,0,0,0,0,19.391,0.3534,5.811,0.0,25.555,10549],["Ratimbum","f302dc8d-6f05-4db6-9b4d-c2dadde90a32","4000310766",10238,10292,108,0,36,0,0,13,72,0,20.638,0.0,4.743,0.0,25.381,10216],["SynGloria6776","18dd7c9b-ca49-42d4-baec-9b32366c0225","4000222607",1749,3771,279,279,0,0,0,0,0,0,6.859,1.0604,17.442,0.0,25.361,1749],["CkoConsulting","91740a93-23c9-4de1-ab8e-8446ab23ef6f","4000279370",9181,9820,1185,0,1178,1,0,0,0,0,20.186,0.0,4.78,0.0,24.966,9185],["Techboard","afb4e51b-a0f5-407a-9522-1d662be878e9","4000325478",11098,12908,2,0,0,0,0,0,7,0,24.008,0.0,0.435,0.0,24.443,11091],["EmKasa","5300d101-bcde-4d61-b201-ac95f13df60d","4000354374",3670,4934,550,0,340,0,0,0,206,0,9.154,0.0,15.264,0.0,24.418,3670],["FomentoTo3","ebccdae6-0c55-4318-8fee-42717218f61f","4000335442",7634,9064,295,0,234,3,0,0,91,0,16.993,0.0,7.277,0.0,24.27,7594],["UNIAONORTEBRASILEIRA","408bf43e-ce83-48b0-bf37-40153a6bcd44","4000339722",3548,4220,205,0,1,0,0,0,256,0,7.973,0.0,16.008,0.0,23.981,3494],["SesiPortao","5c41ee62-e6a2-4cb7-ab05-daabd5b50dc2","4000220773",8230,5070,168,0,0,0,0,0,168,0,13.468,0.0,10.493,0.0,23.961,8230],["HospitalBaleiaSac","fb1364ea-c559-4b20-a444-460c3bee142e","4000213439",7561,9688,700,0,679,1,0,0,19,0,17.949,0.0,5.828,0.0,23.777,7559],["OrientadoraEstreito","cfe35ead-5d3c-437f-a040-6ff04ccdd9e1","4000273206",1741,1912,311,0,1,0,0,0,310,0,3.964,0.0,19.381,0.0,23.345,1741],["GemirPoa","af1933a3-389f-49c8-b4ac-cfccfae13263","4000279480",10246,10413,40,0,0,0,0,0,40,0,20.699,0.0,2.494,0.0,23.193,10243],["POLITONE2","2414bac5-0a3d-4786-b98e-a506f89a1eb1","4000314453",8580,6855,89,0,0,0,0,0,122,0,15.524,0.0,7.63,0.0,23.154,8550],["GemirNovoHamburgo","f61e2ffe-da2c-44ee-ace1-38d085dca5b7","4000279480",11042,9655,38,0,0,0,0,0,38,0,20.735,0.0,2.371,0.0,23.106,11034],["flextec01","3faecb46-ebd7-4925-a198-a07127722fb1","4000316786",9351,6973,85,0,0,0,0,0,105,0,16.409,0.0,6.557,0.0,22.966,9334],["SenaiSantaMaria","b8732454-5177-4f55-9227-6f12d2ab3efe","4000225177",6349,7118,150,0,0,0,0,0,148,0,13.617,0.0,9.245,0.0,22.862,6350],["CredenciamentoProasaDF","22a284ff-3a96-4d28-b883-7ff31d1e0255","4000080546",1587,2130,385,0,135,0,0,0,277,0,4.102,0.0,18.228,0.0,22.33,1556],["ANTONIOCCUMMINS","6ae60230-f629-4a31-b599-52ae1ad84f9d","4000279665",3032,3106,251,0,3,0,0,0,248,107,6.663,0.0,15.523,0.0,22.186,3032],["OrpenGetTech03","dbc270a7-635c-4317-8558-7998bd08e225","4000143063",1,1,2735,0,2748,1,0,0,0,0,2.737,0.0,18.681,0.0,21.418,1],["InstituicaoIPAE","cc4a71e4-b8a4-4098-bdc6-64b7a8201c39","4000318895",4504,4754,185,0,23,0,0,10,187,0,9.443,0.0,11.91,0.0,21.353,4466],["CMPCSaladecrise","73d4ede3-d08b-4577-9732-9e7566f02261","4000357582",376,355,1397,0,1281,116,0,0,0,0,2.128,0.0,18.631,0.0,20.759,376],["SesiEstrela","a039eb1a-00b1-4e5e-8aa6-0e0379ebebb9","4000220773",4739,3888,238,0,56,1,0,0,182,0,8.865,0.0,11.751,0.0,20.616,4733],["LegalBR","cbfe3c89-b6e3-4e33-ad59-8c61a3a95159","4000178670",1948,1982,264,0,3,0,0,0,261,0,4.194,0.0,16.333,0.0,20.527,1948],["ThomsonGTMAtivos","14361150-d142-4d65-beb3-7d748c11be87","4000178670",11856,8426,1,0,1,0,0,0,0,0,20.283,0.0,0.007,0.0,20.29,11856],["DIFERPANFONE","a88e279b-82fa-47c6-9e6e-192e89bec8ee","4000218064",11446,8683,0,0,0,0,0,0,0,0,20.129,0.0,0.0,0.0,20.129,11445],["CentralCobrancaConsorcioColombo2","6de88952-6a5a-4b89-abe0-9993339602a2","4000322498",4043,3830,195,0,0,0,0,0,192,0,8.068,0.0,12.001,0.0,20.069,4031],["AdaconConsultora02","be4b91fa-e9e4-4ff8-b2a3-0f37a0852b25","4000248871",1344,1373,273,0,1,0,0,0,272,0,2.99,0.0,17.008,0.0,19.998,1342],["HmvPontal1","f7f985b8-6c36-4448-8d51-ed49526aa635","4000228264",7602,7341,80,0,0,0,0,0,79,0,15.023,0.0,4.92,0.0,19.943,7602],["Turbotec1","7d7eb279-1579-4ae6-a91c-36765b9f6b12","4000336302",4740,4554,179,0,40,0,0,794,162,0,9.473,0.0,10.395,0.0,19.868,3919],["OrpenGetTech04","b2547c60-fab0-4580-84b8-8a651381ab45","4000143063",0,0,2546,0,2546,0,0,0,0,0,2.546,0.0,17.303,0.0,19.849,0],["Hmtour","5c47e30f-07f0-415d-8352-1891184939b0","4000284394",4462,3806,146,145,1,0,0,0,0,0,9.024,0.6132,10.18,0.0,19.817,4461],["SesiSesmt","0bb5387f-f450-42ca-b53b-378eb2d34d44","4000220773",1201,1484,270,0,0,0,0,0,269,0,2.955,0.0,16.814,0.0,19.769,1201],["BCertOrpenIncd","da72b244-e44c-4099-8e48-a39943cb808f","4000294901",1260,1042,822,0,558,25,0,0,204,0,3.124,0.0,16.543,0.0,19.667,1260],["RAFAELCUMMINSCOL","8257500f-f32d-4efd-85e2-3307fd0d83ac","4000279665",5808,6459,110,0,2,1,0,0,107,140,12.776,0.0,6.694,0.0,19.47,5811],["SENAIEscolaDigital","542f453c-356d-406a-8452-915e433549a6","4000225177",2531,2577,1873,0,1817,48,0,0,0,0,6.981,0.0,12.361,0.0,19.342,2529],["OrientadoraPagani","3687bf8e-8138-43fa-9848-909dd3351ba9","4000273206",3910,3884,394,0,239,2,0,0,151,0,8.188,0.0,11.063,0.0,19.251,3910],["BSFTUniformes","5c29f36d-1e25-48f7-b8c2-64c7513b838e","4000285544",4882,2604,243,163,3,0,0,2792,0,0,8.35,0.6192,10.207,0.0,19.176,2158],["SesiCECaxiasdoSul","f042121b-786d-4112-a1f2-af4edc3f4287","4000220773",4969,3505,164,0,0,0,0,0,164,0,8.638,0.0,10.247,0.0,18.885,4963],["LABSAOROQUE","330a5862-1f36-4cdf-89bf-46bb880b557f","4000316245",8371,8367,25,0,0,0,0,8,34,0,16.763,0.0,2.116,0.0,18.879,8352],["SesiRioGrande","51dd7574-9159-4f34-a6ce-b074045493d5","4000220773",6642,4502,144,0,26,0,0,0,117,0,11.288,0.0,7.482,0.0,18.77,6638],["Sinpain1","511f01ad-43fd-430e-be27-2cfcee34d1ce","4000201577",2892,2090,1802,0,1745,8,0,145,0,0,6.784,0.0,11.935,0.0,18.719,2760],["JuridicoHBR","91fbc227-8dca-455f-acec-9b1bce3b5c07","4000307425",5015,3266,1346,0,1296,7,0,0,3,0,9.627,0.0,9.001,0.0,18.628,5003],["AresClima","92937205-f798-4fe5-8019-a7db95e379eb","4000248504",5916,5399,435,57,375,3,0,0,0,0,11.973,0.2166,6.118,0.0,18.308,5917],["EMANUELLESERVICOSJCB","77dd797e-09d5-409b-90be-6cd6bbca20a6","4000279665",6887,5419,285,0,231,3,0,0,50,204,13.463,0.0,4.701,0.0,18.164,6888],["Capobiango5","e45f55c2-cfcb-473c-88a4-34f5005f2801","4000246388",9079,7973,6,0,0,0,0,0,13,0,17.058,0.0,0.808,0.0,17.866,9074],["INOFOficial","aee53827-97b4-4e19-9657-66bff0f60bc6","4000283729",6175,4363,216,89,127,0,0,0,0,0,11.099,0.3382,6.425,0.0,17.862,6176],["AdaconGerenteContasLocatario","9a203a8d-502e-4ac1-9c77-be970c9fbb1a","4000248871",2414,3211,190,0,0,0,0,0,190,0,5.815,0.0,11.87,0.0,17.685,2414],["SenaiBage","83a4a06d-6a06-451e-b06d-12e1a7ccd1bf","4000225177",3573,3424,149,0,0,0,0,0,166,0,7.146,0.0,10.364,0.0,17.51,3563],["FiergsCentralRelacionamento","215c0190-a87a-46ba-8a85-fa1f612f3049","4000226240",10571,6673,2,0,0,0,0,0,2,0,17.246,0.0,0.124,0.0,17.37,10566],["Euroservice","5ff3b4c7-618f-478b-88b6-a3193bb04084","4000214842",3159,4720,129,129,0,0,0,0,0,0,8.501,0.4902,8.055,0.0,17.046,3150],["SenaiMetrologia","194ed307-51a7-422e-9a3b-8bd649b933f5","4000225177",4641,5299,154,0,51,0,0,0,102,0,10.094,0.0,6.719,0.0,16.813,4627],["FomentoTo1","f38fd0b0-d6d1-4cc2-8ef0-4f050c1c65dc","4000335442",6078,6530,544,0,533,3,0,0,0,0,13.152,0.0,3.628,0.0,16.78,6079],["DITUALCURITIBA","a35c36d1-4579-458f-8818-f89fa86d3783","4000220318",7399,6771,31,31,0,0,0,0,0,0,14.319,0.1177,1.937,0.0,16.374,7388],["poloAnhanguera","1d739021-e597-4333-b6a8-03779468b979","4000214966",3937,3534,93,120,0,0,0,1086,0,0,8.023,0.456,7.493,0.0,15.972,2826],["SesiCESantaCruz","4ac91863-ff99-4a1d-9512-a0fca587876c","4000220773",5496,3594,254,0,166,0,0,0,83,0,9.344,0.0,6.312,0.0,15.656,5491],["WILLIAMSERVICOSCHAP","4128f1da-5eeb-4e9e-a684-89a46219bbbb","4000279665",1652,1485,183,0,4,0,0,0,196,0,3.32,0.0,12.271,0.0,15.591,1635],["SynPluma","7d4301e7-561c-4de0-8f48-154c8008f44c","4000222607",5071,4533,84,84,0,0,0,262,0,0,10.013,0.3192,5.245,0.0,15.577,4809],["televendas01","e0cd7f60-ffdb-4aca-892c-02fc60149c07","4000194438",2150,1736,136,0,0,0,0,0,183,0,4.022,0.0,11.436,0.0,15.458,2104],["HospitalBaleiaRelacoes","5e1ce9a0-a788-47f1-b702-145b2169f8b0","4000213439",6646,8090,70,0,70,0,0,0,0,0,14.806,0.0,0.478,0.0,15.284,6646],["WCursos2","d9e71660-caba-407d-82a9-860f01c773e0","4000331329",1321,1169,106,0,0,0,0,0,203,0,2.596,0.0,12.684,0.0,15.28,1219],["SesiSantaMaria","e31f7e49-270a-4b31-b2d8-9619d60f0d9f","4000220773",3619,2615,143,0,0,0,0,0,142,0,6.377,0.0,8.873,0.0,15.25,3615],["Notificacao3","e15386de-061a-4383-b164-9bd4790454cf","4000218605",4309,3695,778,0,752,0,0,0,20,0,8.782,0.0,6.364,0.0,15.146,4274],["FirstSteps2","34298d39-4cdc-4578-849d-20c0744d2ed3","4000268288",1788,1941,206,0,28,0,0,0,176,0,3.935,0.0,11.104,0.0,15.039,1788],["HMVFARMACIAOFICIAL","294eae7d-0b9b-43ae-8710-503467cee816","4000228264",2195,3050,1247,0,1238,3,0,0,0,0,6.492,0.0,8.419,0.0,14.911,2195],["CreimpolColaboradores","02dfa4a5-a23c-4c49-b6fa-f9666090a1bf","4000194438",5876,7512,187,0,185,1,0,0,0,0,13.575,0.0,1.261,0.0,14.836,5877],["PlenumAdiocional","198b991f-6ace-4a06-be5a-667458a4325f","4000178740",0,372,1894,0,1830,7,0,0,0,0,2.266,0.0,12.47,0.0,14.736,0],["MCTAQ03","526fa4b6-36b4-47b8-9c12-eb3d96c42c4e","4000216430",19,19,230,0,0,0,0,0,228,0,0.268,0.0,14.25,0.0,14.518,19],["GARZESI","a9541c38-9808-4753-9903-5bb518f52676","4000218736",1658,2382,242,134,95,1,0,0,0,0,4.796,0.5106,9.115,0.0,14.422,1659],["NegociosMasteclass2","38bd4967-3c9f-4f5a-843d-c11d00b20083","4000232097",46,71,222,0,0,0,0,0,222,0,0.339,0.0,13.874,0.0,14.213,46],["Govtechsummit","53c61bb6-f5d5-40a9-8259-93d31c626d92","4000347526",1441,913,1530,0,1465,59,0,0,3,0,3.884,0.0,10.149,0.0,14.033,1434],["JoinvilleCurso","8295e80d-25a6-4957-a181-5b375225b025","4000281765",1893,1909,558,0,453,0,0,0,104,0,4.36,0.0,9.575,0.0,13.935,1893],["Primordial","c72769db-e078-4e4e-b97b-187a57675e57","4000293739",4916,5335,46,47,0,0,0,0,0,0,10.479,0.1786,2.936,0.0,13.594,4916],["ROBSONCUMMINSCOL","056d147f-23dc-462f-bc82-b35d435ecc1b","4000279665",4802,4301,184,0,136,3,0,0,45,151,9.781,0.0,3.741,0.0,13.522,4803],["Engegov1","5235cc6e-8a8e-4d70-8adf-3c31693a7470","4000332316",6202,6067,113,0,112,1,0,0,0,0,12.382,0.0,0.767,0.0,13.149,6202],["RoniIcara","4f638225-e857-4f35-be46-a7c86b804dbd","4000144829",6553,5222,21,19,2,0,0,0,0,0,11.872,0.0722,1.196,0.0,13.14,6553],["MAIKYPECASJCB","87b93475-0a3a-4f52-bd7f-8a7271720ebc","4000279665",6286,5006,145,0,139,3,0,0,4,160,11.881,0.0,1.197,0.0,13.078,6293],["HbrFormaturas6","791c0060-4f9e-465a-9dae-cadf4b7e2fac","4000307425",3915,2946,821,0,771,8,0,0,0,0,7.682,0.0,5.244,0.0,12.926,3915],["34888021","ac6e1530-b66c-47f0-bba5-0bda8255aeff","4000212350",1456,2982,136,0,0,0,0,0,133,0,4.574,0.0,8.311,0.0,12.885,1455],["SeccoConstrutora","598bf08f-5433-40f2-a8d3-46ad98a55d0a","4000325704",959,916,158,0,0,0,0,16,172,0,2.033,0.0,10.745,0.0,12.778,929],["MCTAQ04","cca01c14-3f63-42d4-8eb5-b20136bce890","4000216430",14,13,210,0,0,0,0,0,200,0,0.237,0.0,12.5,0.0,12.737,13],["FaculdadeCobrancaHMV","4e34b1f4-f4c8-4cab-803d-cb5ffb506dab","4000228264",3357,3984,81,0,0,0,0,0,80,0,7.422,0.0,4.996,0.0,12.418,3354],["NegociacaoCredenciamento","73a9e7ca-6671-42ef-91df-76c43c4af983","4000080546",2709,3177,113,0,48,0,0,0,94,0,5.999,0.0,6.198,0.0,12.197,2681],["DAIANECUMMINSCOL","4b84785f-dada-4dbe-9339-b0515b17a365","4000279665",242,268,182,0,0,0,0,0,179,20,0.798,0.0,11.184,0.0,11.982,242],["Ciclogiro","83c744b0-1ef2-4878-8da3-e163ecc1f50c","4000287652",4014,3355,63,60,0,0,0,271,0,0,7.669,0.231,3.792,0.0,11.692,3745],["Vellozz3","f324eee6-3dc5-4c45-8beb-127d8dfd54bd","4000346579",4821,3909,384,0,378,5,0,0,0,0,9.114,0.0,2.57,0.0,11.684,4821],["crpmamaranhao","773f21c6-dc5c-4580-8333-2b2815673723","4000235441",6873,4803,0,0,0,0,0,0,0,0,11.676,0.0,0.0,0.0,11.676,6872],["ITSTecnologiaInformatica","e0ad1ed8-e379-4653-8ec2-2f03b596e872","4000323201",4156,5247,25,0,2,0,0,0,32,0,9.428,0.0,2.007,0.0,11.435,4150],["ALINESCUMMINSSJO","e39b23e5-2161-42f4-9d3b-e1c547861681","4000279665",2684,2196,101,0,0,0,0,0,101,45,5.093,0.0,6.307,0.0,11.4,2685],["unimedcentrors04","3f6dfd69-1c1d-469e-bd1c-6438fe219bf6","4000070028",1774,1451,460,0,371,1,0,0,81,0,3.685,0.0,7.582,0.0,11.267,1774],["BiancaFerreiraOdonto2","6ab47597-294d-4cde-a661-3b5be398465e","4000329532",5480,5316,7,0,0,0,0,0,7,0,10.803,0.0,0.436,0.0,11.239,5480],["Endodiagnostic1","7b4e9918-3369-4629-8a88-d1a94ac2a84c","4000323830",500,385,125,0,0,0,0,8,161,0,1.01,0.0,10.106,0.0,11.116,448],["MARCIAS","b7b06789-85cf-45de-ab2b-2bca954925a5","4000279665",3651,3849,40,0,0,0,0,0,50,91,8.0,0.0,3.115,0.0,11.115,3645],["Perffeti","83136130-5959-4998-a37e-acc894a05dcb","4000226233",404,730,142,140,1,0,0,0,0,0,1.808,0.532,8.752,0.0,11.092,404],["ASMEDOFICIAL","554282d0-317e-4c82-ac9c-688a5b8db44d","4000272125",18,23,1425,0,1405,21,0,0,0,0,1.466,0.0,9.557,0.0,11.023,18],["DDR2800","0a9fea62-8860-412f-a2a8-d695765d8bab","4000311409",4614,4913,38,0,19,0,0,0,21,0,9.565,0.0,1.436,0.0,11.001,4612],["IDfederalVarejo","c875cf76-f8cf-4dfa-969e-0e86ea1ae93f","4000214966",3988,3902,43,43,0,0,0,155,0,0,8.1,0.1634,2.686,0.0,10.949,3819],["RibeiroUniformes","d89ea2fd-4e88-4d67-9f22-8b31771d116c","4000328226",4533,3674,50,0,16,0,0,0,41,0,8.257,0.0,2.665,0.0,10.922,4523],["Codevilla","830cb077-b05d-4ede-b4c9-a51877aa97dc","4000323979",2829,2605,59,0,2,0,0,0,85,0,5.493,0.0,5.319,0.0,10.812,2801],["ThinkIT","9f1ed0d5-ee03-4c42-b750-900b9d5d156f","4000223653",6000,4762,0,0,0,0,0,0,0,0,10.762,0.0,0.0,0.0,10.762,6001],["PrevConsultoriaAPP","b5581aed-b2a2-4b1b-83a1-c18684746c19","4000226340",1826,2192,170,84,85,0,0,0,0,0,4.517,0.3192,5.826,0.0,10.662,1825],["SesiCachoeirinha","1e65274b-3e4d-49d8-a762-3d27e3e7de8a","4000220773",3663,2138,75,0,0,0,0,0,75,0,5.876,0.0,4.682,0.0,10.558,3664],["IAGOMSERVICOSCHAP","fd1134a0-4eaa-4d3e-aef5-153adae10c99","4000279665",3810,3980,42,0,4,0,0,0,41,0,7.832,0.0,2.584,0.0,10.416,3807],["SilvestreSaude","4c451696-3f6a-457c-a915-e1faf466a92a","4000293283",6324,4022,0,0,0,0,0,0,0,0,10.346,0.0,0.0,0.0,10.346,6324],["TallesNovo","8cfad996-f818-4864-80e3-138c0228fb60","4000227274",3519,3716,43,43,0,0,0,0,0,0,7.443,0.1648,2.713,0.0,10.321,3519],["Rospide","f7f83562-bb1f-4f42-83db-6276fd56aeb4","4000239291",4080,3258,38,38,0,0,0,0,0,0,7.52,0.1444,2.374,0.0,10.038,4080],["CDIOdonto","5b993a3c-3417-49ff-96f1-9861b596a78b","4000217236",213,213,131,131,0,0,0,0,0,0,1.057,0.4978,8.184,0.0,9.739,213],["IVANPECASJCB","77f9285b-2591-410e-8515-d946cd813a24","4000279665",4464,4089,17,0,6,0,0,0,11,117,8.954,0.0,0.725,0.0,9.679,4471],["KASSIODSVPARTSSC","5f7005a2-4234-4ba9-9b98-18e5fdba2516","4000279665",2273,2455,61,0,0,0,0,0,77,0,4.789,0.0,4.807,0.0,9.596,2259],["NucleoFraturas","b9ce9e2a-e2f0-4288-a652-2fbc1a774b55","4000272125",1886,2353,270,0,214,0,0,0,56,0,4.509,0.0,4.978,0.0,9.487,1884],["AgendamentoAlbum","54b5c8c4-bf2c-43b0-b8e9-29f921c053f9","4000322371",688,687,282,0,178,0,0,0,104,0,1.657,0.0,7.71,0.0,9.367,688],["TapChile","83827f5c-dddd-4868-94ce-d282253f48eb","4000178670",5238,4033,0,0,0,0,0,0,0,0,9.271,0.0,0.0,0.0,9.271,5238],["FomentoTo4","41179619-0271-4136-88a4-2bbb0d8c57a3","4000335442",1534,1595,245,0,176,1,0,0,74,0,3.374,0.0,5.81,0.0,9.184,1524],["PontaGrossa","cbde0631-5dab-444e-abb1-15db681d4b37","4000281765",2309,1577,87,0,4,0,0,0,83,0,3.973,0.0,5.209,0.0,9.182,2308],["DPRHAdventistHealht","aa495143-6b49-468a-93b8-cfc3df6d4240","4000080546",4876,4291,0,0,0,0,0,0,0,0,9.167,0.0,0.0,0.0,9.167,4873],["FABIOCUMMINSCOL","ed6092d7-2944-42aa-bad4-9ed33f635236","4000279665",2919,2573,112,0,69,0,0,0,43,75,5.945,0.0,3.157,0.0,9.102,2919],["MARCELCUMMINSSJO","cf450b21-ca99-479a-8891-e9e76d858f7a","4000279665",4308,4333,8,0,6,0,0,0,2,77,8.842,0.0,0.166,0.0,9.008,4311],["SesiNovaHartz","69f18194-a064-4281-bc1f-cab19432a0f4","4000220773",1416,1060,100,0,0,0,0,0,99,0,2.576,0.0,6.179,0.0,8.755,1417],["IGREJAIASD","8c4e965b-a2ee-4c47-859d-17dc4c82b97f","4000217204",1780,2060,70,68,1,0,0,0,0,0,4.169,0.2584,4.256,0.0,8.683,1781],["SesiSaoSebastiaodoCai","8c1864ec-a2d3-4391-a785-3a8c4f818be4","4000220773",1459,1216,94,0,0,0,0,0,94,0,2.769,0.0,5.866,0.0,8.635,1456],["ComercialDeFerro","bef9b9b6-ae1d-4d80-973f-bb43f9da6b7f","4000227845",3893,4027,10,10,0,0,0,0,0,0,7.969,0.038,0.622,0.0,8.629,3893],["SesiRubemBerta","41ad9211-5de3-4576-94f7-11ba11f69f2e","4000220773",2856,1880,58,0,0,0,0,0,58,0,4.794,0.0,3.619,0.0,8.413,2857],["MarketingChile1","6b9945df-74e0-4831-8276-d8c6088351f1","4000315397",3228,2884,16,0,0,0,0,0,24,0,6.128,0.0,2.136,0.0,8.264,3219],["MissaoSergipe","468faa52-e4b9-475f-8a02-cda9f2d3c40a","4000274027",3292,2552,34,32,2,0,0,0,0,0,6.002,0.1216,2.009,0.0,8.133,3290],["PrismatecPagamentos","806225f8-1e75-4fbd-9473-f731ef2391c9","4000285651",2287,4066,43,0,22,0,0,0,24,0,6.396,0.0,1.646,0.0,8.042,2284],["ARAtivo","c76dde10-4111-42a4-99f6-d0767deaa871","4000312750",3136,2707,28,0,1,0,0,0,34,0,5.871,0.0,2.077,0.0,7.948,3128],["BGsaude","a2500f33-26eb-4df0-85e9-7bf3184299de","4000213439",2945,3119,38,0,0,0,0,741,27,0,6.102,0.0,1.685,0.0,7.787,2214],["Safesoft1","a28649f6-90b1-4ae6-97a2-abeaf052e7e1","4000302432",1580,1624,67,65,0,0,0,0,0,0,3.515,0.2423,3.991,0.0,7.748,1579],["SesiBage","8573abb0-8ef4-43bb-9652-d72d89358f6e","4000220773",1679,1336,73,0,0,0,0,0,74,0,3.088,0.0,4.614,0.0,7.702,1676],["ClinicaSalus2","e302ed36-cab5-4be5-ae58-2fb015e5c9d7","4000327886",3840,3440,53,0,53,0,0,0,0,0,7.333,0.0,0.362,0.0,7.695,3840],["DDR4630","a29c082f-f42a-4d33-b5b9-cbe41d42c8d2","4000082865",3072,3247,21,0,0,0,0,0,21,0,6.34,0.0,1.304,0.0,7.644,3074],["Indusprevi","cec9cade-9844-4117-bedd-e42cb59f71b7","4000359877",1498,1436,74,0,0,0,0,0,74,0,3.008,0.0,4.618,0.0,7.626,1498],["Valenet03","145c147b-2e67-45f3-bcc8-4d3370b68998","4000222074",398,498,107,0,0,0,0,0,106,0,1.003,0.0,6.622,0.0,7.625,397],["SACRegina","adec5722-718f-4aac-8113-23b930f02c64","4000236069",370,763,95,91,0,0,0,0,0,0,1.575,0.3458,5.684,0.0,7.605,370],["GemirPelotas","3d205e1c-2c23-4944-9540-311d56b4e87c","4000279480",3513,3011,16,0,0,0,0,0,16,0,6.54,0.0,0.997,0.0,7.537,3513],["RrmTelecom","d3625465-8542-47d7-b4c0-593443e5ed4a","4000227712",1042,6411,0,0,0,0,0,0,0,0,7.453,0.0,0.0,0.0,7.453,1042],["5511952582170","7786e4d8-2347-4b25-b4d1-5ae9f57a0635","4000182087",1863,1954,50,50,0,0,0,0,0,0,4.063,0.19,3.116,0.0,7.369,1862],["routernovo","e2b985b3-f695-4f99-b743-edad031a4244","4000215540",1406,1676,62,60,0,0,0,0,0,0,3.381,0.228,3.742,0.0,7.351,1405],["PrivilegeSul","99ddc39e-371e-4c51-a638-35c4721339a5","4000309043",1952,1722,51,51,0,0,0,0,0,0,3.921,0.1938,3.186,0.0,7.301,1951],["Facsi2","bcc14d74-46a5-45c9-b168-2d4cd8a065ca","4000302473",2730,2192,73,27,46,0,0,0,0,0,5.103,0.1026,1.995,0.0,7.201,2730],["NautLux","cdbe0245-407b-436c-8ebc-739a8ba947bc","4000310547",2748,2537,73,24,0,0,0,1755,0,0,5.451,0.0906,1.487,0.0,7.029,1036],["PrismatecDevolucaoReativacao","d4cf462d-cca6-4af4-aa2b-d81d55f9e3e3","4000285651",2025,3456,182,0,180,1,0,0,0,0,5.663,0.0,1.229,0.0,6.892,2028],["HMVNUCLEOMAMA","76e1d007-a849-4428-88f2-d51bdee2305e","4000228264",2752,2244,220,0,217,1,0,0,2,0,5.216,0.0,1.603,0.0,6.819,2752],["WestLawArgentina","6767e1af-73a7-4888-bbe9-7a4a7f4111df","4000178670",4775,1973,0,0,0,0,0,0,0,0,6.748,0.0,0.0,0.0,6.748,4777],["Breda1","1a769c8b-8cf4-4e95-9a3d-6800e6429901","4000302491",3053,3067,39,0,36,0,0,0,3,0,6.159,0.0,0.432,0.0,6.591,3053],["EprosysSuporte","9e6ad262-df14-46ab-a9d2-17b20d622561","4000360443",1285,1458,409,12,361,30,0,0,0,0,3.198,0.0456,3.205,0.0,6.449,1285],["HCBCDI","121e3492-b830-4be4-81b7-f2c21592b581","4000322515",3017,3402,0,0,0,0,0,40,0,0,6.419,0.0,0.0,0.0,6.419,2977],["DDR3910Boingo","415ebce2-5038-4990-86a8-f51ffd330ebd","4000082865",3165,3217,4,0,4,0,0,0,0,0,6.386,0.0,0.027,0.0,6.413,3169],["MICHAELSERVICOSJCB","1113ab2b-8e51-42ea-ab0d-11a260cd4fc1","4000279665",2546,2392,163,0,160,1,0,0,2,33,5.185,0.0,1.217,0.0,6.402,2550],["POLITONE","b43a5ffe-99bb-4d21-a829-f40b39ce0570","4000314453",1810,1395,23,0,0,0,0,0,50,0,3.228,0.0,3.119,0.0,6.347,1784],["AdaconCondominios","0f6dbc75-fd0d-4839-b5b0-f028fad9eddc","4000248871",472,805,312,0,262,1,0,0,46,0,1.589,0.0,4.649,0.0,6.238,472],["AdaconGerenteProprietario","52bb6892-04a8-4ab5-bca9-21b759ee2eb7","4000248871",1143,983,64,0,0,0,0,0,64,0,2.19,0.0,3.989,0.0,6.179,1143],["KenkoSaude","f6d82bbe-9950-49a5-a15c-94cc9e451df9","4000361366",1904,2114,25,0,0,0,0,0,25,0,4.043,0.0,1.562,0.0,5.605,1904],["EDUARDOCUMMINSSJO","82a1f810-1fdb-4106-8d5c-a21edd9b2330","4000279665",3166,2190,19,0,19,0,0,0,0,34,5.469,0.0,0.133,0.0,5.602,3167],["ARBAHcertificado","784970b7-0554-4a1f-b64d-fc64c26e372b","4000312750",2807,2532,2,0,0,0,0,0,3,0,5.341,0.0,0.186,0.0,5.527,2806],["HMVSAUDEPLENA","48376372-2faf-4a40-b0d0-93e176d6acd3","4000228264",927,551,604,0,498,104,0,0,0,0,2.082,0.0,3.391,0.0,5.473,927],["NaturalQuality","5b6dc1ff-776f-45cc-9402-3fcc68fc1945","4000321154",2883,2523,1,0,1,0,0,0,0,0,5.407,0.0,0.007,0.0,5.414,2888],["MedcareOFICIAL","e9ec0e15-2c1d-4f13-af6f-2bdd54790f52","4000184781",0,5385,0,0,0,0,0,0,0,0,5.385,0.0,0.0,0.0,5.385,0],["HMVPNEUMOLAB","db1b0e32-440e-4356-8ec1-d28516b71ec2","4000228264",2084,2200,140,0,140,0,0,0,0,0,4.424,0.0,0.952,0.0,5.376,2084],["SesiMarau","4a6a8797-26eb-41e5-88c1-ec71966a1ad9","4000220773",1102,1066,50,0,0,0,0,0,50,0,2.218,0.0,3.115,0.0,5.333,1102],["MIGUELSERVICOSJCB","6320522e-dd2c-4d0a-b4f4-62ae1c7e2f40","4000279665",2028,2016,22,0,3,0,0,0,19,0,4.066,0.0,1.201,0.0,5.267,2032],["VegaCheckout","322dbf4a-6aaa-4467-8bb7-b3585b59f661","4000338973",2344,2671,0,0,0,0,0,0,0,0,5.015,0.0,0.0,0.0,5.015,2345],["multscan","26831801-d173-48cb-9a2d-d273dccbd0b3","4000250907",1438,2106,20,20,0,0,0,0,0,0,3.639,0.076,1.257,0.0,4.972,1436],["HMVCentroCirurgico","364cd092-27f1-4816-a8ae-61d1918ad3bd","4000228264",1975,2187,89,0,89,0,0,0,0,0,4.251,0.0,0.612,0.0,4.863,1975],["HABFINANCEIRO","042f11d5-24eb-44b6-ac5f-65cf85a7ecda","4000174726",2178,2621,0,0,0,0,0,0,0,0,4.799,0.0,0.0,0.0,4.799,2178],["ANAMCUMMINS","49ac20dd-906d-443c-ba0f-9d3183159e36","4000279665",1445,1384,28,0,0,0,0,0,28,31,2.959,0.0,1.745,0.0,4.704,1445],["VeloxContabilidade","d770b2c0-10b1-4d20-bf1f-7aca7b524b41","4000253969",1935,1920,102,0,103,0,0,0,0,0,3.957,0.0,0.709,0.0,4.666,1935],["UNBSecretarias","529524fd-28be-43c6-afd9-23b1d184ec57","4000234135",2268,1931,6,6,0,0,0,0,0,0,4.229,0.0228,0.373,0.0,4.625,2268],["InfinityLog2","cb23822b-ceca-4235-8448-f2eed701a493","4000339744",2252,2346,0,0,0,0,0,0,0,0,4.598,0.0,0.0,0.0,4.598,2249],["SenaiGuapore","2e8c4175-7054-48e8-8a56-8dcf0e9e145c","4000225177",1925,1605,15,0,0,0,0,0,15,0,3.545,0.0,0.932,0.0,4.477,1925],["CobrancasBrasil","d09abe66-026f-4634-9a42-a794a1ea627f","4000178670",2244,1975,0,0,0,0,0,0,0,0,4.219,0.0,0.0,0.0,4.219,2245],["555131950303","739c70ad-a9af-4c67-a0c2-8112b2294e4a","4000207737",2250,1837,16,0,16,0,0,0,0,0,4.103,0.0,0.111,0.0,4.214,2250],["SesiSaudeDR","4972fe45-23f3-4c7d-b78a-96dc8ea763c1","4000220773",1193,1137,25,0,0,0,0,0,29,0,2.355,0.0,1.809,0.0,4.164,1189],["AstFacilities","9c320afe-21f0-4e37-940f-c92d8a81aba6","4000233423",878,1215,124,0,106,0,0,0,19,0,2.217,0.0,1.91,0.0,4.127,874],["ISADORAMOTORESSJO","6f6b5542-4485-417b-9a83-3d04712db86f","4000279665",850,772,52,0,19,0,0,0,36,0,1.674,0.0,2.374,0.0,4.048,847],["chiaperininuvem","2f078d20-66ab-425f-9b6f-c5789f4e4b59","4000271096",1670,1355,12,12,0,0,0,0,0,0,3.085,0.0456,0.746,0.0,3.877,1669],["PlanoCerto2","36e8a430-3365-407c-a256-6f722d5bb5cf","4000309969",2216,1497,0,0,0,0,0,1966,0,0,3.713,0.0,0.0,0.0,3.713,253],["ClinicaHarmonia","282aa08c-4dbe-463d-842d-52448a8d65a6","4000295262",1768,1941,0,0,0,0,0,20,0,0,3.709,0.0,0.0,0.0,3.709,1748],["CentrusLago","644eed54-aecd-4229-8ab3-0cb479047f44","4000227276",1196,1218,17,0,0,0,0,0,17,0,2.431,0.0,1.092,0.0,3.523,1193],["ProjetoBairru","8ac29f7e-135c-4e91-8dee-3431dc024896","4000309983",2226,1288,0,0,0,0,0,0,0,0,3.514,0.0,0.0,0.0,3.514,2225],["DDR4627","7e7d7898-0c26-452f-a800-c0d816f63c34","4000082865",512,611,102,0,49,12,0,0,31,0,1.225,0.0,2.27,0.0,3.495,512],["DDR3932","86a3a04d-0871-4929-b3ee-0de794439158","4000082865",1918,1525,0,0,0,0,0,0,0,0,3.443,0.0,0.0,0.0,3.443,1918],["555133634800","f334c027-dbf1-4a4d-bdd5-f59a3b064ec3","4000208687",934,783,24,23,1,0,0,0,0,0,1.833,0.0874,1.435,0.0,3.355,934],["1134888033","ebbe18b6-6820-4530-bcc9-06544b2f9b0b","4000212350",942,1457,28,0,15,0,0,0,13,0,2.427,0.0,0.914,0.0,3.341,947],["CMPC2025","28dc68c2-8b8a-4b4a-83da-a6fa0ee61f23","4000294318",1415,1046,13,0,0,0,0,0,13,0,2.474,0.0,0.808,0.0,3.282,1415],["DDR0736","21520072-3cef-41ac-88a2-ffa116360ddb","4000082865",146,153,41,0,0,0,0,0,47,0,0.34,0.0,2.937,0.0,3.277,140],["PlanaltoVerde","d8afd45b-f522-483b-8e83-4bc46a5bde07","4000214966",796,1015,24,0,0,0,0,35,23,0,1.835,0.0,1.437,0.0,3.272,761],["UniqueImoveis","d0e10847-2318-4295-b938-6979b9e4b06d","4000273605",895,924,22,0,0,0,0,8,22,0,1.841,0.0,1.367,0.0,3.208,887],["Valedi","f872ba9d-982c-4e55-94c0-264c305b0c45","4000227372",0,3180,0,0,0,0,0,0,0,0,3.18,0.0,0.0,0.0,3.18,0],["DDR3914","0b6fa105-ae8a-49cd-8486-124dc8ac3398","4000082865",373,331,193,0,137,42,0,0,14,0,0.897,0.0,2.264,0.0,3.161,374],["RCX3900","53fcf046-de77-40a9-8c07-ad8fd37a8191","4000082865",786,781,24,0,0,0,0,0,24,0,1.591,0.0,1.5,0.0,3.091,787],["JULIAMOTORESSJO","32cff1c8-f796-4eb0-935c-4a8f0f2323a5","4000279665",281,269,38,0,0,0,0,0,38,0,0.588,0.0,2.372,0.0,2.96,284],["ArtNobre3","5ac6902b-25c8-49a1-8954-53403fa622cc","4000322371",601,1084,12,0,0,0,0,0,19,0,1.697,0.0,1.183,0.0,2.88,594],["SynaptiBrasil","82306655-53d7-46b5-8b58-e8b0fd7fcf46","4000236069",642,890,132,5,125,0,0,0,0,0,1.684,0.019,1.167,0.0,2.87,642],["EvoraFarma2","531f9b47-55ea-40a0-93df-744407d684bd","4000236079",1221,1566,0,0,0,0,0,0,0,0,2.787,0.0,0.0,0.0,2.787,1221],["DDR4628","259191a3-5ef4-41fd-9ed2-e8bf3e21d8b7","4000082865",6,4,47,0,5,0,0,0,42,0,0.057,0.0,2.655,0.0,2.712,6],["MVBBrasil","e90ac384-5923-45f1-abb0-98ce4c2a0305","4000217232",904,1213,8,8,0,0,0,0,0,0,2.157,0.0304,0.497,0.0,2.684,904],["unimedcentrors03","6ad8647f-9d7d-48a4-bd5d-f1d2e8555b7f","4000070028",759,586,21,0,0,0,0,0,21,0,1.366,0.0,1.306,0.0,2.672,759],["farmaciadenagen","3e183d82-8d89-4f21-9bf9-257fefad694a","4000237799",1090,1266,15,3,12,0,0,0,0,0,2.383,0.0114,0.27,0.0,2.664,1089],["551128387107","d7228483-c1b4-4953-a95c-a5ca91ee5ce6","4000204251",1121,1228,34,0,34,0,0,0,0,0,2.383,0.0,0.231,0.0,2.614,1121],["Endodiagnostic2","e64388ca-2993-4ea6-a1d6-0c68e91cec53","4000323830",45,21,46,0,0,0,0,0,40,0,0.112,0.0,2.498,0.0,2.61,42],["AbraViagens","6536c44d-2366-47ad-8b56-6d78925d0af2","4000332359",778,708,13,0,0,0,0,0,16,0,1.499,0.0,0.998,0.0,2.497,775],["1134888031","58cee2cc-22da-457b-abb2-88ee018e3ebc","4000212350",772,940,41,0,32,0,0,0,7,0,1.753,0.0,0.658,0.0,2.411,762],["GMACompressores","20a1671a-b0ae-4d61-9e96-3647fa7134e1","4000293275",1211,1116,1,1,0,0,0,0,0,0,2.332,0.0038,0.062,0.0,2.398,1211],["Orpen0700","be376a41-2e39-4d01-8735-f7b7a480a82c","4000082865",1161,1073,2,0,0,0,0,0,2,0,2.236,0.0,0.124,0.0,2.36,1158],["Facsi3","81b9a04a-4bbb-4006-bb46-989f1c012588","4000302473",840,889,7,7,0,0,0,0,0,0,1.764,0.0266,0.436,0.0,2.227,840],["Agromercador","4ec11932-a398-441f-a107-cf1a892e9727","4000241401",808,1382,0,0,0,0,0,0,0,0,2.19,0.0,0.0,0.0,2.19,808],["ADRABRASIL","99767685-2ece-4cd4-87d4-8b8955f56330","4000215658",915,1193,0,0,0,0,0,0,0,0,2.108,0.0,0.0,0.0,2.108,915],["DDR0716","2432d887-c3a6-4596-8a0b-f5c5b6b8804b","4000082865",1190,884,0,0,0,0,0,0,0,0,2.074,0.0,0.0,0.0,2.074,1191],["SesiNucleoNRs","c4728de3-60e0-4f39-90d0-ca1febbb6b93","4000220773",808,660,9,0,0,0,0,0,9,0,1.477,0.0,0.562,0.0,2.039,809],["LUISCUMMINSSJO","6436377a-b48f-4a35-a82d-4a47dafba7a7","4000279665",1082,856,6,0,6,0,0,0,0,9,1.95,0.0,0.042,0.0,1.992,1082],["IDFARINDICADOR","a98e0d61-8fb7-430b-8b4c-909b2f6e3ea5","4000214966",676,668,9,9,0,0,0,12,0,0,1.389,0.0342,0.559,0.0,1.982,664],["DahrerePeixoto","a8aad8bb-b9d5-4501-847b-7b08c8226707","4000239405",684,1283,0,0,0,0,0,0,0,0,1.967,0.0,0.0,0.0,1.967,684],["senaiSAOMARCOS","2f95c675-1147-47d3-b2c8-3d9b3c661e87","4000225177",618,574,12,0,0,0,0,0,12,0,1.204,0.0,0.745,0.0,1.949,619],["DDR3923","83823a40-a294-41fb-a06e-24089d266c2f","4000082865",1133,810,0,0,0,0,0,0,0,0,1.943,0.0,0.0,0.0,1.943,1133],["DDR4613","7bbb51c5-7a15-4ff1-8d45-19b658c03ed3","4000082865",473,267,73,0,60,1,3,0,9,0,0.813,0.0,1.097,0.0,1.91,473],["1134888028","f5f0c006-4b75-4e43-9e80-e2d87af82a94","4000212350",378,986,25,0,20,0,0,0,5,0,1.389,0.0,0.451,0.0,1.84,373],["DDR3951","6c6b7908-00df-4c6d-bb17-12d6a6636494","4000082865",67,102,26,0,0,0,0,0,26,0,0.195,0.0,1.62,0.0,1.815,66],["Gerencial","738bac22-95e3-47aa-8124-e2213312bbb5","4000240425",839,860,0,0,0,0,0,0,0,0,1.699,0.0,0.0,0.0,1.699,839],["saosebastiaopinhais","84dcd8d5-18a8-43a5-b6fe-66aec82bd19c","4000175663",764,906,0,0,0,0,0,0,0,0,1.67,0.0,0.0,0.0,1.67,763],["Opportunity2","d1893e5d-8242-40ed-9407-1fcb6cc09680","4000313940",157,158,18,0,0,0,0,0,21,0,0.333,0.0,1.311,0.0,1.644,152],["SesiVenancio","e4e63d9f-05d1-4e2b-80cb-4dc27940a13f","4000220773",88,214,18,0,0,0,0,0,21,0,0.32,0.0,1.31,0.0,1.63,85],["DistribuidoraViare","8d717bb0-9b86-404c-b653-33542959caab","4000285651",129,111,22,0,1,0,0,0,21,0,0.262,0.0,1.315,0.0,1.577,128],["MarketingMexico","53645b54-4e93-4fb7-b880-0a60c1b4ccd8","4000315397",792,773,0,0,0,0,0,0,0,0,1.565,0.0,0.0,0.0,1.565,792],["RRPremoldados","f6166515-83a1-4847-be41-751b7485a201","4000329452",701,820,0,0,0,0,0,154,0,0,1.521,0.0,0.0,0.0,1.521,545],["TATIELEFCUMMINS","c4437c5f-3118-4cea-bcf8-13595533922b","4000279665",196,160,18,0,0,0,0,0,18,5,0.387,0.0,1.123,0.0,1.51,196],["HCBEVO","c2a464e1-0f05-4b19-a02f-1ceb4d8133a5","4000322515",785,655,0,0,0,0,0,0,0,0,1.44,0.0,0.0,0.0,1.44,785],["SIMONELCUMMINSPECASPASSOFUNDO","efa65b50-4dbf-4bff-a9d9-3609e57b31c2","4000279665",318,373,11,0,0,0,0,0,11,8,0.737,0.0,0.682,0.0,1.419,318],["DuFrioRH","5611f9bc-ae96-40c6-9573-3a82a4647789","4000298692",0,0,176,0,176,0,0,0,0,0,0.176,0.0,1.23,0.0,1.406,0],["DDR3947","1f2ecd90-3d7f-47e5-9afe-3cd2402226da","4000082865",346,282,12,0,0,0,0,0,12,0,0.64,0.0,0.75,0.0,1.39,346],["Ozonteck","797efab2-0bc1-4593-a1d0-f82957aa62ab","4000311120",0,1389,0,0,0,0,0,0,0,0,1.389,0.0,0.0,0.0,1.389,0],["JOAOCUMMINSSJO","7d677b24-6064-4b41-9f02-f9c0e97f0910","4000279665",628,471,15,0,15,0,0,0,0,15,1.186,0.0,0.105,0.0,1.291,628],["OrpenNotificacao","e5fd8687-7ee8-4036-b386-c73d6a97b3e3","4000082865",20,115,27,0,2,1,7,0,17,0,0.162,0.0,1.123,0.0,1.285,20],["PrismatecRessarcimento","8f327c19-f256-438c-aeaf-98008a26c3f9","4000285651",272,258,18,0,8,0,0,0,10,0,0.548,0.0,0.68,0.0,1.228,272],["UNBIgrejas","6b252107-f624-4f9b-9f5d-4b300464e2ff","4000234135",511,374,4,4,0,0,0,0,0,0,0.905,0.0152,0.248,0.0,1.168,511],["GJSAdvogados","16e563c4-8d36-48e8-83cb-7becadfb8d7d","4000333253",221,309,8,0,0,0,0,0,10,0,0.538,0.0,0.623,0.0,1.161,219],["adaconcobranca","2b6bccb1-3bc3-4ff3-bf33-87d5590d0c2e","4000248871",394,342,6,0,0,0,0,0,6,0,0.742,0.0,0.372,0.0,1.114,394],["DominioAdicionais","4f3b35b1-1004-4243-a21d-585104d74f60","4000178670",89,137,112,0,109,3,0,0,0,0,0.338,0.0,0.741,0.0,1.079,89],["ValeAutoShop","d1c5ab2c-3f4b-4540-a5b3-a2d293c3006e","4000345728",90,55,29,0,12,9,0,0,13,0,0.174,0.0,0.894,0.0,1.068,85],["comercialtechto","757a1b8e-14c4-413e-ba26-3762ecdca9e0","4000271096",581,486,0,0,0,0,0,0,0,0,1.067,0.0,0.0,0.0,1.067,581],["denagen02","dcb5853a-0ed8-4593-99d3-bce0f0140032","4000237799",455,534,2,0,2,0,0,0,0,0,0.991,0.0,0.014,0.0,1.005,454],["GlobalTax","b8fe06aa-cd44-4843-bdf0-ba279d2a2cd7","4000281917",379,419,12,0,10,0,0,0,2,0,0.81,0.0,0.194,0.0,1.004,379],["PlanoCerto","2850ea9b-c172-4afa-953c-29f0c7c35fcb","4000309969",444,544,0,0,0,0,0,55,0,0,0.988,0.0,0.0,0.0,0.988,389],["ShopQUE","572f5494-ed45-4677-b0d2-6fbec0b00d2b","4000288509",358,408,24,0,24,0,0,0,0,0,0.79,0.0,0.164,0.0,0.954,358],["Router","f6c6b388-0662-4577-b231-ccfc7325e87b","4000215540",106,133,10,10,0,0,0,0,0,0,0.288,0.038,0.624,0.0,0.95,106],["SenaiLajeado","70a195af-a29d-4787-a09e-07a079ff05de","4000225177",435,498,0,0,0,0,0,0,0,0,0.933,0.0,0.0,0.0,0.933,434],["VERAGERADORESSJO","856bc065-c3a0-49e4-966d-919957eb6741","4000279665",138,158,11,0,2,0,0,0,9,10,0.356,0.0,0.573,0.0,0.929,137],["RoniItajai","da30c30f-aac9-4794-bade-cd6728318715","4000144829",480,384,1,0,0,0,0,0,1,0,0.865,0.0,0.062,0.0,0.927,480],["CLAUDIONORSVPARTS","555cee26-2669-45d2-ae31-11605165f1f5","4000279665",336,390,3,0,0,0,0,0,3,5,0.73,0.0,0.186,0.0,0.916,336],["OrpenDominio","6393a75d-49a1-48b8-a797-ef4181877277","4000144209",0,896,0,0,0,0,0,0,0,0,0.896,0.0,0.0,0.0,0.896,0],["1134888032","d9782f77-756a-4d93-bc4e-2bc3562cd7c2","4000212350",345,326,20,0,19,0,0,0,1,0,0.691,0.0,0.195,0.0,0.886,345],["SantoSupermercado2","6931b07c-af63-4799-9a84-651e1591dac3","4000315267",514,370,0,0,0,0,0,0,0,0,0.884,0.0,0.0,0.0,0.884,514],["1134888034","84b75741-f405-472a-a085-e470ee06dfc5","4000212350",294,422,13,0,11,1,0,0,1,0,0.729,0.0,0.139,0.0,0.868,293],["DDR4614","2272d585-73c4-4a01-aab9-4063ac46bb1a","4000082865",417,376,17,0,7,10,0,0,0,0,0.81,0.0,0.049,0.0,0.859,417],["Nortkar","3a9fa2a8-54c5-4a02-afa6-12eab345f39c","4000295872",226,558,0,0,0,0,0,0,0,0,0.784,0.0,0.0,0.0,0.784,226],["HMVNUCLEOMAMAENFERMAGEM","6057502c-3da7-404f-bdae-3501e39ba3e9","4000228264",290,335,20,0,20,0,0,0,0,0,0.645,0.0,0.137,0.0,0.782,290],["PlantaoTI","0bccb081-c652-4f07-9e56-ff4e21b3beb0","4000080546",365,393,0,0,0,0,0,0,0,0,0.758,0.0,0.0,0.0,0.758,365],["RODRIGOSCUMMINS","fcaf766a-dc95-4699-9f38-d014c5043c9e","4000279665",297,294,3,0,2,0,0,0,1,22,0.682,0.0,0.076,0.0,0.758,298],["PoppCorretora1","404e5b1b-3656-4e0e-8c55-9d823325053d","4000230887",322,422,0,0,0,0,0,0,0,0,0.744,0.0,0.0,0.0,0.744,321],["DEBORASVPARTS","6bae1db8-d88c-4b2d-bf26-0831befc9eac","4000279665",283,290,3,0,2,0,0,0,1,9,0.606,0.0,0.076,0.0,0.682,284],["Thoten","327adb8d-0fde-46bf-89a1-273bc88c3854","4000324572",221,437,0,0,0,0,0,0,0,0,0.658,0.0,0.0,0.0,0.658,221],["SesiDivisaoOperacoesInvestimentos","113c3f52-20c1-4ffd-af2b-64dafd93801b","4000220773",48,42,6,0,0,0,0,0,9,0,0.096,0.0,0.558,0.0,0.654,45],["Desjoyaux","4d3e1181-a241-45e2-bf24-c9e5e38b878d","4000294045",375,258,0,0,0,0,0,0,0,0,0.633,0.0,0.0,0.0,0.633,375],["Ouvidoria","1313a555-fc19-4e44-abf8-68d13cddbcad","4000190838",157,172,4,0,0,0,0,0,4,13,0.382,0.0,0.251,0.0,0.633,157],["DDR0749","1d0d44f2-68dc-4023-a7d8-4956e6439489","4000082865",283,285,1,0,0,0,0,0,1,0,0.569,0.0,0.062,0.0,0.631,283],["DDR3939","0ba314e1-7983-4eea-a474-15c07b1944fb","4000082865",231,249,2,0,0,0,0,0,2,0,0.482,0.0,0.124,0.0,0.606,231],["EmiteAi3","fcd3f13e-656f-4e7b-80a6-d462b44af689","4000302309",151,454,0,0,0,0,0,0,0,0,0.605,0.0,0.0,0.0,0.605,151],["HMVMEDICINANUCLEAR","25beb505-9332-4c41-ac94-b46de135be7d","4000228264",273,327,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.0,0.6,273],["DDR3960","60a765f2-a8fd-45fd-97f4-d505d7a0ca1e","4000082865",300,263,0,0,0,0,0,0,0,0,0.563,0.0,0.0,0.0,0.563,300],["MicroMarketSales","5d61477a-fdf9-4ef8-b66d-15aafef741d6","4000134216",237,191,2,0,0,0,0,0,2,0,0.43,0.0,0.125,0.0,0.555,237],["Estreitoorientacao","6180eac2-0354-40bf-a06d-8df34acd93f6","4000273206",61,95,7,0,1,0,0,0,6,0,0.163,0.0,0.382,0.0,0.545,61],["DDR5645","57c0fd20-74db-49cd-b5e9-27b872e95923","4000082865",235,242,1,0,0,0,0,0,1,0,0.478,0.0,0.062,0.0,0.54,235],["OrientadoraEstreito","d31a57ef-73e7-4acc-8a01-a1ee1ff55293","4000273206",182,188,20,0,19,1,0,0,0,0,0.39,0.0,0.13,0.0,0.52,182],["ProasaBOT","5131c0f5-676d-4f2f-8532-7366eed00a3c","4000080546",223,290,0,0,0,0,0,0,0,0,0.513,0.0,0.0,0.0,0.513,223],["Garrama","39a77729-c03f-4174-8069-5e5e8cb61dde","4000227263",0,509,0,0,0,0,0,0,0,0,0.509,0.0,0.0,0.0,0.509,0],["DDR3942","00e95bda-d68e-48e6-82ea-5b51ab0307c7","4000082865",228,200,1,0,0,0,0,0,1,0,0.429,0.0,0.062,0.0,0.491,228],["DygnusSuporte","eeff464e-01f7-43f9-85ca-5b1ea7299da2","4000249851",179,241,1,1,0,0,0,0,0,0,0.425,0.0038,0.062,0.0,0.491,179],["contamkunz","2c454602-c1f1-4136-88cf-323e8015d982","4000225153",0,485,0,0,0,0,0,0,0,0,0.485,0.0,0.0,0.0,0.485,0],["DDR3977","81898eea-d3d1-43bd-b804-4bf8c9858ed3","4000082865",79,88,5,0,0,0,0,0,5,0,0.172,0.0,0.311,0.0,0.483,79],["JlhGas","3291d0dd-bca3-4d30-ae23-f0576c7e36ad","4000228655",0,478,0,0,0,0,0,0,0,0,0.478,0.0,0.0,0.0,0.478,0],["EmiteAi","b400e076-6ba6-443c-938d-bf13c5343a66","4000302309",233,233,0,0,0,0,0,0,0,0,0.466,0.0,0.0,0.0,0.466,233],["NOGUEIRAEBARROS","b9429a8c-fa80-41ff-b1c7-0e839de62d69","4000335420",10,51,13,0,11,0,0,0,5,0,0.074,0.0,0.387,0.0,0.461,6],["LabCentro","8f0bcaa6-7fb4-4ec4-a19c-1643ff70bd93","4000365562",2,5,57,0,57,0,0,0,0,0,0.064,0.0,0.39,0.0,0.454,2],["TpartsVendas","b81486bd-c147-41ec-870d-ff872a28ed23","4000227120",0,442,0,0,0,0,0,0,0,0,0.442,0.0,0.0,0.0,0.442,0],["HMVIGUATEMI","d9a78800-a5c5-41a3-8079-35962fb8ad51","4000228264",152,160,15,0,15,0,0,0,0,0,0.327,0.0,0.103,0.0,0.43,152],["Sobradinhocelular","6fea4457-1f7f-4314-933c-f73612bbda26","4000070028",185,199,0,0,0,0,0,0,0,0,0.384,0.0,0.0,0.0,0.384,185],["DDR0734","b4e73933-1018-48ef-8d2b-d3ea2740d80d","4000082865",175,8,3,0,0,0,0,0,3,0,0.186,0.0,0.186,0.0,0.372,175],["Smarteech3","753dcb98-5bcb-4074-918f-a0722e114332","4000297945",111,189,1,1,0,0,0,0,0,0,0.305,0.0038,0.062,0.0,0.371,111],["PrismatecSuporteOficinas","f487e32c-4787-423f-92ff-0ec9ce1ed9d4","4000285651",118,91,40,0,17,23,0,0,0,0,0.249,0.0,0.118,0.0,0.367,118],["DDR3956","f7cbd8d3-e944-4fed-b159-9cb340cfaf0f","4000082865",135,94,2,0,0,0,0,0,2,0,0.231,0.0,0.124,0.0,0.355,135],["CuricicaOdonto","e3738b58-d28b-4d43-9a5e-385348a681c6","4000207894",0,338,0,0,0,0,0,0,0,0,0.338,0.0,0.0,0.0,0.338,0],["GABRIELNEST","a3e2035e-9cba-4498-a7a5-60d81e76c3a8","4000279665",133,118,4,0,3,0,0,0,1,0,0.255,0.0,0.083,0.0,0.338,133],["vivario","e71e5b49-3d24-4b7c-83d0-3310df16a575","4000240235",0,327,0,0,0,0,0,0,0,0,0.327,0.0,0.0,0.0,0.327,0],["ThomsonGTMSuporte","f9fa31b0-684f-4d79-92f5-17d954d7a17f","4000178670",71,56,22,0,22,0,0,0,0,0,0.149,0.0,0.173,0.0,0.322,71],["PerolasMake","ced0bded-cef6-4ab0-b6ea-7d15f5042ee5","4000120160",0,318,0,0,0,0,0,0,0,0,0.318,0.0,0.0,0.0,0.318,0],["LicenciadoStarter","702d12f3-3a17-4f1d-a149-cb2d9586a3a1","4000134216",150,166,0,0,0,0,0,0,0,0,0.316,0.0,0.0,0.0,0.316,150],["FazAnalises","21540bb9-f10e-4ced-aed5-2daeb3e70b7d","4000227019",117,121,1,1,0,0,0,0,0,0,0.243,0.0038,0.062,0.0,0.309,118],["receptivonovo","e615cb26-c46b-4ee4-9118-30ef22fc3bd4","4000186012",173,128,0,0,0,0,0,0,0,0,0.301,0.0,0.0,0.0,0.301,173],["DDR3949","c1b1a78f-a857-40bc-a945-edf1a6a43551","4000082865",150,146,0,0,0,0,0,0,0,0,0.296,0.0,0.0,0.0,0.296,150],["DDR4629","4e12d90c-26f9-48ca-bfbf-0c90e92ce3a5","4000082865",123,164,0,0,0,0,0,0,0,0,0.287,0.0,0.0,0.0,0.287,123],["DDR3930","cc2154a9-a82e-45f0-868f-2126f8ab63fd","4000082865",35,24,38,0,28,10,0,0,0,0,0.097,0.0,0.19,0.0,0.287,35],["Digi3Sistemas6","211805da-9dcb-4c0b-bbd4-2649e541d814","4000325456",0,31,32,0,32,0,0,0,0,0,0.063,0.0,0.218,0.0,0.281,0],["DDR3973","de928cc5-3019-4db2-98d9-27012a2e2a50","4000082865",14,14,4,0,0,0,0,0,4,0,0.032,0.0,0.249,0.0,0.281,14],["DominioIA","589b3cb6-67fd-4257-89a6-8cb9092e542d","4000178670",126,151,0,0,0,0,0,0,0,0,0.277,0.0,0.0,0.0,0.277,126],["Zeppelini","af78093d-102a-475a-bd91-9b6422c20fa7","4000277227",156,119,0,0,0,0,0,0,0,0,0.275,0.0,0.0,0.0,0.275,156],["DDR0714","6bac6056-4adf-48b6-b2bb-e930a7fe20ce","4000082865",136,136,0,0,0,0,0,0,0,0,0.272,0.0,0.0,0.0,0.272,136],["DDR3948","426189ec-bc80-4612-8e4d-28e11f9d7b8f","4000082865",5,3,4,0,0,0,0,0,4,6,0.022,0.0,0.25,0.0,0.272,5],["Techboard3","c785ecea-fc14-4392-a151-051edd8cda27","4000325478",157,98,0,0,0,0,0,0,0,0,0.255,0.0,0.0,0.0,0.255,157],["Glassfit","1ef7f9d1-6d65-412f-8ab8-96bbd659f733","4000279641",102,151,0,0,0,0,0,0,0,0,0.253,0.0,0.0,0.0,0.253,102],["SenaiNiloPecanha","d87351fc-e559-45b6-9d86-e8a70e3649ad","4000225177",110,139,0,0,0,0,0,0,0,0,0.249,0.0,0.0,0.0,0.249,109],["MixEmbalagens","446f7f51-55be-4a04-86a8-90a0f74bdf19","4000282299",0,245,0,0,0,0,0,0,0,0,0.245,0.0,0.0,0.0,0.245,0],["TOWNSQ","4ddf53c8-f5e6-474f-8763-d9f15772f786","4000216702",0,236,0,0,0,0,0,0,0,0,0.236,0.0,0.0,0.0,0.236,0],["Marketing9012","7624a5b3-c7d0-48ee-a213-a2fb53379147","4000080546",60,105,1,0,0,0,0,0,1,0,0.166,0.0,0.062,0.0,0.228,60],["Engegraph","bee67a85-7b72-4e31-bc89-adf131382d16","4000122464",0,225,0,0,0,0,0,0,0,0,0.225,0.0,0.0,0.0,0.225,0],["AutoPrime1","3bcb6df8-6bbd-46a7-94a9-e21e1a1ec945","4000229423",0,219,0,0,0,0,0,0,0,0,0.219,0.0,0.0,0.0,0.219,0],["MotormacNest","6f1093f3-2dad-4ae3-be07-64494bfb2a33","4000279665",113,96,1,0,1,0,0,0,0,0,0.21,0.0,0.007,0.0,0.217,113],["MVAAmbiental2","b3d7b44e-d7a9-449c-bd2f-01fe9aa9c85a","4000338508",58,152,0,0,0,0,0,0,0,0,0.21,0.0,0.0,0.0,0.21,58],["DDR3917","abd4c971-c2c2-4460-9b95-fdc1e786b17a","4000082865",5,6,4,0,1,0,0,0,3,0,0.015,0.0,0.193,0.0,0.208,5],["DDR4602","1bde0690-db13-4a7d-b190-c6dd93528240","4000082865",3,6,3,0,0,0,0,0,3,0,0.012,0.0,0.187,0.0,0.199,3],["SouthSummit","81aa412d-7e6f-4ebd-b66b-2e767286f523","4000327398",68,125,0,0,0,0,0,0,0,0,0.193,0.0,0.0,0.0,0.193,68],["551128387109","8646a7b1-ef32-450c-ba44-1265acd39fc5","4000204251",90,101,0,0,0,0,0,0,0,0,0.191,0.0,0.0,0.0,0.191,90],["LiderImobiliariaAPP","e24b8578-686c-4c6b-8321-ce2d9947deae","4000227832",0,186,0,0,0,0,0,0,0,0,0.186,0.0,0.0,0.0,0.186,0],["554335122100","24a711b0-3d2b-4237-babf-c6027cd0ebec","4000200591",0,181,0,0,0,0,0,0,0,0,0.181,0.0,0.0,0.0,0.181,0],["ANDRECUMMINSCOL","7098f5e1-1ca8-477b-b953-69d884345ec6","4000279665",75,68,1,0,1,0,0,0,0,5,0.167,0.0,0.007,0.0,0.174,75],["DDR3916","375be2ff-d5a1-480f-8120-f32e458b47da","4000082865",100,71,0,0,0,0,0,0,0,0,0.171,0.0,0.0,0.0,0.171,100],["sesisuporteprestador","53e43196-3499-4579-8f3e-6ae5e69f28b0","4000220773",26,19,2,0,0,0,0,0,2,0,0.047,0.0,0.124,0.0,0.171,26],["DDR0730","d46856ee-5b3b-4cca-8c65-f8f7713436d4","4000082865",85,84,0,0,0,0,0,0,0,0,0.169,0.0,0.0,0.0,0.169,85],["DDR3975","f8da5ac2-d6e6-490c-89aa-16a20c8deff0","4000082865",9,12,4,0,2,0,0,0,2,0,0.025,0.0,0.138,0.0,0.163,9],["FinanceiroHSL","8617ff01-5fca-47b2-900b-2b81f3c46e3f","4000332605",4,24,17,0,17,0,0,0,0,0,0.045,0.0,0.116,0.0,0.161,4],["ShopTAQ","2fb3dfa6-41c6-4eca-9f65-4f41dd3e4cb9","4000288509",69,77,1,0,1,0,0,0,0,0,0.147,0.0,0.007,0.0,0.154,69],["NegociosPublicosCongressos","7083d46b-5d55-4617-b896-b80dc1f7c2b9","4000232097",65,87,0,0,0,0,0,0,0,0,0.152,0.0,0.0,0.0,0.152,65],["OrpenFeiras","70f8b1a6-f790-4440-b97a-ce47640ba8d5","4000082865",16,9,2,0,0,0,0,0,2,0,0.027,0.0,0.124,0.0,0.151,16],["LUCASSVPARTS","0de9d0b1-ed81-48fc-9dc1-16f4087932df","4000279665",41,36,1,0,0,0,0,0,1,2,0.088,0.0,0.062,0.0,0.15,41],["AVANCEPropaganda","ad9ea018-6b78-4d48-ac37-3a947bdc272b","4000239508",78,62,0,0,0,0,0,0,0,0,0.14,0.0,0.0,0.0,0.14,78],["Decorwall","67a62900-614c-4043-b330-566884563f83","4000274813",0,137,0,0,0,0,0,0,0,0,0.137,0.0,0.0,0.0,0.137,0],["DDR3908","3af3500b-3a6c-4444-9706-87c63173a7de","4000082865",42,31,1,0,0,0,0,0,1,0,0.074,0.0,0.062,0.0,0.136,42],["BuziosHosting2","566a5946-564b-4fe0-bb5a-a31c959a2885","4000331386",59,71,0,0,0,0,0,0,0,0,0.13,0.0,0.0,0.0,0.13,59],["DDR3945","aca6581b-8869-4968-a067-a68897add415","4000082865",72,57,0,0,0,0,0,0,0,0,0.129,0.0,0.0,0.0,0.129,72],["GrupoBRF","2bd4f91b-4a83-46b3-ac37-aa5969353013","4000244074",0,129,0,0,0,0,0,0,0,0,0.129,0.0,0.0,0.0,0.129,0],["FlowEquipamentos","d716d47a-008a-482f-a07a-f31bfcf6e01d","4000286303",0,125,0,0,0,0,0,0,0,0,0.125,0.0,0.0,0.0,0.125,0],["MutransitOficial","89000fed-a225-46b3-b2f5-b7595cbbc624","4000237331",25,28,1,1,0,0,0,0,0,0,0.058,0.0038,0.062,0.0,0.124,25],["Ktfdistribuidora","8021682d-b93f-4e02-afba-8121d9b1dfb7","4000284038",0,123,0,0,0,0,0,0,0,0,0.123,0.0,0.0,0.0,0.123,0],["RSSOLUCOESLTDA","b0e0d086-b014-4e59-b953-42df121832af","4000223725",0,119,0,0,0,0,0,0,0,0,0.119,0.0,0.0,0.0,0.119,0],["AvancePropaganda2","25e456ee-ba26-4fce-8263-15f792eea0b5","4000239508",49,66,0,0,0,0,0,0,0,0,0.115,0.0,0.0,0.0,0.115,49],["DDR3903","046509d2-a0cb-4150-a2d8-8367b0795477","4000082865",59,53,0,0,0,0,0,0,0,0,0.112,0.0,0.0,0.0,0.112,59],["HMVOncoHemato","f5091f5d-4878-4302-b31a-4b7787bed77a","4000228264",15,32,1,0,0,0,0,0,1,0,0.048,0.0,0.062,0.0,0.11,15],["MattozoSaoPaulo","22ffa543-58d6-475b-969a-ce31b2fd6b3b","4000229161",23,16,2,0,1,0,0,0,1,0,0.041,0.0,0.069,0.0,0.11,23],["GscSegurancaBmOrpen","e2a1e9bf-b812-44e5-8de1-114c77e19f88","4000295767",0,108,0,0,0,0,0,0,0,0,0.108,0.0,0.0,0.0,0.108,0],["TallesDelgado","c99e5921-7da8-4d8e-98ad-fae35cb22759","4000227274",47,57,0,0,0,0,0,0,0,0,0.104,0.0,0.0,0.0,0.104,47],["Distec2","94140810-cb17-4229-8143-b8e8dbdf4826","4000337343",0,103,0,0,0,0,0,0,0,0,0.103,0.0,0.0,0.0,0.103,0],["MedsetBeauty2","b0646c73-e999-4472-8ded-9ad392a9325f","4000274996",0,103,0,0,0,0,0,0,0,0,0.103,0.0,0.0,0.0,0.103,0],["SenaiCentroCompetencia","0f8e8222-8210-4469-af40-447475e59906","4000225177",23,17,1,0,0,0,0,0,1,0,0.041,0.0,0.062,0.0,0.103,23],["ISRAEL","a1b387e7-ee06-42d1-828d-1427c904d68f","4000218064",10,89,0,0,0,0,0,0,0,0,0.099,0.0,0.0,0.0,0.099,10],["DraEduarda","1065b968-268f-4a68-9f1d-f30eb9bdbd2f","4000272125",30,68,0,0,0,0,0,0,0,0,0.098,0.0,0.0,0.0,0.098,30],["tedsyscs","93b64556-387a-43be-8e8a-a0485e50c2c8","4000249218",48,49,0,0,0,0,0,0,0,0,0.097,0.0,0.0,0.0,0.097,48],["UnimedFederacao","d3b3536d-ea64-4222-9887-351f97a6d3a6","4000319226",57,39,0,0,0,0,0,0,0,0,0.096,0.0,0.0,0.0,0.096,57],["0705dev","59f37bba-c62c-44f2-a0c9-ac23b9637dff","4000082865",14,14,1,0,0,0,0,0,1,0,0.029,0.0,0.062,0.0,0.091,14],["SupportMex","80e66fcf-1b3f-4cdb-beb0-3ec7ec43b57d","4000178670",45,38,0,0,0,0,0,0,0,0,0.083,0.0,0.0,0.0,0.083,45],["DeniseFaria","e8416baa-4fc0-4c66-8d22-2869249c5203","4000253499",0,83,0,0,0,0,0,0,0,0,0.083,0.0,0.0,0.0,0.083,0],["OrpenDev","d82156aa-2137-4231-97ab-17ccebf419b4","4000082865",2,1,3,0,2,0,0,0,1,0,0.006,0.0,0.076,0.0,0.082,2],["MattozoBH","428f048c-054e-4d1e-b9e2-cbbd4a902262","4000229161",30,38,1,0,1,0,0,0,0,0,0.069,0.0,0.007,0.0,0.076,30],["GrandSalao","c652d456-c38b-40cd-80e6-7e1ba2091d35","4000228589",0,75,0,0,0,0,0,0,0,0,0.075,0.0,0.0,0.0,0.075,0],["Nicola","f73b72e5-ef33-4b49-9b4e-29ff4bc0029f","4000272125",28,44,0,0,0,0,0,0,0,0,0.072,0.0,0.0,0.0,0.072,28],["Cobreja","903e7d34-546b-4f73-ba83-f82d82ad9317","4000226651",0,70,0,0,0,0,0,0,0,0,0.07,0.0,0.0,0.0,0.07,0],["NegociosSeminariosNovo","11cee0e0-b1e9-461f-9b98-bcacb1e0f241","4000232097",3,4,1,0,0,0,0,0,1,0,0.008,0.0,0.062,0.0,0.07,3],["Manejo","46a21be9-0934-430b-9fcc-fb1265a0f8ed","4000235546",0,69,0,0,0,0,0,0,0,0,0.069,0.0,0.0,0.0,0.069,0],["Cevisa","0833973d-ef71-4fa7-a769-d91623e411c0","4000080546",0,69,0,0,0,0,0,0,0,0,0.069,0.0,0.0,0.0,0.069,0],["ValeNet04","114143f7-13bc-4387-bc90-ccb7a3a0feac","4000222074",0,6,1,0,0,0,0,0,1,0,0.007,0.0,0.062,0.0,0.069,0],["DDR3979","f3ce41af-f9eb-44df-9268-a7fece0a810a","4000082865",0,3,1,0,0,0,0,0,1,0,0.004,0.0,0.062,0.0,0.066,0],["LopesPrime","0050b288-21eb-4223-a931-e893e7f5765d","4000222074",1,2,1,0,0,0,0,0,1,0,0.004,0.0,0.062,0.0,0.066,1],["RichColors","f1f0c7f7-3f38-4d5f-a4d5-a8ff008e4197","4000289400",0,63,0,0,0,0,0,0,0,0,0.063,0.0,0.0,0.0,0.063,0],["SesiLajeado","7a376083-5201-45a8-a0f8-0e242dc4833c","4000220773",27,28,0,0,0,0,0,0,0,0,0.055,0.0,0.0,0.0,0.055,27],["seguradora","310487cf-bd76-449c-baa1-29fac1850547","4000215103",0,52,0,0,0,0,0,0,0,0,0.052,0.0,0.0,0.0,0.052,0],["SBQuatroBarras","1866d6ee-5d6d-4573-9fcf-236488715158","4000175663",26,26,0,0,0,0,0,0,0,0,0.052,0.0,0.0,0.0,0.052,26],["DDR4622","3ef0e137-c8aa-40af-8ef4-b78f409366f7","4000082865",27,25,0,0,0,0,0,0,0,0,0.052,0.0,0.0,0.0,0.052,27],["comecialunimedcentrors05","353ee024-3f32-4592-b099-d1f73ea44800","4000070028",24,26,0,0,0,0,0,0,0,0,0.05,0.0,0.0,0.0,0.05,24],["OdontoPenha","e66ba0d5-cfcb-421c-9be4-f644fa3d62a3","4000207894",0,49,0,0,0,0,0,0,0,0,0.049,0.0,0.0,0.0,0.049,0],["QUEIMADOSCOMPANHA","ee4edc19-1587-4621-b9e8-197f3ed3007a","4000216430",21,28,0,0,0,0,0,0,0,0,0.049,0.0,0.0,0.0,0.049,21],["AdaconConsultora01","b9f9ee3d-21e1-4b48-a3c1-8c79bafa1309","4000248871",27,21,0,0,0,0,0,0,0,0,0.048,0.0,0.0,0.0,0.048,27],["Interpoint","034d5656-e6d0-46d8-b94b-edf325ed2d3a","4000226986",0,48,0,0,0,0,0,0,0,0,0.048,0.0,0.0,0.0,0.048,0],["Sesicuidarmais","779b6792-8852-421d-9f98-1c66ade5a5f5","4000220773",24,24,0,0,0,0,0,0,0,0,0.048,0.0,0.0,0.0,0.048,24],["BomPrecoNovo","6da41ec8-eade-4eec-8410-97b11737308d","4000268888",11,36,0,0,0,0,0,0,0,0,0.047,0.0,0.0,0.0,0.047,11],["Townsq2","f106be02-ffc0-4932-81c4-4d819a005f88","4000216702",0,47,0,0,0,0,0,0,0,0,0.047,0.0,0.0,0.0,0.047,0],["WhatsApiCHparts","6a7f8b36-e9f2-414f-85fc-7345fa4d6fe6","4000144829",23,24,0,0,0,0,0,0,0,0,0.047,0.0,0.0,0.0,0.047,23],["SpLeiturasCompras","81aecdc0-77c9-4cc7-9421-327fda67ab33","4000240561",23,23,0,0,0,0,0,0,0,0,0.046,0.0,0.0,0.0,0.046,23],["Clicb11957876PlanosdeSaudePremium","2a7b55b5-64ad-448d-943b-053e8c50a18e","4000190367",13,33,0,0,0,0,0,0,0,0,0.046,0.0,0.0,0.0,0.046,13],["Telesom","c5b20334-7520-40db-b306-a23ab67333a8","4000273396",29,17,0,0,0,0,0,0,0,0,0.046,0.0,0.0,0.0,0.046,29],["CampanhaTaquara","bbe2cbd4-779f-4852-93d2-5bfe5d0a34cb","4000216431",0,44,0,0,0,0,0,0,0,0,0.044,0.0,0.0,0.0,0.044,0],["FSLEmbalagens","9db494d7-6311-45be-8bf4-541459bddf7b","4000315119",0,42,0,0,0,0,0,0,0,0,0.042,0.0,0.0,0.0,0.042,0],["Gestaodeservicos","41828225-2085-4bac-b6b1-6c9cdde41cf1","4000268888",9,29,0,0,0,0,0,0,0,0,0.038,0.0,0.0,0.0,0.038,9],["DDRMBPECAS4108","e7e9572b-d63c-4a2a-adac-defebf2a3816","4000312341",0,38,0,0,0,0,0,0,0,0,0.038,0.0,0.0,0.0,0.038,0],["Techboard2","7ab28407-e31b-4e3c-acb7-6c7b8ef6353a","4000325478",21,16,0,0,0,0,0,0,0,0,0.037,0.0,0.0,0.0,0.037,21],["LogisticaCreimpol","a1de2615-d836-4fa6-9ace-0521b89871fe","4000194438",6,4,6,0,3,3,0,0,0,0,0.016,0.0,0.02,0.0,0.036,6],["Idgmrj","aa3e2fb9-a43f-4922-a412-6431a1c74981","4000227413",0,35,0,0,0,0,0,0,0,0,0.035,0.0,0.0,0.0,0.035,0],["DDR4623","9558fcec-4239-4619-8d7f-2cf7c24ecb71","4000082865",14,21,0,0,0,0,0,0,0,0,0.035,0.0,0.0,0.0,0.035,15],["TsPneus","7379f788-2df1-4cea-a252-c16fc86d857c","4000229226",13,18,0,0,0,0,0,0,0,0,0.031,0.0,0.0,0.0,0.031,13],["INSTITUTOAPP","724defbf-fd4c-46d8-9efe-733373e34929","4000176758",0,30,0,0,0,0,0,0,0,0,0.03,0.0,0.0,0.0,0.03,0],["Valvular","8430355f-a695-43e1-b201-fe6d47c7bd4b","4000241406",14,16,0,0,0,0,0,0,0,0,0.03,0.0,0.0,0.0,0.03,14],["Baleia","94df218d-e349-41d2-8df0-50496eb1ec43","4000243890",2,27,0,0,0,0,0,0,0,0,0.029,0.0,0.0,0.0,0.029,2],["DDR3971","dbe8584d-1632-407d-a488-0402981a2b7c","4000082865",3,2,3,0,3,0,0,0,0,0,0.008,0.0,0.021,0.0,0.029,3],["Tybetos","5b9c3b15-22cf-4d1a-92cc-c9c2b6f85dfc","4000327604",11,17,0,0,0,0,0,0,0,0,0.028,0.0,0.0,0.0,0.028,11],["DDR3931","2a2674a9-8648-45c4-92b3-7b5289f2e9e8","4000082865",11,17,0,0,0,0,0,0,0,0,0.028,0.0,0.0,0.0,0.028,11],["ParceriasEstrategicas","8ac8a3b4-92cd-4b2b-a7c4-92a1d1c481d8","4000175874",2,25,0,0,0,0,0,0,0,0,0.027,0.0,0.0,0.0,0.027,2],["DDR3943","98d49aee-4298-4469-bcfe-975eedb81c26","4000082865",18,8,0,0,0,0,0,0,0,0,0.026,0.0,0.0,0.0,0.026,18],["DDR4620","befebf5d-c762-4658-ac7c-ea1f09a9b2f2","4000082865",10,16,0,0,0,0,0,0,0,0,0.026,0.0,0.0,0.0,0.026,10],["AKTrend","b47f788f-5c01-45a4-b568-5068cff332e7","4000329996",0,25,0,0,0,0,0,0,0,0,0.025,0.0,0.0,0.0,0.025,0],["RCXComercial","59ce27a2-ec68-4f52-98a2-867087f74a23","4000082865",18,7,0,0,0,0,0,0,0,0,0.025,0.0,0.0,0.0,0.025,18],["IzzieIt","1eeaf6d5-b2d6-4349-9f40-7e2fa7e4eedb","4000251654",12,12,0,0,0,0,0,0,0,0,0.024,0.0,0.0,0.0,0.024,12],["Sollicita","6e098866-83b5-4536-9896-be12a128e660","4000228249",0,23,0,0,0,0,0,0,0,0,0.023,0.0,0.0,0.0,0.023,0],["FEDAG0274","fe253114-7bd4-4076-b803-457d90e49b92","4000333417",0,22,0,0,0,0,0,0,0,0,0.022,0.0,0.0,0.0,0.022,0],["ServSul","28743124-b32e-4cbf-8e09-908557621cd6","4000268888",0,21,0,0,0,0,0,0,0,0,0.021,0.0,0.0,0.0,0.021,0],["RegiaoAdmSergipe","299ca2d5-03cc-4b25-9886-75047080adb5","4000273012",0,21,0,0,0,0,0,0,0,0,0.021,0.0,0.0,0.0,0.021,0],["FelipeNicola","101c68d6-9ee8-499b-9631-55980c1a5787","4000272125",0,20,0,0,0,0,0,0,0,0,0.02,0.0,0.0,0.0,0.02,0],["Desentupidoradaserra","c4ddf210-1efe-4848-9e55-7eab0c7beeb4","4000268888",3,17,0,0,0,0,0,0,0,0,0.02,0.0,0.0,0.0,0.02,3],["Homeclin","9faa3651-b795-4f22-b71e-7aef870b6546","4000244926",0,19,0,0,0,0,0,0,0,0,0.019,0.0,0.0,0.0,0.019,0],["AVANZA","721ad801-9732-4646-aa5e-cd32db7da35e","4000346579",0,3,2,0,2,0,0,0,0,0,0.005,0.0,0.014,0.0,0.019,0],["ClientesEspeciais","eed2221d-d481-422f-94d6-88e50bc28e59","4000218064",14,2,0,0,0,0,0,0,0,0,0.016,0.0,0.0,0.0,0.016,14],["1134888030","20a3e307-8f60-4211-aa04-b11358dd9d18","4000212350",2,13,0,0,0,0,0,0,0,0,0.015,0.0,0.0,0.0,0.015,2],["FACESAPP","2e0a5952-85c6-40bb-8b9c-bf9c1e0ae706","4000176758",0,14,0,0,0,0,0,0,0,0,0.014,0.0,0.0,0.0,0.014,0],["Grandsalao2","36a7a670-a337-4660-b38a-13e1428d1015","4000228589",0,14,0,0,0,0,0,0,0,0,0.014,0.0,0.0,0.0,0.014,0],["OmcGroup1","02d19aeb-ccd5-48ca-8a7c-ab37c88907d6","4000249844",0,13,0,0,0,0,0,0,0,0,0.013,0.0,0.0,0.0,0.013,0],["ctbmpoa","2f5d1d6f-9361-463f-9de4-dd41680f1d91","4000082865",8,4,0,0,0,0,0,0,0,0,0.012,0.0,0.0,0.0,0.012,8],["AlanFerreira","a10518cc-9b7f-44b5-863d-ffb80458f61d","4000316053",6,6,0,0,0,0,0,0,0,0,0.012,0.0,0.0,0.0,0.012,6],["NegociosPublicosSeminarios","820418c1-9c4f-4855-96fa-f75ed0d5137b","4000232097",6,6,0,0,0,0,0,0,0,0,0.012,0.0,0.0,0.0,0.012,6],["SavordelliADV","a5655e8a-bfc9-4fdd-820b-b54a6a3e4896","4000375658",0,12,0,0,0,0,0,0,0,0,0.012,0.0,0.0,0.0,0.012,0],["Prontomed3","d0984b7a-6e7e-4645-a28e-5943fc98b2bf","4000299584",2,2,1,0,1,0,0,0,0,0,0.005,0.0,0.007,0.0,0.012,2],["WecanbrJundiai","638f5670-f56e-425d-905f-9269e58d69d2","4000233423",3,8,0,0,0,0,0,0,0,0,0.011,0.0,0.0,0.0,0.011,3],["FitEnergiaOficial","40a3b3f9-3c39-4402-b73a-2ad81656a7f4","4000222074",0,11,0,0,0,0,0,0,0,0,0.011,0.0,0.0,0.0,0.011,0],["MG3Tech","03d8906c-8233-4547-828a-e572ee250136","4000272116",5,6,0,0,0,0,0,0,0,0,0.011,0.0,0.0,0.0,0.011,5],["RotaHMLBOT","01b7831e-998d-46d3-bfc5-7ede7ff76e0f","4000178670",10,1,0,0,0,0,0,0,0,0,0.011,0.0,0.0,0.0,0.011,10],["routerlink3","c2ece601-20a1-4f58-9c0a-229d53cf5ea6","4000215540",5,5,0,0,0,0,0,0,0,0,0.01,0.0,0.0,0.0,0.01,5],["MbmLogistica","2f408848-a0a9-4ab6-ab4a-8074ce7d6230","4000228034",0,10,0,0,0,0,0,0,0,0,0.01,0.0,0.0,0.0,0.01,0],["HMVLABORATORIO","db31ca25-bf87-47e5-96ab-e93d708ba915","4000228264",3,7,0,0,0,0,0,0,0,0,0.01,0.0,0.0,0.0,0.01,3],["DDR3958","5648b6e3-8e0d-4d3f-990d-e6f40c774189","4000082865",1,1,1,0,1,0,0,0,0,0,0.003,0.0,0.007,0.0,0.01,1],["FoccoConstrucoes","49b6b4a4-7e84-4603-b8fa-2ca4878829bf","4000312708",0,9,0,0,0,0,0,0,0,0,0.009,0.0,0.0,0.0,0.009,0],["rafaggb001","c40c2c0a-3feb-4ad7-aff0-57b941e8c03e","4000315111",0,9,0,0,0,0,0,0,0,0,0.009,0.0,0.0,0.0,0.009,0],["MjmComercial","c06e7970-b982-4d4e-975f-093e216ca346","4000268888",1,8,0,0,0,0,0,0,0,0,0.009,0.0,0.0,0.0,0.009,1],["NCAgendamento","496089ea-1acf-44ad-a337-e38824e03e36","4000196595",0,8,0,0,0,0,0,0,0,0,0.008,0.0,0.0,0.0,0.008,0],["RCXApp","bc748551-d3c2-48d4-9e5f-b4c0e07bfe52","4000082865",6,2,0,0,0,0,0,0,0,0,0.008,0.0,0.0,0.0,0.008,6],["CobrancasArgentina","8c0ab743-8e24-4415-a7df-f895a11c6e55","4000178670",1,7,0,0,0,0,0,0,0,0,0.008,0.0,0.0,0.0,0.008,1],["SenaiObservatorio","1429daec-e667-4ef5-aab7-2861d92b67f1","4000225177",2,5,0,0,0,0,0,0,0,0,0.007,0.0,0.0,0.0,0.007,2],["ThomsonReutersRH","0e58f3fe-8a19-465b-8cb2-b5661005b044","4000374941",0,7,0,0,0,0,0,0,0,0,0.007,0.0,0.0,0.0,0.007,0],["VivaxCorretora","4d7230ea-9126-4d73-af21-9aceaa2bbe1f","4000283737",0,6,0,0,0,0,0,0,0,0,0.006,0.0,0.0,0.0,0.006,0],["DDR3980","e18b8d24-e32f-4f63-be98-52eed46d883e","4000082865",0,6,0,0,0,0,0,0,0,0,0.006,0.0,0.0,0.0,0.006,0],["DDR0740","67778e47-f907-4035-9583-83a7809af5c2","4000082865",2,4,0,0,0,0,0,0,0,0,0.006,0.0,0.0,0.0,0.006,2],["FamilyCorretora","901443e8-c4bd-4bc1-9911-7befaf536522","4000219988",0,5,0,0,0,0,0,0,0,0,0.005,0.0,0.0,0.0,0.005,0],["Napoleao","0ff4a83e-7145-468f-a853-816aac6f2e83","4000214448",0,5,0,0,0,0,0,0,0,0,0.005,0.0,0.0,0.0,0.005,0],["DuqueBacelar","af526c3d-4f33-4606-92c1-86261e5e3ca9","4000273590",0,5,0,0,0,0,0,0,0,0,0.005,0.0,0.0,0.0,0.005,0],["Akitaon","e88bdd6d-ac4e-4482-a229-5f74769b3708","4000241410",3,2,0,0,0,0,0,0,0,0,0.005,0.0,0.0,0.0,0.005,3],["RochaMarquezeAdv","466c3cb2-2414-4217-bdb1-76a31fea8e6f","4000273605",2,3,0,0,0,0,0,0,0,0,0.005,0.0,0.0,0.0,0.005,2],["DDR4642","272f5569-d622-4bad-9afa-ce5d98c6537c","4000082865",3,2,0,0,0,0,0,0,0,0,0.005,0.0,0.0,0.0,0.005,3],["qua3734","5b5d7741-58e3-4bdd-b83b-bf5c8b18c555","4000233107",0,4,0,0,0,0,0,0,0,0,0.004,0.0,0.0,0.0,0.004,0],["DDR4610","f1be75e9-42f9-45d5-b60d-c1bc0617393a","4000082865",2,2,0,0,0,0,0,0,0,0,0.004,0.0,0.0,0.0,0.004,2],["OrpenWise","706b4f2c-eed2-4157-bc52-928a7e9301c5","4000134337",0,4,0,0,0,0,0,0,0,0,0.004,0.0,0.0,0.0,0.004,0],["SaudeDigitalAssistenciaPaciente","4d7ff504-918d-448a-a612-f09dce37af3c","4000228264",3,1,0,0,0,0,0,0,0,0,0.004,0.0,0.0,0.0,0.004,3],["curicica04","eddb0432-00b5-4f65-8cfb-95b69786eaa9","4000207894",0,4,0,0,0,0,0,0,0,0,0.004,0.0,0.0,0.0,0.004,0],["ORPENTEUTEXTO","9ba689d7-f071-4f38-9829-fdeeb808a161","4000082865",2,2,0,0,0,0,0,0,0,0,0.004,0.0,0.0,0.0,0.004,2],["OrpenDigittos","46de2d47-693d-450a-85c1-0c17c29c35dc","4000124295",0,3,0,0,0,0,0,0,0,0,0.003,0.0,0.0,0.0,0.003,0],["DiretoriaMaker","b7b6ee45-5aed-4e20-92d6-02e9fd8e403c","4000277149",0,3,0,0,0,0,0,0,0,0,0.003,0.0,0.0,0.0,0.003,0],["DDR5644","d403c66f-cce7-4781-97cd-f8d32f23efa5","4000082865",0,3,0,0,0,0,0,0,0,0,0.003,0.0,0.0,0.0,0.003,0],["DDR3976","04030a4a-22c1-4ad7-943f-9e5a041d4af5","4000082865",0,2,0,0,0,0,0,0,0,0,0.002,0.0,0.0,0.0,0.002,0],["DDR4617","876f14d0-6d40-4052-8eb4-66c3b826b000","4000082865",1,1,0,0,0,0,0,0,0,0,0.002,0.0,0.0,0.0,0.002,1],["dsecsoftware","8ea5df33-a3be-400d-b1a8-2d6594fedcbd","4000295750",1,1,0,0,0,0,0,0,0,0,0.002,0.0,0.0,0.0,0.002,1],["relacionamentocomocooperado","26257e61-d5cf-444f-aaf4-90b71c90784a","4000070028",1,1,0,0,0,0,0,0,0,0,0.002,0.0,0.0,0.0,0.002,1],["ChurraseCia","a85543bc-398f-4970-9dc2-0cfd11a62fe3","4000237730",0,2,0,0,0,0,0,0,0,0,0.002,0.0,0.0,0.0,0.002,0],["DDR3955","721c9476-67d5-4714-b1a4-0095320dec7e","4000082865",1,1,0,0,0,0,0,0,0,0,0.002,0.0,0.0,0.0,0.002,1],["MedicoReferencia","1a2f0eac-48ba-4dd5-887d-7d5849b00509","4000258779",0,1,0,0,0,0,0,0,0,0,0.001,0.0,0.0,0.0,0.001,0],["FiergsRecupera","9de24e5c-3aaa-4fa7-bd14-20adcf05779b","4000225177",0,1,0,0,0,0,0,0,0,0,0.001,0.0,0.0,0.0,0.001,0],["queimadosnotificacao","27c06731-ff2e-4591-b250-d95e63611ab8","4000216432",0,1,0,0,0,0,0,0,0,0,0.001,0.0,0.0,0.0,0.001,0],["orpenwzeffb2fa9","1e7d7a55-624b-4b0a-bdac-3d7ba7ebc01f","4000082865",0,1,0,0,0,0,0,0,0,0,0.001,0.0,0.0,0.0,0.001,0],["orpenwz84dbfeedfe","b3f0973a-1ff1-48b7-bfe7-e3557ab11bcd","4000082865",0,1,0,0,0,0,0,0,0,0,0.001,0.0,0.0,0.0,0.001,0],["UPPUON","d3fc607f-2ed8-491c-8f36-723ee7374aa1","4000217927",0,1,0,0,0,0,0,0,0,0,0.001,0.0,0.0,0.0,0.001,0],["FenixInsumosC","e1054ca6-6c8a-4f96-b860-f3c3e27dd739","4000277143",0,1,0,0,0,0,0,0,0,0,0.001,0.0,0.0,0.0,0.001,0],["MakerStore","045a5ffe-2820-41bf-814e-f4c0fb3399b1","4000277149",0,1,0,0,0,0,0,0,0,0,0.001,0.0,0.0,0.0,0.001,0],["Altmayer","22289008-f2b8-481e-a2b9-24ad0678aada","4000268068",0,1,0,0,0,0,0,0,0,0,0.001,0.0,0.0,0.0,0.001,0],["PRONTOHOSPITALAR","af4581e9-e983-4c4a-b1b9-8eac28a145e4","4000209135",0,7,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,0.0,0]]</script>
+<script>
+(function(){
+"use strict";
+
+/* registro:
+   0 app  1 appId  2 cid  3 sOut  4 sIn  5 tmpl  6 mkt  7 utilPaid  8 utilFree
+   9 auth  10 freeEntry  11 mmlite  12 voiceIn  13 gFee  14 gMkt  15 wFee
+   16 disc  17 total  18 svc                                              */
+
+var DATA = JSON.parse(document.getElementById("seed").textContent);
+var state = {view:"cliente", cols:"resumo", mode:"desconto", cap:75, scope:"app",
+             q:"", sort:"total", dir:-1, open:{},
+             rMkt:0.0625, rUtil:0.0068, rAuth:0.0315, rSvc:0.0068,
+             days:90, fx:5.12, scale:"mes",
+             tq:"", tmin:0, ttop:0};
+
+var fmtU = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"USD",minimumFractionDigits:2,maximumFractionDigits:2});
+var fmtB = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:2,maximumFractionDigits:2});
+var fmtR = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"USD",minimumFractionDigits:4,maximumFractionDigits:4});
+var fmtN = new Intl.NumberFormat("pt-BR");
+function usd(v){ return fmtU.format(v); }
+function brl(v){ return fmtB.format(v); }
+function rate(v){ return fmtR.format(v); }
+function int(v){ return fmtN.format(Math.round(v)); }
+function pct(v){ return (v*100).toFixed(1).replace(".",",")+"%"; }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function shorten(s,n){ s=String(s); return s.length>n ? s.slice(0,n-1)+"…" : s; }
+
+/* meses cobertos pelo extrato e divisor da escala em uso */
+function months(){ return Math.max(state.days/30, 0.0333); }
+function div(){ return state.scale === "mes" ? months() : 1; }
+/* formatadores já na escala escolhida */
+function m$(v){ return usd(v/div()); }
+function mR(v){ return brl((v/div())*state.fx); }
+function mQ(v){ return int(v/div()); }
+
+/* ---- aplica modo de cobrança e abre a fatura Meta por categoria ---- */
+function priced(){
+  var rows = DATA.map(function(r){
+    var cMkt  = (r[6] + r[11]) * state.rMkt;
+    var cUtil = r[7] * state.rUtil;
+    var cAuth = r[9] * state.rAuth;
+    return {r:r, app:r[0], appId:r[1], cid:r[2],
+            msgs:r[3]+r[4]+r[5], svcMsgs:r[18],
+            qMkt:r[6]+r[11], qUtil:r[7], qUtilFree:r[8], qAuth:r[9], qFep:r[10],
+            g:r[13], gm:r[14], w:r[15], disc:r[16],
+            gBill:r[13], capped:false,
+            cMkt:cMkt, cUtil:cUtil, cAuth:cAuth,
+            cOut:r[15] - (cMkt + cUtil + cAuth)};   /* resíduo: internacional / ajuste */
+  });
+
+  if(state.mode === "teto"){
+    var cap = state.cap * months();          /* o teto é mensal */
+    if(state.scope === "app"){
+      rows.forEach(function(x){ if(x.g > cap){ x.gBill = cap; x.capped = true; } });
+    } else {
+      var byCli = {};
+      rows.forEach(function(x){ byCli[x.cid] = (byCli[x.cid]||0) + x.g; });
+      rows.forEach(function(x){
+        var t = byCli[x.cid];
+        if(t > cap){ x.gBill = t > 0 ? (x.g/t)*cap : 0; x.capped = true; }
+      });
+    }
+  }
+
+  rows.forEach(function(x){
+    x.gTotal = x.gBill + x.gm;
+    x.total  = x.gTotal + x.w - (state.mode === "desconto" ? x.disc : 0);
+    x.future = x.total + x.svcMsgs*state.rSvc + x.qUtilFree*state.rUtil;
+  });
+  return rows;
+}
+
+var SUMK = ["apps","msgs","svcMsgs","g","w","disc","total","cMkt","cUtil","cAuth","cOut",
+            "future","qMkt","qUtil","qUtilFree","qAuth","qFep"];
+function blank(key,label,hint,mono){
+  var e = {key:key, label:label, hint:hint, mono:mono, capped:false, children:[]};
+  SUMK.forEach(function(k){ e[k]=0; });
+  return e;
+}
+function addInto(e,x){
+  e.apps++; e.msgs+=x.msgs; e.svcMsgs+=x.svcMsgs;
+  e.g+=x.gTotal; e.w+=x.w; e.disc+=x.disc; e.total+=x.total; e.future+=x.future;
+  e.cMkt+=x.cMkt; e.cUtil+=x.cUtil; e.cAuth+=x.cAuth; e.cOut+=x.cOut;
+  e.qMkt+=x.qMkt; e.qUtil+=x.qUtil; e.qUtilFree+=x.qUtilFree; e.qAuth+=x.qAuth; e.qFep+=x.qFep;
+  e.capped = e.capped || x.capped;
+  e.children.push(x);
+}
+function aggregate(rows){
+  if(state.view === "app"){
+    return rows.map(function(x){
+      var e = blank(x.appId, x.app, x.cid, false);
+      addInto(e,x);
+      return e;
+    });
+  }
+  var m = {}, out = [];
+  rows.forEach(function(x){
+    var e = m[x.cid];
+    if(!e){ e = m[x.cid] = blank(x.cid, x.cid, "", true); out.push(e); }
+    addInto(e,x);
+  });
+  out.forEach(function(e){
+    e.children.sort(function(a,b){ return b.total - a.total; });
+    e.hint = e.children[0].app + (e.apps > 1 ? " +" + (e.apps-1) + " app" + (e.apps>2?"s":"") : "");
+  });
+  return out;
+}
+
+function matches(e, q){
+  if(e.label.toLowerCase().indexOf(q) > -1 || e.hint.toLowerCase().indexOf(q) > -1) return true;
+  return e.children.some(function(c){
+    return c.app.toLowerCase().indexOf(q) > -1 || c.cid.indexOf(q) > -1 || c.appId.indexOf(q) > -1;
+  });
+}
+function filtered(list){
+  var q = state.q.trim().toLowerCase();
+  return q ? list.filter(function(e){ return matches(e,q); }) : list;
+}
+/* filtro que vale só para a tabela */
+function tableFilter(list){
+  var q = state.tq.trim().toLowerCase();
+  var out = list;
+  if(q) out = out.filter(function(e){ return matches(e,q); });
+  if(state.tmin > 0){
+    var d = div();
+    out = out.filter(function(e){ return (e.total/d) >= state.tmin; });
+  }
+  if(state.ttop > 0){
+    out = out.slice().sort(function(a,b){ return b.total-a.total; }).slice(0, state.ttop);
+    out = sorted(out);
+  }
+  return out;
+}
+function sorted(list){
+  var k = state.sort, d = state.dir;
+  return list.slice().sort(function(a,b){
+    var av = (k === "label") ? a.label.toLowerCase() : a[k];
+    var bv = (k === "label") ? b.label.toLowerCase() : b[k];
+    return av < bv ? -d : av > bv ? d : 0;
+  });
+}
+
+/* ---------------- render ---------------- */
+var elChart=document.getElementById("chart"), elComp=document.getElementById("comp"),
+    elSim=document.getElementById("sim"), elTbody=document.getElementById("tbody"),
+    elThead=document.getElementById("thead"), elTfoot=document.getElementById("tfoot"),
+    elKpis=document.getElementById("kpis"), tip=document.getElementById("tip");
+var current=[], chartTop=[];
+
+function render(){
+  var rows = priced();
+  var list = sorted(filtered(aggregate(rows)));
+  var per  = state.scale === "mes" ? " / mês" : " em " + int(state.days) + " dias";
+
+  var T = {}; SUMK.forEach(function(k){ T[k]=0; });
+  list.forEach(function(e){ SUMK.forEach(function(k){ T[k]+=e[k]; }); });
+
+  var grossG = rows.reduce(function(s,x){ return s+x.g; },0);
+  var econ = state.mode === "teto" ? grossG - rows.reduce(function(s,x){ return s+x.gBill; },0)
+           : state.mode === "desconto" ? T.disc : 0;
+
+  /* KPIs — dólar em destaque, real logo abaixo */
+  elKpis.innerHTML =
+    tile("Custo total", m$(T.total), mR(T.total), modeLabel() + per) +
+    tile("Customer IDs", int(state.view==="cliente" ? list.length : uniqueCids(list)), "",
+         int(T.apps) + " apps ativos") +
+    tile("Marketing", m$(T.cMkt), mR(T.cMkt), mQ(T.qMkt) + " msg · " + pct(T.total?T.cMkt/T.total:0)) +
+    tile("Utility paga", m$(T.cUtil), mR(T.cUtil), mQ(T.qUtil) + " msg · " + pct(T.total?T.cUtil/T.total:0)) +
+    (econ > 0
+      ? tile("Economia", m$(econ), mR(econ), state.mode==="teto" ? "efeito do teto" : "desconto concedido", "accent")
+      : tile("Serviço", "US$ 0,00", "R$ 0,00", mQ(T.svcMsgs) + " conversas grátis", "accent"));
+
+  /* composição por categoria */
+  var comps = [
+    {k:"Taxa Gupshup",  v:T.g,     q:T.msgs,   u:"US$ 0,0010 / msg",          c:"b"},
+    {k:"Marketing",     v:T.cMkt,  q:T.qMkt,   u:rate(state.rMkt)+" / msg",   c:"m"},
+    {k:"Utility paga",  v:T.cUtil, q:T.qUtil,  u:rate(state.rUtil)+" / msg",  c:"m"},
+    {k:"Autenticação",  v:T.cAuth, q:T.qAuth,  u:rate(state.rAuth)+" / msg",  c:"m"},
+    {k:"Outros / internacional", v:T.cOut, q:0, u:"resíduo vs. fatura real",  c:"o"},
+    {k:"Conversas de serviço",   v:0, q:T.svcMsgs,   u:"grátis até 30/09/2026", c:"f"},
+    {k:"Utility em janela aberta", v:0, q:T.qUtilFree, u:"grátis até 30/09/2026", c:"f"},
+    {k:"Free entry points",      v:0, q:T.qFep,      u:"janela 72h de anúncios", c:"f"}
+  ];
+  if(state.mode === "desconto" && T.disc > 0)
+    comps.splice(1, 0, {k:"Desconto Gupshup", v:-T.disc, q:0, u:"abatido do bruto", c:"o"});
+  var cmax = Math.max.apply(null, comps.map(function(c){ return Math.abs(c.v); }).concat([1]));
+  elComp.innerHTML = comps.map(function(c){
+    return '<div class="crow"><div class="cl">'+esc(c.k)+'<small>'
+      + (c.q ? mQ(c.q)+" msg · " : "") + esc(c.u) + '</small></div>'
+      + '<div class="ctrack"><div class="cbar '+c.c+'" style="width:'+((Math.abs(c.v)/cmax)*100).toFixed(2)+'%"></div></div>'
+      + '<div class="cv">'+(c.v<0 ? "−"+m$(-c.v) : m$(c.v))+'</div>'
+      + '<div class="cr">'+(c.v<0 ? "−"+mR(-c.v) : mR(c.v))+'</div>'
+      + '<div class="cp">'+(T.total ? pct(c.v/T.total) : "—")+'</div></div>';
+  }).join("");
+
+  /* simulação outubro/2026 */
+  var addSvc = T.svcMsgs*state.rSvc, addUtil = T.qUtilFree*state.rUtil;
+  var add = addSvc + addUtil, fut = T.total + add;
+  var smax = Math.max(fut, T.total, 1);
+  elSim.innerHTML =
+      simRow("Hoje", "regra até 30/09", T.total, T.g, T.w, 0, smax)
+    + simRow("Outubro", "serviço cobrado", fut, T.g, T.w, add, smax)
+    + '<div class="simfoot">'
+    + '<div class="simstat"><b class="risk">+'+m$(add)+'</b><span>'+mR(add)+' de custo novo'+per+'</span></div>'
+    + '<div class="simstat"><b class="risk">'+(T.total ? "+"+pct((fut/T.total)-1) : "—")+'</b><span>sobre a fatura atual</span></div>'
+    + '<div class="simstat"><b>'+mQ(T.svcMsgs)+'</b><span>conversas de serviço hoje grátis'+per+'</span></div>'
+    + '<div class="simstat"><b>'+mQ(T.qUtilFree)+'</b><span>utility em janela aberta'+per+'</span></div>'
+    + '</div>';
+
+  /* top 12 */
+  var top = list.slice().sort(function(a,b){ return b.total-a.total; }).slice(0,12);
+  var max = top.length ? top[0].total : 1;
+  chartTop = top;
+  elChart.innerHTML = top.map(function(e,i){
+    var wG = max?(e.g/max)*100:0, wM = max?(e.w/max)*100:0;
+    return '<div class="row-c" data-i="'+i+'">'
+      + '<div class="nm'+(e.mono?" mono":"")+'">'+esc(e.label)+'<small>'+esc(shorten(e.hint,26))+'</small></div>'
+      + '<div class="track">'+(wG>0?'<div class="seg-b" style="width:'+wG.toFixed(3)+'%"></div>':'')
+      + (wM>0?'<div class="seg-m" style="width:'+wM.toFixed(3)+'%"></div>':'')+'</div>'
+      + '<div class="amt">'+m$(e.total)+'</div>'
+      + '<div class="amtr">'+mR(e.total)+'</div></div>';
+  }).join("");
+  document.getElementById("chartNote").textContent =
+    "Top 12 de " + int(list.length) + " · " + pct(T.total ? top.reduce(function(s,e){return s+e.total;},0)/T.total : 0) + " do custo";
+  document.getElementById("chartTitle").textContent =
+    state.view === "cliente" ? "Onde o custo se concentra" : "Apps mais caros";
+
+  /* ---- tabela (filtro próprio) ---- */
+  var tlist = tableFilter(list);
+  current = tlist;
+  var showDisc = state.mode === "desconto", byCat = state.cols === "cat";
+  var cols = byCat
+    ? [{k:"label",t:state.view==="cliente"?"Customer ID":"App"},
+       {k:"cMkt",t:"Marketing",cls:"m"},{k:"cUtil",t:"Utility",cls:"m"},
+       {k:"cAuth",t:"Auth",cls:"m"},{k:"cOut",t:"Outros",cls:"x"},
+       {k:"svcMsgs",t:"Serviço (grátis)",cls:"f",isq:true},
+       {k:"g",t:"Gupshup",cls:"b"},{k:"total",t:"Total US$",cls:"t"},{k:"totalR",t:"Total R$",cls:"r",isr:true}]
+    : [{k:"label",t:state.view==="cliente"?"Customer ID":"App"},
+       {k:"apps",t:"Apps",isq:true,hide:state.view==="app"},
+       {k:"msgs",t:"Mensagens",isq:true},
+       {k:"g",t:"Gupshup",cls:"b"},{k:"w",t:"Meta",cls:"m"},
+       {k:"disc",t:"Desconto",cls:"d",hide:!showDisc},
+       {k:"total",t:"Total US$",cls:"t"},{k:"totalR",t:"Total R$",cls:"r",isr:true},
+       {k:"share",t:"%"}];
+  cols = cols.filter(function(c){ return !c.hide; });
+
+  elThead.innerHTML = cols.map(function(c){
+    var sk = c.isr ? "total" : c.k;
+    return '<th data-k="'+sk+'" data-active="'+(state.sort===sk?1:0)+'">'+c.t
+      +'<span class="car">'+(state.dir<0?"▼":"▲")+'</span></th>';
+  }).join("");
+
+  function cells(e, isChild){
+    return cols.slice(1).map(function(c){
+      if(c.isr)           return '<td class="r">'+mR(e.total)+'</td>';
+      if(c.k === "share") return '<td class="num">'+(T.total?pct(e.total/T.total):"—")+'</td>';
+      if(c.k === "apps")  return '<td class="num">'+(isChild ? "" : e.apps)+'</td>';
+      if(c.isq)           return '<td class="'+(c.cls||"num")+'">'+mQ(e[c.k])+'</td>';
+      if(c.k === "disc")  return '<td class="d">'+(e.disc>0 ? "−"+m$(e.disc) : "—")+'</td>';
+      return '<td class="'+(c.cls||"num")+'">'+m$(e[c.k])+'</td>';
+    }).join("");
+  }
+
+  elTbody.innerHTML = tlist.length ? tlist.map(function(e){
+    var isOpen = !!state.open[e.key];
+    var html = '<tr class="parent'+(isOpen?" open":"")+'" data-key="'+esc(e.key)+'"><td><span class="ent">'
+      + (state.view==="cliente" ? '<span class="exp">▶</span>' : '')
+      + '<span class="id">'+esc(e.label)+'</span>'
+      + '<span class="hint">'+esc(shorten(e.hint,40))+'</span>'
+      + (e.capped ? ' <span class="chip cap">no teto</span>' : '')
+      + '</span></td>' + cells(e,false) + '</tr>';
+    if(state.view==="cliente" && isOpen){
+      html += e.children.map(function(c){
+        var ce = {label:c.app, apps:1, msgs:c.msgs, svcMsgs:c.svcMsgs, g:c.gTotal, w:c.w,
+                  disc:c.disc, total:c.total, cMkt:c.cMkt, cUtil:c.cUtil, cAuth:c.cAuth, cOut:c.cOut};
+        return '<tr class="child"><td>'+esc(c.app)+'</td>'+cells(ce,true)+'</tr>';
+      }).join("");
+    }
+    return html;
+  }).join("") : '<tr class="empty"><td colspan="'+cols.length+'">Nenhum cliente atende a esse filtro. Baixe o custo mínimo ou limpe os campos.</td></tr>';
+
+  var F = {}; SUMK.forEach(function(k){ F[k]=0; });
+  tlist.forEach(function(e){ SUMK.forEach(function(k){ F[k]+=e[k]; }); });
+  elTfoot.innerHTML = '<td>'+(tlist.length===list.length ? "Total" : "Total exibido")+'</td>'
+    + cols.slice(1).map(function(c){
+        if(c.isr)           return '<td>'+mR(F.total)+'</td>';
+        if(c.k === "share") return '<td>'+(T.total?pct(F.total/T.total):"—")+'</td>';
+        if(c.k === "apps")  return '<td>'+int(F.apps)+'</td>';
+        if(c.isq)           return '<td>'+mQ(F[c.k])+'</td>';
+        if(c.k === "disc")  return '<td>−'+m$(F.disc)+'</td>';
+        return '<td>'+m$(F[c.k])+'</td>';
+      }).join("");
+
+  document.getElementById("tsum").textContent =
+    int(tlist.length) + " de " + int(list.length) + (state.view==="cliente" ? " clientes · " : " apps · ")
+    + m$(F.total) + " · " + mR(F.total);
+  document.getElementById("tableNote").textContent =
+    state.view==="cliente" ? "clique numa linha para abrir os apps" : "";
+  document.getElementById("tableTitle").textContent =
+    state.view==="cliente" ? "Detalhamento por cliente" : "Detalhamento por app";
+}
+
+function simRow(lab, note, total, g, w, extra, max){
+  function p(v){ return ((v/max)*100).toFixed(2); }
+  return '<div class="simrow"><div class="simlab">'+lab+'<small>'+note+'</small></div>'
+    + '<div class="simtrack">'
+    +   '<i class="b" style="width:'+p(g)+'%"></i>'
+    +   '<i class="m" style="width:'+p(w)+'%"></i>'
+    +   (extra > 0 ? '<i class="r" style="width:'+p(extra)+'%"></i>' : '')
+    +   '<span class="simval">'+m$(total)+'<em>'+mR(total)+'</em></span>'
+    + '</div></div>';
+}
+function uniqueCids(list){
+  var s={}; list.forEach(function(e){ e.children.forEach(function(c){ s[c.cid]=1; }); }); return Object.keys(s).length;
+}
+function modeLabel(){
+  if(state.mode==="bruto") return "bruto do extrato";
+  if(state.mode==="desconto") return "líquido real";
+  return "teto US$ "+state.cap+"/mês "+(state.scope==="app"?"por app":"por cliente");
+}
+function tile(k,v,r,n,cls){
+  return '<div class="kpi'+(cls?" "+cls:"")+'"><div class="kpi-k">'+k+'</div><div class="kpi-v">'+v+'</div>'
+    + (r ? '<div class="kpi-r">'+r+'</div>' : '')
+    + '<div class="kpi-n">'+n+'</div></div>';
+}
+
+/* ---------------- eventos ---------------- */
+function seg(id, key, after){
+  document.getElementById(id).addEventListener("click", function(ev){
+    var b = ev.target.closest("button"); if(!b) return;
+    state[key] = b.dataset[Object.keys(b.dataset)[0]];
+    [].forEach.call(this.children, function(x){ x.setAttribute("aria-pressed", x===b); });
+    if(after) after();
+    render();
+  });
+}
+seg("scaleSeg","scale");
+seg("viewSeg","view",function(){ state.open = {}; });
+seg("colSeg","cols");
+seg("modeSeg","mode",function(){ document.getElementById("capBox").hidden = state.mode !== "teto"; });
+
+function numInput(id, key, min){
+  document.getElementById(id).addEventListener("input", function(){
+    var v = parseFloat(this.value);
+    state[key] = (isNaN(v) || v < (min||0)) ? (min||0) : v;
+    if(key === "days"){
+      var lbl = document.querySelector('#scaleSeg button[data-s="periodo"]');
+      if(lbl) lbl.textContent = "Total " + Math.round(state.days) + " dias";
+    }
+    render();
+  });
+}
+numInput("capVal","cap"); numInput("rMkt","rMkt"); numInput("rUtil","rUtil");
+numInput("rAuth","rAuth"); numInput("rSvc","rSvc");
+numInput("dias","days",1); numInput("fx","fx");
+numInput("tmin","tmin");
+document.getElementById("capScope").addEventListener("change", function(){ state.scope=this.value; render(); });
+document.getElementById("ttop").addEventListener("change", function(){ state.ttop = parseInt(this.value,10)||0; render(); });
+
+function debounced(id, key){
+  var t;
+  document.getElementById(id).addEventListener("input", function(){
+    var v = this.value; clearTimeout(t);
+    t = setTimeout(function(){ state[key] = v; render(); }, 140);
+  });
+}
+debounced("q","q"); debounced("tq","tq");
+
+document.getElementById("tclear").addEventListener("click", function(){
+  state.tq = ""; state.tmin = 0; state.ttop = 0;
+  document.getElementById("tq").value = "";
+  document.getElementById("tmin").value = "0";
+  document.getElementById("ttop").value = "0";
+  render();
+});
+
+elThead.addEventListener("click", function(ev){
+  var th = ev.target.closest("th"); if(!th) return;
+  var k = th.dataset.k;
+  if(state.sort === k) state.dir *= -1;
+  else { state.sort = k; state.dir = (k === "label") ? 1 : -1; }
+  render();
+});
+elTbody.addEventListener("click", function(ev){
+  var tr = ev.target.closest("tr.parent"); if(!tr || state.view !== "cliente") return;
+  state.open[tr.dataset.key] = !state.open[tr.dataset.key];
+  render();
+});
+elChart.addEventListener("mousemove", function(ev){
+  var row = ev.target.closest(".row-c");
+  if(!row){ tip.classList.remove("on"); return; }
+  var e = chartTop[+row.dataset.i]; if(!e) return;
+  tip.innerHTML = "<b>"+esc(e.label)+"</b><br>Marketing <b>"+m$(e.cMkt)+"</b><br>Utility <b>"+m$(e.cUtil)
+    + "</b><br>Gupshup <b>"+m$(e.g)+"</b><br>"+mQ(e.svcMsgs)+" conversas de serviço";
+  tip.classList.add("on");
+  tip.style.left = Math.min(ev.clientX+14, window.innerWidth-260)+"px";
+  tip.style.top  = Math.max(8, ev.clientY-86)+"px";
+});
+elChart.addEventListener("mouseleave", function(){ tip.classList.remove("on"); });
+
+/* ---------------- exportar ---------------- */
+document.getElementById("exportBtn").addEventListener("click", function(){
+  var byCat = state.cols === "cat", showDisc = state.mode === "desconto";
+  var d = div(), fx = state.fx;
+  var suf = state.scale === "mes" ? " (media mensal)" : " (90 dias)";
+  var head = (state.view==="cliente" ? ["Customer Id","Apps","Apps (nomes)"] : ["App Name","App Id","Customer Id"])
+    .concat(["Mensagens","Conversas de servico"])
+    .concat(byCat ? ["Custo Marketing US$","Custo Utility US$","Custo Auth US$","Outros US$"] : ["Taxa Meta US$"])
+    .concat(["Taxa Gupshup US$"]).concat(showDisc ? ["Desconto US$"] : [])
+    .concat(["Total US$","Total R$","Projecao out/2026 US$"]);
+  var lines = [head.map(function(h){ return /US\$|R\$|Mensagens|Conversas/.test(h) ? h+suf : h; }).join(";")];
+  current.forEach(function(e){
+    var c = state.view==="cliente"
+      ? [e.key, e.apps, e.children.map(function(x){ return x.app; }).join(" | ")]
+      : [e.label, e.key, e.hint];
+    c = c.concat([Math.round(e.msgs/d), Math.round(e.svcMsgs/d)])
+         .concat(byCat ? [n2(e.cMkt/d),n2(e.cUtil/d),n2(e.cAuth/d),n2(e.cOut/d)] : [n2(e.w/d)])
+         .concat([n2(e.g/d)]).concat(showDisc ? [n2(e.disc/d)] : [])
+         .concat([n2(e.total/d), n2((e.total/d)*fx), n2(e.future/d)]);
+    lines.push(c.map(csvCell).join(";"));
+  });
+  save(lines.join("\r\n"),
+       "rateio-gupshup_"+slug(document.getElementById("periodo").value)+"_"+state.scale+"-"+state.view+"-"+state.cols+".csv");
+});
+function n2(v){ return v.toFixed(2).replace(".",","); }
+function csvCell(v){ v=String(v); return /[";\r\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; }
+function slug(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+
+/* o visualizador de artifacts entrega arquivos pela capability downloads;
+   fora dele (arquivo local, GitHub Pages) cai no link de download comum. */
+var dl = null;
+if(window.claude && typeof window.claude.use === "function"){
+  window.claude.use("downloads").then(function(d){ dl=d; }, function(){ dl=null; });
+}
+function save(text, name){
+  var body = "﻿" + text;
+  if(dl){
+    dl.save({filename:name, data:new Blob([body],{type:"text/csv"})}).then(function(){
+      flash("Arquivo " + name + " salvo.");
+    }, function(err){
+      if(err && err.code === "declined") return;
+      flash("Não foi possível salvar o arquivo" + (err && err.message ? ": "+err.message : "."), true);
+    });
+    return;
+  }
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([body],{type:"text/csv;charset=utf-8"}));
+  a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+
+/* ---------------- importar ---------------- */
+document.getElementById("importBtn").addEventListener("click", function(){ document.getElementById("file").click(); });
+document.getElementById("file").addEventListener("change", function(){
+  if(this.files && this.files[0]) readFile(this.files[0]);
+  this.value = "";
+});
+var drop=document.getElementById("drop"), dragN=0;
+window.addEventListener("dragenter", function(e){ e.preventDefault(); dragN++; drop.classList.add("on"); });
+window.addEventListener("dragover",  function(e){ e.preventDefault(); });
+window.addEventListener("dragleave", function(e){ e.preventDefault(); if(--dragN<=0){ dragN=0; drop.classList.remove("on"); } });
+window.addEventListener("drop", function(e){
+  e.preventDefault(); dragN=0; drop.classList.remove("on");
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if(f) readFile(f);
+});
+function readFile(f){
+  var fr = new FileReader();
+  fr.onload = function(){
+    try{
+      var rows = parseGupshup(String(fr.result));
+      if(!rows.length) throw new Error("Nenhuma linha reconhecida.");
+      DATA = rows; state.open = {}; render();
+      flash(rows.length + " apps carregados de " + f.name + ". Confira o campo Dias, que define a média mensal.");
+    }catch(err){
+      flash("Não deu para ler o arquivo: " + err.message + " Confira se é o CSV de analytics da Gupshup, com o cabeçalho original.", true);
+    }
+  };
+  fr.readAsText(f, "utf-8");
+}
+function flash(msg, bad){
+  tip.innerHTML = esc(msg);
+  tip.style.left="50%"; tip.style.top="84px";
+  tip.style.transform="translateX(-50%)"; tip.style.maxWidth="460px";
+  tip.classList.add("on");
+  setTimeout(function(){ tip.classList.remove("on"); tip.style.transform=""; tip.style.maxWidth=""; }, bad?8000:4500);
+}
+function splitCSV(line){
+  var out=[], cur="", q=false;
+  for(var i=0;i<line.length;i++){
+    var ch=line[i];
+    if(q){ if(ch==='"'){ if(line[i+1]==='"'){ cur+='"'; i++; } else q=false; } else cur+=ch; }
+    else { if(ch==='"') q=true; else if(ch===","){ out.push(cur); cur=""; } else cur+=ch; }
+  }
+  out.push(cur); return out;
+}
+function parseGupshup(text){
+  text = text.replace(/^﻿/, "");
+  var lines = text.split(/\r?\n/).filter(function(l){ return l.trim().length; });
+  if(lines.length < 2) throw new Error("Arquivo vazio.");
+  var head = splitCSV(lines[0]).map(function(h){
+    return h.trim().toLowerCase().replace(/[–—]/g,"-").replace(/\s+/g," ");
+  });
+  function col(name){
+    var i = head.indexOf(name.toLowerCase());
+    if(i < 0) throw new Error('coluna "'+name+'" não encontrada.');
+    return i;
+  }
+  var ix = {
+    app:col("App Name"), appId:col("App Id"), cid:col("Customer Id"),
+    sOut:col("Session Outgoing Messages"), sIn:col("Session Incoming Messages"),
+    tmpl:col("Template Messages"), mkt:col("Marketing Templates"),
+    utilPaid:col("Paid Utility Templates"), utilFree:col("Free Utility Templates"),
+    auth:col("Authentication Templates"), fep:col("Free entry points"),
+    mml:col("MM Lite"), voice:col("Incoming Voice Minutes"),
+    g:col("Gupshup Fee"), gm:col("Gupshup fee for Cloud API - Marketing"),
+    w:col("WhatsApp Fee"), d:col("Discount"), t:col("Total Fee"),
+    svc:col("Conversation Service")
+  };
+  function num(s){
+    var v = parseFloat(String(s==null?"":s).replace(/\$/g,"").replace(/\s/g,"").replace(/,/g,""));
+    return isNaN(v) ? 0 : v;
+  }
+  var out=[];
+  for(var i=1;i<lines.length;i++){
+    var c = splitCSV(lines[i]);
+    if(c.length < head.length) continue;
+    out.push([c[ix.app], c[ix.appId], c[ix.cid],
+      num(c[ix.sOut]), num(c[ix.sIn]), num(c[ix.tmpl]), num(c[ix.mkt]),
+      num(c[ix.utilPaid]), num(c[ix.utilFree]), num(c[ix.auth]),
+      num(c[ix.fep]), num(c[ix.mml]), num(c[ix.voice]),
+      num(c[ix.g]), num(c[ix.gm]), num(c[ix.w]), num(c[ix.d]), num(c[ix.t]),
+      num(c[ix.svc])]);
+  }
+  out.sort(function(a,b){ return b[17]-a[17]; });
+  return out;
+}
+
+render();
+})();
+</script>
