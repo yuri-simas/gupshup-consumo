@@ -218,8 +218,8 @@ tr.tot td{border-bottom:0;border-top:1px solid var(--ink);font-weight:600}
     <input id="rSvc" class="n" type="number" step="0.0001" min="0" value="0.0068" aria-label="Tarifa da mensagem de serviço"></label>
   <label><span class="lb">Dólar R$</span>
     <input id="fx" class="n" type="number" step="0.01" min="0" value="5.12" aria-label="Cotação do dólar"></label>
-  <a class="lnk" href="index.html">← Rateio geral</a>
-  <button class="go" id="print">Imprimir / PDF</button>
+  <a class="lnk" href="rateio.html">← Rateio geral</a>
+  <button class="go" id="exportar">Exportar HTML</button>
 </div>
 
 <div class="deck" id="deck"></div>
@@ -293,7 +293,7 @@ function build(){
 /* ---------------- slides ---------------- */
 function render(){
   if(!st.sel.length){ document.getElementById("deck").innerHTML = ""; return; }
-  var b = build(), A = b.apps, T = b.T, N = 7;
+  var b = build(), A = b.apps, T = b.T, N = 6;
   var nome = st.nome || (A[0] ? A[0].app : "Cliente");
   var multi = st.sel.length > 1;
   var s = [];
@@ -311,7 +311,7 @@ function render(){
     + '<div class="meta">'
     +   '<span>Escopo · '+(multi ? st.sel.length+" Customer Ids consolidados" : "Customer Id "+esc(st.sel[0]))+' · '+esc(nome)+'</span>'
     +   '<span>Base · 90 dias · '+A.length+' app'+(A.length>1?"s":"")+'</span>'
-    +   '<span>Natureza · Estimativa · tarifa de serviço não publicada</span>'
+    +   '<span>Natureza · Projeção · tarifa de serviço confirmada pela Meta</span>'
     +   '<span>Emissão · 03/09/2026</span>'
     + '</div>'));
 
@@ -429,19 +429,6 @@ function render(){
         'Hoje, aumentar o volume de atendimento é quase de graça — o limite absorve. A partir de outubro cada mensagem de serviço tem custo cheio e linear. '
         + '<strong>A lógica de "quanto mais atende, melhor" se inverte</strong>: o volume que hoje não pesava passa a ser exatamente o que define a conta.')));
 
-  /* 07 ressalvas */
-  s.push(slide(7,N,false,
-    tag("05 · Ressalvas")
-    + '<h2>O que ainda não é definitivo</h2>'
-    + '<div class="cards">'
-    + card("Tarifa","Ainda não confirmada","A Meta se comprometeu a publicar a tabela oficial de mensagem de serviço por país até 01/09/2026. Enquanto ela não é confirmada, usamos a tarifa de Utilidade — US$ "+R_UTIL.toFixed(4).replace(".",",")+" — que é o critério anunciado por ela.")
-    + card("Cenário","O mais caro possível","Assumimos que toda mensagem de serviço será cobrada. A janela gratuita de 72h dos anúncios Click-to-WhatsApp segue valendo, então o valor real tende a ficar abaixo.")
-    + card("Base","90 dias, sem quebra por ciclo","O extrato consolida o trimestre. Os valores aqui são a média mensal. Com os extratos de cada ciclo separados dá para mostrar a tendência mês a mês.")
-    + '</div>'
-    + note("ok","O que já é certo",
-        'A data — <strong>01/10/2026</strong> — e a regra: mensagens de serviço e templates de utilidade enviados dentro da janela aberta passam a ser cobrados por unidade. '
-        + 'O teto de US$ 75/mês por app da Gupshup foi confirmado nos dados: aplicá-lo à base inteira reproduz a fatura real com 0,4% de diferença.')));
-
   document.getElementById("deck").innerHTML = s.join("");
   wire();
 }
@@ -457,9 +444,6 @@ function figs(list){
 }
 function note(kind,title,html){
   return '<div class="note'+(kind?" "+kind:"")+'"><b>'+esc(title)+'</b><p>'+html+'</p></div>';
-}
-function card(t,h,p){
-  return '<div class="card"><p class="t">'+esc(t)+'</p><h3>'+esc(h)+'</h3><p>'+esc(p)+'</p></div>';
 }
 function seg(p,bg,label){
   if(p <= 0.001) return "";
@@ -615,7 +599,101 @@ document.getElementById("nome").addEventListener("input", function(){ st.nome = 
     render();
   });
 });
-document.getElementById("print").addEventListener("click", function(){ window.print(); });
+document.getElementById("exportar").addEventListener("click", exportarHTML);
+
+/* ---------------- exportar o deck como HTML autônomo ---------------- */
+/* O arquivo gerado não depende desta página: leva o CSS, os slides do cliente
+   escolhido, o logo em data URI e a navegação por teclado. Abre offline. */
+var NAV = [
+  'var slides=[].slice.call(document.querySelectorAll(".slide"));',
+  'var i=0;',
+  'function go(n){i=Math.max(0,Math.min(slides.length-1,n));slides[i].scrollIntoView({behavior:"smooth"});}',
+  'document.addEventListener("keydown",function(e){',
+  '  if(["ArrowDown","ArrowRight","PageDown"," "].indexOf(e.key)>-1){e.preventDefault();go(i+1);}',
+  '  else if(["ArrowUp","ArrowLeft","PageUp"].indexOf(e.key)>-1){e.preventDefault();go(i-1);}',
+  '  else if(e.key==="Home"){e.preventDefault();go(0);}',
+  '  else if(e.key==="End"){e.preventDefault();go(slides.length-1);}',
+  '  else if(e.key==="p"||e.key==="P"){window.print();}',
+  '});',
+  'var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)i=slides.indexOf(en.target);});},{threshold:.5});',
+  'slides.forEach(function(s){io.observe(s);});',
+  'setTimeout(function(){var h=document.getElementById("hint");if(h){h.style.transition="opacity .6s";h.style.opacity="0";}},4600);'
+].join("
+");
+
+var FONTES = 'https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700'
+  + '&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap';
+
+function slug(s){
+  return norm(s).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "cliente";
+}
+
+function exportarHTML(){
+  if(!st.sel.length) return;
+  var nome = st.nome || "Cliente";
+  var doc = '<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+'
+    + '<meta charset="utf-8">
+'
+    + '<meta name="viewport" content="width=device-width, initial-scale=1">
+'
+    + '<title>ORPEN · ' + esc(nome) + ' · Impacto da nova cobrança do WhatsApp</title>
+'
+    + '<link rel="preconnect" href="https://fonts.googleapis.com">
+'
+    + '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+'
+    + '<link href="' + FONTES + '" rel="stylesheet">
+'
+    + '<style>
+' + document.querySelector("style").textContent + '
+'
+    + '/* deck exportado: sem a barra de controle */
+'
+    + '.bar{display:none!important}
+'
+    + '.deck{height:100vh}
+'
+    + '.slide{min-height:100vh}
+'
+    + '</style>
+</head>
+<body>
+'
+    + '<div class="deck">' + document.getElementById("deck").innerHTML + '</div>
+'
+    + '<div class="hint" id="hint">↑ ↓ navegar · P imprimir</div>
+'
+    + '<scr' + 'ipt>
+' + NAV + '
+</scr' + 'ipt>
+</body>
+</html>
+';
+  baixar(doc, "orpen-impacto-whatsapp-" + slug(nome) + ".html");
+}
+
+/* No visualizador de artifacts o arquivo vai pela capability downloads;
+   fora dele (GitHub Pages, arquivo local) cai no link de download comum. */
+var dl = null;
+if(window.claude && typeof window.claude.use === "function"){
+  window.claude.use("downloads").then(function(d){ dl = d; }, function(){ dl = null; });
+}
+function baixar(texto, nome){
+  var blob = new Blob([texto], {type:"text/html;charset=utf-8"});
+  if(dl){
+    dl.save({filename:nome, data:blob}).then(function(){}, function(err){
+      if(err && err.code !== "declined") alert("Não foi possível salvar: " + (err.message || err.code));
+    });
+    return;
+  }
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nome;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
 
 /* ---------------- navegação ---------------- */
 var idx = 0;

@@ -7,8 +7,8 @@ Duas páginas estáticas, sem backend — todo o cálculo roda no navegador.
 
 | Página | O que faz |
 |---|---|
-| [`index.html`](https://yuri-simas.github.io/gupshup-consumo/) | Rateio geral: custo por cliente e por app, aberto por categoria de mensagem, em dólar e real |
-| [`deck.html`](https://yuri-simas.github.io/gupshup-consumo/deck.html) | Gerador de apresentação executiva por cliente, na identidade da Orpen |
+| [`index.html`](https://yuri-simas.github.io/gupshup-consumo/) | Gerador de apresentação executiva por cliente, na identidade da Orpen. Busca por nome de app, consolida vários Customer Ids e exporta o deck como HTML autônomo |
+| [`rateio.html`](https://yuri-simas.github.io/gupshup-consumo/rateio.html) | Rateio geral: custo por cliente e por app, aberto por categoria de mensagem, em dólar e real |
 
 Base publicada: extrato de **90 dias**, 888 apps em 391 Customer IDs. Os valores aparecem em **média mensal** (total ÷ 3) por padrão.
 
@@ -45,7 +45,7 @@ Não custam nada hoje: `Conversation Service`, `Free Utility Templates` (utility
 
 ## A mudança de 01/10/2026
 
-A partir dessa data a Meta cobra por unidade as **mensagens de serviço** (respostas de texto livre dentro da janela de 24h) e os **templates de utility enviados com a janela já aberta**. A tarifa oficial por país ainda não foi confirmada; as páginas usam a de Utility — `US$ 0,0068` — que é o critério anunciado pela Meta, e o campo é editável.
+A partir dessa data a Meta cobra por unidade as **mensagens de serviço** (respostas de texto livre dentro da janela de 24h) e os **templates de utility enviados com a janela já aberta**. A tarifa do Brasil foi confirmada em `US$ 0,0068` por mensagem — a mesma de Utility, sem desconto por volume. O campo é editável nas duas páginas.
 
 O teto da Gupshup continua valendo, mas cobre só a camada Gupshup: a cobrança da Meta é uma camada separada, **sem teto**.
 
@@ -60,13 +60,13 @@ python src/csv_para_json.py "caminho/analytics.csv"
 python src/build.py
 ```
 
-Confira o campo **Dias** no cabeçalho, que define o divisor da média mensal, e commite `dados.json`, `index.html` e `deck.html`.
+Confira o campo **Dias** no cabeçalho, que define o divisor da média mensal, e commite `dados.json`, `index.html` e `rateio.html`.
 
 ## Estrutura
 
 ```
-index.html                 rateio geral (gerado)
-deck.html                  gerador de deck (gerado)
+index.html                 gerador de deck (gerado)
+rateio.html                rateio geral (gerado)
 dados.json                 extrato convertido, 19 campos por app
 src/rateio.template.html   fonte do rateio, com o marcador __DATA__
 src/deck.template.html     fonte do deck, com __DATA__ e __LOGO__
@@ -75,4 +75,8 @@ src/csv_para_json.py       CSV da Gupshup → dados.json
 src/build.py               templates + dados → páginas publicadas
 ```
 
-Edite sempre os arquivos em `src/` — `index.html` e `deck.html` são gerados e qualquer alteração direta neles se perde no próximo build.
+Edite sempre os arquivos em `src/` — `index.html` e `rateio.html` são gerados e qualquer alteração direta neles se perde no próximo build.
+
+## Exportar um deck
+
+O botão **Exportar HTML** baixa a apresentação do cliente escolhido como um arquivo `.html` autônomo: leva o CSS, o logo em data URI e a navegação por teclado. Abre offline, em qualquer navegador, sem depender deste site. Para PDF, abra o arquivo e imprima com `P`.

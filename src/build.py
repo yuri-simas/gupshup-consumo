@@ -28,13 +28,14 @@ def main():
 
     print("gerando:")
 
-    rateio = ler("src", "rateio.template.html")
-    assert "__DATA__" in rateio, "rateio.template.html sem marcador __DATA__"
-    escrever("index.html", rateio.replace("__DATA__", dados))
-
+    # O deck e a pagina principal do site.
     deck = ler("src", "deck.template.html")
     assert "__DATA__" in deck and "__LOGO__" in deck, "deck.template.html sem marcadores"
-    escrever("deck.html", deck.replace("__DATA__", dados).replace("__LOGO__", logo))
+    escrever("index.html", deck.replace("__DATA__", dados).replace("__LOGO__", logo))
+
+    rateio = ler("src", "rateio.template.html")
+    assert "__DATA__" in rateio, "rateio.template.html sem marcador __DATA__"
+    escrever("rateio.html", rateio.replace("__DATA__", dados))
 
 
 if __name__ == "__main__":
