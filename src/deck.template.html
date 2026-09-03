@@ -602,8 +602,11 @@ document.getElementById("nome").addEventListener("input", function(){ st.nome = 
 document.getElementById("exportar").addEventListener("click", exportarHTML);
 
 /* ---------------- exportar o deck como HTML autônomo ---------------- */
-/* O arquivo gerado não depende desta página: leva o CSS, os slides do cliente
-   escolhido, o logo em data URI e a navegação por teclado. Abre offline. */
+/* O arquivo gerado nao depende desta pagina: leva o CSS, os slides do cliente
+   escolhido, o logo em data URI e a navegacao por teclado. Abre offline.
+   A quebra de linha vem de fromCharCode para nao depender de escape. */
+var NL = String.fromCharCode(10);
+
 var NAV = [
   'var slides=[].slice.call(document.querySelectorAll(".slide"));',
   'var i=0;',
@@ -618,8 +621,7 @@ var NAV = [
   'var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)i=slides.indexOf(en.target);});},{threshold:.5});',
   'slides.forEach(function(s){io.observe(s);});',
   'setTimeout(function(){var h=document.getElementById("hint");if(h){h.style.transition="opacity .6s";h.style.opacity="0";}},4600);'
-].join("
-");
+].join(NL);
 
 var FONTES = 'https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700'
   + '&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap';
@@ -631,47 +633,34 @@ function slug(s){
 function exportarHTML(){
   if(!st.sel.length) return;
   var nome = st.nome || "Cliente";
-  var doc = '<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-'
-    + '<meta charset="utf-8">
-'
-    + '<meta name="viewport" content="width=device-width, initial-scale=1">
-'
-    + '<title>ORPEN · ' + esc(nome) + ' · Impacto da nova cobrança do WhatsApp</title>
-'
-    + '<link rel="preconnect" href="https://fonts.googleapis.com">
-'
-    + '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-'
-    + '<link href="' + FONTES + '" rel="stylesheet">
-'
-    + '<style>
-' + document.querySelector("style").textContent + '
-'
-    + '/* deck exportado: sem a barra de controle */
-'
-    + '.bar{display:none!important}
-'
-    + '.deck{height:100vh}
-'
-    + '.slide{min-height:100vh}
-'
-    + '</style>
-</head>
-<body>
-'
-    + '<div class="deck">' + document.getElementById("deck").innerHTML + '</div>
-'
-    + '<div class="hint" id="hint">↑ ↓ navegar · P imprimir</div>
-'
-    + '<scr' + 'ipt>
-' + NAV + '
-</scr' + 'ipt>
-</body>
-</html>
-';
+  var doc = [
+    '<!DOCTYPE html>',
+    '<html lang="pt-BR">',
+    '<head>',
+    '<meta charset="utf-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1">',
+    '<title>ORPEN · ' + esc(nome) + ' · Impacto da nova cobrança do WhatsApp</title>',
+    '<link rel="preconnect" href="https://fonts.googleapis.com">',
+    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
+    '<link href="' + FONTES + '" rel="stylesheet">',
+    '<style>',
+    document.querySelector("style").textContent,
+    '/* deck exportado: sem a barra de controle */',
+    '.bar{display:none!important}',
+    '.deck{height:100vh}',
+    '.slide{min-height:100vh}',
+    '</style>',
+    '</head>',
+    '<body>',
+    '<div class="deck">' + document.getElementById("deck").innerHTML + '</div>',
+    '<div class="hint" id="hint">↑ ↓ navegar · P imprimir</div>',
+    '<scr' + 'ipt>',
+    NAV,
+    '</scr' + 'ipt>',
+    '</body>',
+    '</html>',
+    ''
+  ].join(NL);
   baixar(doc, "orpen-impacto-whatsapp-" + slug(nome) + ".html");
 }
 
@@ -685,7 +674,7 @@ function baixar(texto, nome){
   var blob = new Blob([texto], {type:"text/html;charset=utf-8"});
   if(dl){
     dl.save({filename:nome, data:blob}).then(function(){}, function(err){
-      if(err && err.code !== "declined") alert("Não foi possível salvar: " + (err.message || err.code));
+      if(err && err.code !== "declined") alert("Nao foi possivel salvar: " + (err.message || err.code));
     });
     return;
   }
