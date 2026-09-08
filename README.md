@@ -79,4 +79,8 @@ Edite sempre os arquivos em `src/` — `index.html` e `rateio.html` são gerados
 
 ## Exportar um deck
 
-O botão **Exportar HTML** baixa a apresentação do cliente escolhido como um arquivo `.html` autônomo: leva o CSS, o logo em data URI e a navegação por teclado. Abre offline, em qualquer navegador, sem depender deste site. Para PDF, abra o arquivo e imprima com `P`.
+**Exportar HTML** baixa a apresentação do cliente escolhido como um arquivo `.html` autônomo: leva o CSS, o logo em data URI e a navegação por teclado. Abre offline, em qualquer navegador, sem depender deste site.
+
+**Exportar PDF** abre a impressão do navegador — escolha *Salvar como PDF* no destino. Sai em A4 paisagem, um slide por página, com o texto vetorial e selecionável. A tecla `P` faz o mesmo, aqui e no arquivo exportado.
+
+> Não usamos biblioteca de PDF no navegador de propósito: `html2canvas` rasterizaria os seis slides, deixando o arquivo pesado e o texto sem seleção. A impressão nativa preserva fonte, cor e vetor.

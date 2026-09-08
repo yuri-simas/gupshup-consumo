@@ -184,12 +184,17 @@ tr.tot td{border-bottom:0;border-top:1px solid var(--ink);font-weight:600}
   .hint{display:none}
   .bar select{max-width:100%;flex:1}
 }
+@page{size:A4 landscape;margin:10mm}
 @media print{
   body{background:#fff}
   .bar,.hint{display:none!important}
-  .deck{height:auto;overflow:visible}
-  .slide{min-height:auto;page-break-after:always;break-after:page;border:0;padding:24px 30px}
-  .tw.scroll{max-height:none;overflow:visible;border:0}
+  .deck{height:auto;overflow:visible;scroll-snap-type:none}
+  .slide{min-height:auto;page-break-after:always;break-after:page;border:0;padding:16px 22px;justify-content:flex-start}
+  .slide:last-child{page-break-after:auto;break-after:auto}
+  .slide::after{bottom:6px}
+  .tw,.tw.scroll{max-height:none;overflow:visible;border:0}
+  .figs,.note,.rank,.spine,.tw{break-inside:avoid;page-break-inside:avoid}
+  .rw,.crow{break-inside:avoid;page-break-inside:avoid}
   .slide.dark{background:#1A293E!important}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
@@ -220,6 +225,7 @@ tr.tot td{border-bottom:0;border-top:1px solid var(--ink);font-weight:600}
     <input id="fx" class="n" type="number" step="0.01" min="0" value="5.12" aria-label="Cotação do dólar"></label>
   <a class="lnk" href="rateio.html">← Rateio geral</a>
   <button class="go" id="exportar">Exportar HTML</button>
+  <button id="exportarPdf" title="Abre a impressão do navegador — escolha Salvar como PDF">Exportar PDF</button>
 </div>
 
 <div class="deck" id="deck"></div>
@@ -600,6 +606,7 @@ document.getElementById("nome").addEventListener("input", function(){ st.nome = 
   });
 });
 document.getElementById("exportar").addEventListener("click", exportarHTML);
+document.getElementById("exportarPdf").addEventListener("click", function(){ window.print(); });
 
 /* ---------------- exportar o deck como HTML autônomo ---------------- */
 /* O arquivo gerado nao depende desta pagina: leva o CSS, os slides do cliente
@@ -645,10 +652,13 @@ function exportarHTML(){
     '<link href="' + FONTES + '" rel="stylesheet">',
     '<style>',
     document.querySelector("style").textContent,
-    '/* deck exportado: sem a barra de controle */',
-    '.bar{display:none!important}',
-    '.deck{height:100vh}',
-    '.slide{min-height:100vh}',
+    '/* deck exportado: sem a barra de controle. So na tela, para nao',
+    '   sobrescrever o bloco de impressao que vem antes. */',
+    '@media screen{',
+    '  .bar{display:none!important}',
+    '  .deck{height:100vh}',
+    '  .slide{min-height:100vh}',
+    '}',
     '</style>',
     '</head>',
     '<body>',
