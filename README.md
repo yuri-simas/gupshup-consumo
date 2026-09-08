@@ -83,4 +83,6 @@ Edite sempre os arquivos em `src/` — `index.html` e `rateio.html` são gerados
 
 **Exportar PDF** abre a impressão do navegador — escolha *Salvar como PDF* no destino. Sai em A4 paisagem, um slide por página, com o texto vetorial e selecionável. A tecla `P` faz o mesmo, aqui e no arquivo exportado.
 
+> `@page` usa `margin: 0` de propósito. O navegador desenha cabeçalho e rodapé — URL do site, título e data — dentro da área de margem; sem margem ele não tem onde imprimir, e **o link não vaza para o PDF**. O respiro volta como `padding` do slide. Se editar essa regra, o endereço do GitHub reaparece no rodapé de todo deck enviado a cliente.
+
 > Não usamos biblioteca de PDF no navegador de propósito: `html2canvas` rasterizaria os seis slides, deixando o arquivo pesado e o texto sem seleção. A impressão nativa preserva fonte, cor e vetor.

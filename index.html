@@ -184,14 +184,19 @@ tr.tot td{border-bottom:0;border-top:1px solid var(--ink);font-weight:600}
   .hint{display:none}
   .bar select{max-width:100%;flex:1}
 }
-@page{size:A4 landscape;margin:10mm}
+/* Margem zero de proposito: o navegador desenha cabecalho e rodape --
+   URL, titulo e data -- dentro da area de margem da pagina. Sem margem
+   ele nao tem onde imprimir, e o link nao vaza para o PDF. O respiro
+   volta como padding do slide, em milimetros. */
+@page{size:A4 landscape;margin:0}
 @media print{
   body{background:#fff}
   .bar,.hint{display:none!important}
   .deck{height:auto;overflow:visible;scroll-snap-type:none}
-  .slide{min-height:auto;page-break-after:always;break-after:page;border:0;padding:16px 22px;justify-content:flex-start}
+  .slide{min-height:auto;page-break-after:always;break-after:page;border:0;padding:13mm 15mm;justify-content:flex-start}
   .slide:last-child{page-break-after:auto;break-after:auto}
-  .slide::after{bottom:6px}
+  .slide::after{bottom:7mm;right:15mm}
+  .orpen-logo{top:11mm;right:15mm}
   .tw,.tw.scroll{max-height:none;overflow:visible;border:0}
   .figs,.note,.rank,.spine,.tw{break-inside:avoid;page-break-inside:avoid}
   .rw,.crow{break-inside:avoid;page-break-inside:avoid}
